@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "cblas.h"
 
-
+int min(int a, int b);
 // helper function for creating the C matrix
 double **init_C(double **C, int m, int n){
     for(int i=0;i<m;i++){
@@ -68,7 +68,7 @@ void matmult_nmk(int m,int n,int k,double **A,double **B,double **C){
     for(int j=0;j<n;j++){
         for(int i=0;i<m;i++){
             for(int l=0;l<k;l++){
-                C[i][j] += A[i][l]*B[l][j];
+                C[i][j] = C[i][j] + A[i][l]*B[l][j];
             }
         }
     }
@@ -102,4 +102,32 @@ void matmult_knm(int m,int n,int k,double **A,double **B,double **C){
             }
         }
     }
+}
+
+void matmult_blk(int m,int n,int k,double **A,double **B,double **C, int bs){
+    C = init_C(C,m,n);
+    
+    for(int i1=0;i1<m;i1+=bs){
+        for(int l=0;l<k;l++){
+            for(int j=0;j<n;j++){
+                for(int i2=0; i2 < min(m-i1, bs); i2++){
+                C[i1+i2][j] += A[i1+i2][l]*B[l][j];
+                }
+            }
+        }
+    }
+
+    // Cleanup loop
+    for (int i= m - (m%bs); i<m; i++){
+        for (int l=0; l<k; l++){
+            for (int j=0; j<n; j++){
+                C[i][j] += A[i][l]*B[l][j];
+            }
+        }
+    }
+}
+
+int min(int a, int b)
+{
+    return (a > b) ? b : a;
 }
