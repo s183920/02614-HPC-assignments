@@ -50,3 +50,7 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# own additions
+assignment1_serial_tuning/compile.log
+assignment1_serial_tuning/results/*

@@ -20,3 +20,6 @@ In which order do you expect the fastest algorithm to run?
       cached. The outermost loop is the one that is least likely to be
       cached. The middle loop is the one that is most likely to be
       cached, but not as much as the innermost loop.
+
+
+FLOPS = 2mnk
