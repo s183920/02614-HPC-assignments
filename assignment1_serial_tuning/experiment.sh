@@ -16,41 +16,38 @@
 #BSUB -W 15
 # uncomment the following line, if you want to assure that your job has
 # a whole CPU for itself (shared L3 cache)
-# #BSUB -R "span[hosts=1] affinity[socket(1)]"
+#BSUB -R "span[hosts=1] affinity[socket(1)]"
+
 
 # define the driver name to use
-# valid values: matmult_c.studio, matmult_f.studio, matmult_c.gcc or
-# matmult_f.gcc
-#
-EXECUTABLE=matmult_c.gcc
+export EXECUTABLE=matmult_c.gcc
 
 # experiments name
-EXPNAME=matmult_test_$(date +%Y%m%d_%H%M%S)
-# EXPNAME="$EXPNAME_$(date +%Y%m%d_%H%M%S)"
-mkdir results/$EXPNAME
-touch results/$EXPNAME/setup.txt
+export EXPNAME=matmult_test_$(date +%Y%m%d_%H%M%S)
+export ANALYZER_DIR=results/${EXPNAME}/analyzer_files
+export SIZE_DIR=results/${EXPNAME}/output_files
 
-# define the mkn values in the MKN variable
-SIZES="100 200"
-echo "SIZES=$SIZES" >> results/$EXPNAME/setup.txt
+# create necesary files and directories
+mkdir results/$EXPNAME
+touch results/$EXPNAME/setup.txt # file for setup
+
+# safe compile options
+# cp Makefile $EXPNAME/Makefile.bak
+cp compile.log results/$EXPNAME/compile.log
 
 # uncomment and set a reasonable BLKSIZE for the blk version
-#
-# BLKSIZE=1
+export BLKSIZE=1
 
-# enable(1)/disable(0) result checking
-export MATMULT_COMPARE=0
+# permuations
+export PERMS="mkn mnk kmn knm nmk nkm"
 
-# start the collect command with the above settings
+# driver options
+# export MATMULT_RESULTS=      # {[0]|1}       print result matrices (in Matlab format, def: 0)
+export MATMULT_COMPARE=0   # {0|[1]}       control result comparison (def: 1); enable(1)/disable(0) result checking
+# export MFLOPS_MIN_T=         # [3.0]         the minimum run-time (def: 3.0 s)
+export MFLOPS_MAX_IT=1000        # [infinity]    max. no of iterations; set if you want to do profiling.
 
-# loop over permutations
-PERMS="mkn mnk kmn knm nmk nkm"
-for PERM in $PERMS ; do
-echo "PERM=$PERM"
-# loop over matrix sizes
-FILENAME=results/$EXPNAME/$PERM.txt
-touch $FILENAME
-for S in $SIZES; do
-    ./$EXECUTABLE $PERM $S $S $S $BLKSIZE >> $FILENAME
-done
-done
+# perform the experiments
+sh experiment_size.sh # uncomment to perform size experiment
+# sh experiment_blk.sh # uncomment to perform blk experiment
+# sh experiment_analyzer.sh # uncomment to perform tuning experiment
