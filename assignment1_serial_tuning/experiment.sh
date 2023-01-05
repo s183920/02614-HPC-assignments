@@ -1,14 +1,9 @@
 #!/bin/sh
 
 # experiments name
-<<<<<<< HEAD
-export EXPNAME=blk_L3_test_$(date +%Y%m%d_%H%M%S)
-=======
 export EXPNAME=big_size_$(date +%Y%m%d_%H%M%S)
->>>>>>> 99eef38ddf0a4fd62d10f5cc1ca7d0095a29c643
 mkdir -p results/$EXPNAME
 mkdir -p hpc_logs
-
 #!/bin/bash
 # 02614 - High-Performance Computing, January 2022
 # 
