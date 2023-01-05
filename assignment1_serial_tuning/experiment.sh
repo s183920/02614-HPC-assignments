@@ -37,7 +37,7 @@ touch results/$EXPNAME/setup.txt # file for setup
 cp compile.log results/$EXPNAME/compile.log
 
 # uncomment and set a reasonable BLKSIZE for the blk version
-export BLKSIZE=1
+export BLKSIZE=5
 
 # permuations
 export PERMS="mkn mnk kmn knm nmk nkm"
@@ -50,5 +50,5 @@ export MFLOPS_MAX_IT=1000        # [infinity]    max. no of iterations; set if y
 
 # perform the experiments
 #sh experiment_size.sh # uncomment to perform size experiment
-# sh experiment_blk.sh # uncomment to perform blk experiment
+sh experiment_blk.sh # uncomment to perform blk experiment
 #sh experiment_analyzer.sh # uncomment to perform tuning experiment
