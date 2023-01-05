@@ -12,11 +12,17 @@ CFLAGS= $(OPT) $(PIC) $(XOPTS)
 SOFLAGS = -shared 
 XLIBS	= 
 
+
+
 $(TARGET): $(LIBOBJS)
-	# @module load gcc # NOT WORKING
+	# @module load gcc
 	$(CC) $(CFLAGS) -o $@ $(SOFLAGS) $(LIBOBJS) $(XLIBS) $(LIBSRCS)
 	@echo $(CC) $(CFLAGS) -o $@ $(SOFLAGS) $(LIBOBJS) $(XLIBS) $(LIBSRCS) > compile.log
 
+# load modules
+loadmodules:
+	@module load gcc
+	
 # cleaning functions
 clean:
 	@/bin/rm -f core core.* $(LIBOBJS) 
@@ -32,8 +38,14 @@ cleanresults:
 matrix.o: matrix.c
 
 # save results
-# saveresults
-
+SAVEKEY="large"
+saveresults: 
+	@mkdir -p results_saved
+	@cp -r results/*$(SAVEKEY)* results_saved/
+	# move hpc_log with jobid
+	# @cp results/hpc_log results/hpc_log_$(SAVEKEY)
+	# extract jobid from results/*$(SAVEKEY)*/jobid.txt
+	
 # test 
 test: $(TARGET)
 	@echo "Expected result: "
