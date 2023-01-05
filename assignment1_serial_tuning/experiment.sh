@@ -40,15 +40,16 @@ cp compile.log results/$EXPNAME/compile.log
 export BLKSIZE=1
 
 # permuations
-export PERMS="mkn mnk kmn knm nmk nkm"
+export PERMS="lib mkn mnk kmn knm nmk nkm"
+#export PERMS="lib"
 
 # driver options
 # export MATMULT_RESULTS=      # {[0]|1}       print result matrices (in Matlab format, def: 0)
 export MATMULT_COMPARE=0   # {0|[1]}       control result comparison (def: 1); enable(1)/disable(0) result checking
-# export MFLOPS_MIN_T=         # [3.0]         the minimum run-time (def: 3.0 s)
+# export MFLOPS_MIN_T= 3       # [3.0]         the minimum run-time (def: 3.0 s)
 export MFLOPS_MAX_IT=1000        # [infinity]    max. no of iterations; set if you want to do profiling.
 
 # perform the experiments
 #sh experiment_size.sh # uncomment to perform size experiment
 # sh experiment_blk.sh # uncomment to perform blk experiment
-#sh experiment_analyzer.sh # uncomment to perform tuning experiment
+sh experiment_analyzer.sh # uncomment to perform tuning experiment
