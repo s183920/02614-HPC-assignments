@@ -2,7 +2,7 @@ TARGET	= libmatmult.so
 LIBSRCS	= -lm
 LIBOBJS	= matrix.o
 
-OPT	= -g -O3 -funroll-loops
+OPT	= -g -O3
 PIC	= -fPIC
 XOPTS = 
 
@@ -13,7 +13,7 @@ SOFLAGS = -shared
 XLIBS	= 
 
 $(TARGET): $(LIBOBJS)
-	@module load gcc
+	# @module load gcc # NOT WORKING
 	$(CC) $(CFLAGS) -o $@ $(SOFLAGS) $(LIBOBJS) $(XLIBS) $(LIBSRCS)
 	@echo $(CC) $(CFLAGS) -o $@ $(SOFLAGS) $(LIBOBJS) $(XLIBS) $(LIBSRCS) > compile.log
 
@@ -30,6 +30,9 @@ cleanresults:
 
 # dependencies
 matrix.o: matrix.c
+
+# save results
+saveresults
 
 # test 
 test: $(TARGET)

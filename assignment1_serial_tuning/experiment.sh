@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# experiments name
+export EXPNAME=queue_test_$(date +%Y%m%d_%H%M%S)
+mkdir -p results/$EXPNAME
+mkdir -p results/hpc_logs
+
 #!/bin/bash
 # 02614 - High-Performance Computing, January 2022
 # 
@@ -9,7 +14,8 @@
 # Author: Bernd Dammann <bd@cc.dtu.dk>
 #
 #BSUB -J mm_batch
-#BSUB -o mm_batch_%J.out
+#BSUB -o results/hpc_logs/mm_batch_%J.out
+#BSUB -e results/hpc_logs/mm_batch_%J.err
 #BSUB -q hpcintro
 #BSUB -n 1
 #BSUB -R "rusage[mem=2048]"
@@ -22,18 +28,17 @@
 # define the driver name to use
 export EXECUTABLE=matmult_c.gcc
 
-# experiments name
-export EXPNAME=matmult_test_$(date +%Y%m%d_%H%M%S)
+# create necesary files and directories
 export ANALYZER_DIR=results/${EXPNAME}/analyzer_files
 export SIZE_DIR=results/${EXPNAME}/output_files
 
 # create necesary files and directories
 #mkdir results
-mkdir -p results/$EXPNAME
 touch results/$EXPNAME/setup.txt # file for setup
+lscpu >> results/$EXPNAME/setup.txt # write setup to file
+echo "Jobid: ${LSB_JOBID}" >> results/$EXPNAME/setup.txt # write setup to file
 
 # safe compile options
-# cp Makefile $EXPNAME/Makefile.bak
 cp compile.log results/$EXPNAME/compile.log
 
 # uncomment and set a reasonable BLKSIZE for the blk version
