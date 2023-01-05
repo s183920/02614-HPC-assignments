@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # experiments name
-export EXPNAME=queue_test_$(date +%Y%m%d_%H%M%S)
+export EXPNAME=big_size_$(date +%Y%m%d_%H%M%S)
 mkdir -p results/$EXPNAME
 mkdir -p hpc_logs
 
@@ -24,8 +24,17 @@ mkdir -p hpc_logs
 # a whole CPU for itself (shared L3 cache)
 #BSUB -R "span[hosts=1] affinity[socket(1)]"
 
+# set compiler flags
+OPT_FLAGS="-g -O3"
+
+
+# compile the code
+module load gcc
+make realclean
+make OPT="$OPT_FLAGS"
 
 # define the driver name to use
+# cp matmult_c.gcc results/$EXPNAME/matmult_c.gcc
 export EXECUTABLE=matmult_c.gcc
 
 # create necesary files and directories
@@ -36,13 +45,13 @@ export SIZE_DIR=results/${EXPNAME}/output_files
 #mkdir results
 touch results/$EXPNAME/setup.txt # file for setup
 lscpu >> results/$EXPNAME/setup.txt # write setup to file
-echo "Jobid: ${LSB_JOBID}" > results/$EXPNAME/jobid.txt # write setup to file
+echo "Jobid: ${LSB_JOBID}" >> results/$EXPNAME/setup.txt # write setup to file
 
 # safe compile options
 cp compile.log results/$EXPNAME/compile.log
 
 # define the mkn values in the MKN variable
-export SIZES="5 10" #100 150 250 350 500 600"
+export SIZES="5 10 100 150 250 350 500 600 700 800"
 
 # uncomment and set a reasonable BLKSIZE for the blk version
 export BLKSIZE=1
@@ -62,7 +71,6 @@ sh experiment_size.sh # uncomment to perform size experiment
 #sh experiment_analyzer.sh # uncomment to perform tuning experiment
 
 # copy hpc logs to results folder
-echo "$LSB_JOBID"
 if [ "$LSB_JOBID" != "" ]; then
     cp hpc_logs/${LSB_JOBID}.out results/$EXPNAME/hpc_logs.out
     cp hpc_logs/${LSB_JOBID}.err results/$EXPNAME/hpc_logs.err

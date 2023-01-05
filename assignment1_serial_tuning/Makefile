@@ -12,11 +12,17 @@ CFLAGS= $(OPT) $(PIC) $(XOPTS)
 SOFLAGS = -shared 
 XLIBS	= 
 
+
+
 $(TARGET): $(LIBOBJS)
-	# @module load gcc # NOT WORKING
+	# @module load gcc
 	$(CC) $(CFLAGS) -o $@ $(SOFLAGS) $(LIBOBJS) $(XLIBS) $(LIBSRCS)
 	@echo $(CC) $(CFLAGS) -o $@ $(SOFLAGS) $(LIBOBJS) $(XLIBS) $(LIBSRCS) > compile.log
 
+# load modules
+loadmodules:
+	@module load gcc
+	
 # cleaning functions
 clean:
 	@/bin/rm -f core core.* $(LIBOBJS) 
