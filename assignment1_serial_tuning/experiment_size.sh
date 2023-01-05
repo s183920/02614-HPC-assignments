@@ -5,12 +5,12 @@ module load python3
 
 
 # create necesary files and directories
-mkdir $SIZE_DIR # directory for output files
+mkdir -p $SIZE_DIR # directory for output files
 touch results/$EXPNAME/setup_sizes.txt # file for setup of size exp
 
 
 # define the mkn values in the MKN variable
-SIZES="100 200"
+SIZES="10 50 100 150 250 350 500 600"
 echo "SIZES=$SIZES" >> results/$EXPNAME/setup_sizes.txt
 
 # loop over permutations
