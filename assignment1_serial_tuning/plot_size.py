@@ -70,9 +70,18 @@ def get_compiler_optimizations(exp):
 
 if __name__ == "__main__":
     import os
-    # exp = "results/matmult_test_20230104_190844/"
-    exp = "results/large_20230104_222614/"
+    import argparse
 
+    def_exp = "large_20230104_222614"
+    def_folder = "results_saved"
+
+    # argparser
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--exp", type = str, default = def_exp)
+    parser.add_argument("--folder", type = str, default = def_folder)
+    args = parser.parse_args()
+    exp = args.folder + "/" + args.exp + "/"
+    
     # make folder for plots
     os.makedirs(exp + "plots", exist_ok = True)
 
@@ -132,7 +141,7 @@ if __name__ == "__main__":
         ax.plot(data["memory"], data["performance"] ,label = name)
         ax.set_xscale("log", base = 2) 
         # ticks = range(0, 14)
-        ticks = [2**i for i in range(0, 14)] #  1, 2, 4, 8, 16, 64, 256, 1024, 4096, 16384, 65536, 262144
+        ticks = [2**i for i in range(0, 16)] #  1, 2, 4, 8, 16, 64, 256, 1024, 4096, 16384, 65536, 262144
         # ax.set_xticks([2**t for t in ticks])
         # ax.set_xticklabels(["$2^{"+ str(t) + "}$" for t in ticks])
         ax.set_xticks(ticks)

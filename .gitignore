@@ -52,6 +52,11 @@ Mkfile.old
 dkms.conf
 
 # own additions
+.venv
+
+# assigment 1
 assignment1_serial_tuning/compile.log
 assignment1_serial_tuning/results/*
-.venv
+assignment1_serial_tuning/results_saved/*
+assignment1_serial_tuning/hpc_logs/*
+

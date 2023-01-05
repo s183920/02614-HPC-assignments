@@ -32,8 +32,14 @@ cleanresults:
 matrix.o: matrix.c
 
 # save results
-saveresults
-
+SAVEKEY="large"
+saveresults: 
+	@mkdir -p results_saved
+	@cp -r results/*$(SAVEKEY)* results_saved/
+	# move hpc_log with jobid
+	# @cp results/hpc_log results/hpc_log_$(SAVEKEY)
+	# extract jobid from results/*$(SAVEKEY)*/jobid.txt
+	
 # test 
 test: $(TARGET)
 	@echo "Expected result: "
