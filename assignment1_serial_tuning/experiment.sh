@@ -65,11 +65,6 @@ export MATMULT_COMPARE=0   # {0|[1]}       control result comparison (def: 1); e
 # export MFLOPS_MAX_IT=1000        # [infinity]    max. no of iterations; set if you want to do profiling.
 
 # perform the experiments
-<<<<<<< HEAD
-#sh experiment_size.sh # uncomment to perform size experiment
-sh experiment_blk.sh # uncomment to perform blk experiment
-#sh experiment_analyzer.sh # uncomment to perform tuning experiment
-=======
 sh experiment_size.sh # uncomment to perform size experiment
 # sh experiment_blk.sh # uncomment to perform blk experiment
 #sh experiment_analyzer.sh # uncomment to perform tuning experiment
@@ -79,4 +74,3 @@ if [ "$LSB_JOBID" != "" ]; then
     cp hpc_logs/${LSB_JOBID}.out results/$EXPNAME/hpc_logs.out
     cp hpc_logs/${LSB_JOBID}.err results/$EXPNAME/hpc_logs.err
 fi
->>>>>>> 99eef38ddf0a4fd62d10f5cc1ca7d0095a29c643
