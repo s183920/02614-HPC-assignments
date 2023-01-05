@@ -23,3 +23,19 @@ In which order do you expect the fastest algorithm to run?
 
 
 FLOPS = 2mnk
+
+
+## Mising implementation
+
+- [ ] Blocked version experiment
+- [ ] compilers experiment
+
+### Plots
+- [ ] Plot of size performance
+- [ ] Plot of block size performance
+- [ ] Plot of performance for different compilers
+
+
+## Assumptions
+
+The cache is warmed up by the driver and the program is therefore only ran once for each size.
