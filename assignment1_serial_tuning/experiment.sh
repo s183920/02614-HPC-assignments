@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # experiments name
-export EXPNAME=queue_test_$(date +%Y%m%d_%H%M%S)
+export EXPNAME=blk_L3_test_$(date +%Y%m%d_%H%M%S)
 mkdir -p results/$EXPNAME
 mkdir -p results/hpc_logs
 
@@ -55,5 +55,5 @@ export MATMULT_COMPARE=0   # {0|[1]}       control result comparison (def: 1); e
 
 # perform the experiments
 #sh experiment_size.sh # uncomment to perform size experiment
-# sh experiment_blk.sh # uncomment to perform blk experiment
+sh experiment_blk.sh # uncomment to perform blk experiment
 #sh experiment_analyzer.sh # uncomment to perform tuning experiment

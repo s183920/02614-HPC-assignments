@@ -32,7 +32,7 @@ cleanresults:
 matrix.o: matrix.c
 
 # save results
-saveresults
+# saveresults
 
 # test 
 test: $(TARGET)
