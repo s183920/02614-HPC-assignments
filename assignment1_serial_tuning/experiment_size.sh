@@ -35,4 +35,9 @@ done
 
 # make plot
 echo "Making plot of size experiment..."
-python3 plot_size.py --exp $EXPNAME --folder results --compile_count $COUNT
+# python3 plot_size.py --exp $EXPNAME --folder results
+if [ "$COUNT" == "" ]; then
+    python3 plot_size.py --exp $EXPNAME --folder results
+else
+    python3 plot_size.py --exp $EXPNAME --folder results --compile_count $COUNT
+fi
