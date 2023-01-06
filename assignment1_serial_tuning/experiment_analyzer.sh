@@ -8,7 +8,7 @@ mkdir $ANALYZER_DIR # directory for analyzer files
 touch results/$EXPNAME/setup_sizes.txt # file for setup of size exp
 
 # define the mkn values in the MKN variable
-SIZES="100"
+SIZES="30 75 200 1200"
 echo "SIZES=$SIZES" >> results/$EXPNAME/setup.txt
 
 # analyzer options

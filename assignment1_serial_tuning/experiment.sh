@@ -24,7 +24,7 @@ mkdir -p hpc_logs
 #BSUB -R "span[hosts=1] affinity[socket(1)]"
 
 # set compiler flags
-OPT_FLAGS="-g -O3"
+OPT_FLAGS="-g"
 
 
 # compile the code
@@ -66,9 +66,9 @@ export MATMULT_COMPARE=0   # {0|[1]}       control result comparison (def: 1); e
 # export MFLOPS_MAX_IT=1000        # [infinity]    max. no of iterations; set if you want to do profiling.
 
 # perform the experiments
-sh experiment_size.sh # uncomment to perform size experiment
+#sh experiment_size.sh # uncomment to perform size experiment
 # sh experiment_blk.sh # uncomment to perform blk experiment
-#sh experiment_analyzer.sh # uncomment to perform tuning experiment
+sh experiment_analyzer.sh # uncomment to perform tuning experiment
 
 # copy hpc logs to results folder
 if [ "$LSB_JOBID" != "" ]; then
