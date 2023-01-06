@@ -53,14 +53,14 @@ echo "Jobid: ${LSB_JOBID}" >> results/$EXPNAME/setup.txt # write setup to file
 cp compile.log results/$EXPNAME/compile_logs/compile.log
 
 # define the mkn values in the MKN variable
-export SIZES="5 10 20 30 75 100 150 200 250 500 800 1000 1200 1500"
+export SIZES="30"
 # export SIZES="30"
 
 # uncomment and set a reasonable BLKSIZE for the blk version
-export BLKSIZE=32
+export BLKSIZE=30
 
 # permuations
-export PERMS="mkn mnk kmn knm nmk nkm lib"
+export PERMS="nkm "
 # export PERMS="nat lib"
 
 # driver options
