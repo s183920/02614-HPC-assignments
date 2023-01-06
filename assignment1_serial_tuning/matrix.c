@@ -28,6 +28,7 @@ void matmult_nat(int m,int n,int k,double **A,double **B,double **C){
 
 // Matrix multiplication with library function
 void matmult_lib(int m,int n,int k,double **A,double **B,double **C){
+    C = init_C(C,m,n);
      // C = A * B using cblas_dgemm see https://www.intel.com/content/www/us/en/develop/documentation/mkl-tutorial-c/top/multiplying-matrices-using-dgemm.html
     cblas_dgemm(
         //Indicates that the matrices are stored in row major order, with the elements of each row of the matrix stored contiguously as shown in the figure above.
