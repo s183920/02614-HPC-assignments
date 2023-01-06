@@ -2,7 +2,7 @@ TARGET	= libmatmult.so
 LIBSRCS	= -lm
 LIBOBJS	= matrix.o
 
-OPT	= -g -O3
+OPT	= -g -O3 -funroll-loops -flto -march=native -ffast-math -funsafe-loop-optimizations -funsafe-math-optimizations -mavx2
 PIC	= -fPIC # fpic necessary for shared libraries
 XOPTS = 
 
