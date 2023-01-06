@@ -53,6 +53,7 @@ dkms.conf
 
 # own additions
 .venv
+*/__pycache__/*
 
 # assigment 1
 assignment1_serial_tuning/compile.log

@@ -1,0 +1,241 @@
+mat_size,memory,performance,info,permutation,optimization
+30,21.094,3179.487,['matmult_mkn'],mkn,"['-O3', '-funroll-loops']"
+75,131.836,3719.089,['matmult_mkn'],mkn,"['-O3', '-funroll-loops']"
+200,937.5,4023.476,['matmult_mkn'],mkn,"['-O3', '-funroll-loops']"
+1200,33750.0,4222.048,['matmult_mkn'],mkn,"['-O3', '-funroll-loops']"
+30,21.094,2685.701,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto']"
+75,131.836,3542.947,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto']"
+200,937.5,3495.234,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto']"
+1200,33750.0,3665.637,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto']"
+30,21.094,1460.846,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+75,131.836,1513.114,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+200,937.5,984.676,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+1200,33750.0,423.71,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+30,21.094,306.93,['matmult_kmn'],kmn,[]
+75,131.836,310.237,['matmult_kmn'],kmn,[]
+200,937.5,314.282,['matmult_kmn'],kmn,[]
+1200,33750.0,320.186,['matmult_kmn'],kmn,[]
+30,21.094,1485.836,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto']"
+75,131.836,1678.053,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto']"
+200,937.5,1313.506,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto']"
+1200,33750.0,1155.779,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto']"
+30,21.094,1144.988,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+75,131.836,1123.384,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+200,937.5,912.033,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+1200,33750.0,873.429,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+30,21.094,1439.242,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+75,131.836,1542.7,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+200,937.5,1021.81,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+1200,33750.0,431.353,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+30,21.094,3264.232,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+75,131.836,4712.833,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+200,937.5,4265.459,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+1200,33750.0,4087.349,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+30,21.094,1204.269,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+75,131.836,1134.436,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+200,937.5,918.327,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+1200,33750.0,853.548,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+30,21.094,1435.683,['matmult_nmk'],nmk,"['-O3', '-funroll-loops']"
+75,131.836,1670.107,['matmult_nmk'],nmk,"['-O3', '-funroll-loops']"
+200,937.5,1368.75,['matmult_nmk'],nmk,"['-O3', '-funroll-loops']"
+1200,33750.0,1257.855,['matmult_nmk'],nmk,"['-O3', '-funroll-loops']"
+30,21.094,299.068,['matmult_knm'],knm,[]
+75,131.836,301.356,['matmult_knm'],knm,[]
+200,937.5,252.392,['matmult_knm'],knm,[]
+1200,33750.0,214.992,['matmult_knm'],knm,[]
+30,21.094,3253.203,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+75,131.836,4707.762,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+200,937.5,4402.479,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+1200,33750.0,4086.058,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+30,21.094,1144.712,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+75,131.836,1123.411,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+200,937.5,912.629,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+1200,33750.0,872.046,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+30,21.094,1144.772,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+75,131.836,1121.82,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+200,937.5,913.338,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+1200,33750.0,871.34,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+30,21.094,1351.723,['matmult_nkm'],nkm,['-O3']
+75,131.836,1304.122,['matmult_nkm'],nkm,['-O3']
+200,937.5,990.96,['matmult_nkm'],nkm,['-O3']
+1200,33750.0,425.897,['matmult_nkm'],nkm,['-O3']
+30,21.094,1441.1,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+75,131.836,1538.655,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+200,937.5,1022.201,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+1200,33750.0,426.548,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+30,21.094,1460.881,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+75,131.836,1550.867,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+200,937.5,991.049,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+1200,33750.0,424.141,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+30,21.094,1333.319,['matmult_mnk'],mnk,['-O3']
+75,131.836,1373.245,['matmult_mnk'],mnk,['-O3']
+200,937.5,1192.247,['matmult_mnk'],mnk,['-O3']
+1200,33750.0,1036.285,['matmult_mnk'],mnk,['-O3']
+30,21.094,3229.308,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+75,131.836,4722.269,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+200,937.5,4166.923,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+1200,33750.0,4082.93,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+30,21.094,1344.284,['matmult_nmk'],nmk,['-O3']
+75,131.836,1409.955,['matmult_nmk'],nmk,['-O3']
+200,937.5,1247.099,['matmult_nmk'],nmk,['-O3']
+1200,33750.0,1171.221,['matmult_nmk'],nmk,['-O3']
+30,21.094,1462.519,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+75,131.836,1537.143,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+200,937.5,990.098,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+1200,33750.0,427.08,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+30,21.094,1460.976,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+75,131.836,1531.462,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+200,937.5,986.642,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+1200,33750.0,426.669,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+30,21.094,1439.328,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+75,131.836,1544.04,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+200,937.5,1016.342,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+1200,33750.0,431.068,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+30,21.094,1206.276,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+75,131.836,1135.292,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+200,937.5,922.483,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+1200,33750.0,852.693,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+30,21.094,1205.523,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+75,131.836,1134.005,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+200,937.5,921.574,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+1200,33750.0,853.432,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+30,21.094,3903.554,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+75,131.836,5341.342,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+200,937.5,6512.613,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+1200,33750.0,6541.626,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+30,21.094,3908.761,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+75,131.836,5339.404,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+200,937.5,6605.061,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+1200,33750.0,6542.766,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+30,21.094,1438.65,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+75,131.836,1544.263,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+200,937.5,1017.298,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+1200,33750.0,430.747,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+30,21.094,1145.609,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+75,131.836,1124.334,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+200,937.5,911.493,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+1200,33750.0,873.899,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+30,21.094,1460.802,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+75,131.836,1554.281,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+200,937.5,995.787,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+1200,33750.0,426.854,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+30,21.094,3885.675,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+75,131.836,5349.267,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+200,937.5,6719.23,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+1200,33750.0,6541.119,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+30,21.094,1486.781,['matmult_mnk'],mnk,"['-O3', '-funroll-loops']"
+75,131.836,1678.163,['matmult_mnk'],mnk,"['-O3', '-funroll-loops']"
+200,937.5,1311.061,['matmult_mnk'],mnk,"['-O3', '-funroll-loops']"
+1200,33750.0,1174.969,['matmult_mnk'],mnk,"['-O3', '-funroll-loops']"
+30,21.094,1438.324,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+75,131.836,1543.584,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+200,937.5,1019.324,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+1200,33750.0,425.603,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+30,21.094,1204.747,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+75,131.836,1127.344,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+200,937.5,924.665,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+1200,33750.0,853.793,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+30,21.094,1460.855,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+75,131.836,1554.438,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+200,937.5,991.832,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+1200,33750.0,426.599,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+30,21.094,3239.795,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+75,131.836,4727.601,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+200,937.5,4141.403,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+1200,33750.0,4082.874,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+30,21.094,3859.688,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+75,131.836,5304.804,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+200,937.5,6580.642,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+1200,33750.0,6541.485,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+30,21.094,1205.063,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+75,131.836,1134.38,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+200,937.5,920.466,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+1200,33750.0,851.612,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+30,21.094,1465.224,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto']"
+75,131.836,1548.395,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto']"
+200,937.5,1008.7,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto']"
+1200,33750.0,425.221,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto']"
+30,21.094,293.923,['matmult_mnk'],mnk,[]
+75,131.836,305.344,['matmult_mnk'],mnk,[]
+200,937.5,279.632,['matmult_mnk'],mnk,[]
+1200,33750.0,268.822,['matmult_mnk'],mnk,[]
+30,21.094,1144.568,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+75,131.836,1123.645,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+200,937.5,913.305,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+1200,33750.0,872.837,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+30,21.094,3881.452,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+75,131.836,5345.478,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+200,937.5,6679.424,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+1200,33750.0,6546.084,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2', '-mtune=native']"
+30,21.094,1436.158,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto']"
+75,131.836,1672.409,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto']"
+200,937.5,1377.755,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto']"
+1200,33750.0,1253.395,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto']"
+30,21.094,2825.809,['matmult_mkn'],mkn,['-O3']
+75,131.836,3420.495,['matmult_mkn'],mkn,['-O3']
+200,937.5,3580.037,['matmult_mkn'],mkn,['-O3']
+1200,33750.0,3914.595,['matmult_mkn'],mkn,['-O3']
+30,21.094,283.044,['matmult_nkm'],nkm,[]
+75,131.836,297.967,['matmult_nkm'],nkm,[]
+200,937.5,255.425,['matmult_nkm'],nkm,[]
+1200,33750.0,214.1,['matmult_nkm'],nkm,[]
+30,21.094,2682.183,['matmult_kmn'],kmn,"['-O3', '-funroll-loops']"
+75,131.836,3549.375,['matmult_kmn'],kmn,"['-O3', '-funroll-loops']"
+200,937.5,3455.221,['matmult_kmn'],kmn,"['-O3', '-funroll-loops']"
+1200,33750.0,3668.816,['matmult_kmn'],kmn,"['-O3', '-funroll-loops']"
+30,21.094,299.894,['matmult_mkn'],mkn,[]
+75,131.836,309.726,['matmult_mkn'],mkn,[]
+200,937.5,316.372,['matmult_mkn'],mkn,[]
+1200,33750.0,319.863,['matmult_mkn'],mkn,[]
+30,21.094,1422.489,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto']"
+75,131.836,1504.456,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto']"
+200,937.5,983.732,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto']"
+1200,33750.0,421.28,['matmult_knm'],knm,"['-O3', '-funroll-loops', '-flto']"
+30,21.094,1469.307,['matmult_nkm'],nkm,"['-O3', '-funroll-loops']"
+75,131.836,1548.425,['matmult_nkm'],nkm,"['-O3', '-funroll-loops']"
+200,937.5,1015.094,['matmult_nkm'],nkm,"['-O3', '-funroll-loops']"
+1200,33750.0,429.129,['matmult_nkm'],nkm,"['-O3', '-funroll-loops']"
+30,21.094,3884.684,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+75,131.836,5311.026,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+200,937.5,6497.153,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+1200,33750.0,6539.465,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations']"
+30,21.094,3171.615,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto']"
+75,131.836,3718.42,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto']"
+200,937.5,4005.536,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto']"
+1200,33750.0,4219.048,['matmult_mkn'],mkn,"['-O3', '-funroll-loops', '-flto']"
+30,21.094,308.618,['matmult_nmk'],nmk,[]
+75,131.836,309.865,['matmult_nmk'],nmk,[]
+200,937.5,293.214,['matmult_nmk'],nmk,[]
+1200,33750.0,266.313,['matmult_nmk'],nmk,[]
+30,21.094,2654.578,['matmult_kmn'],kmn,['-O3']
+75,131.836,3314.278,['matmult_kmn'],kmn,['-O3']
+200,937.5,3189.447,['matmult_kmn'],kmn,['-O3']
+1200,33750.0,3582.622,['matmult_kmn'],kmn,['-O3']
+30,21.094,1145.056,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+75,131.836,1123.687,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+200,937.5,912.103,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+1200,33750.0,872.991,['matmult_nmk'],nmk,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math']"
+30,21.094,3231.395,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+75,131.836,4717.678,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+200,937.5,4257.018,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+1200,33750.0,4081.549,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+30,21.094,1204.577,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+75,131.836,1134.469,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+200,937.5,922.945,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+1200,33750.0,853.281,['matmult_mnk'],mnk,"['-O3', '-funroll-loops', '-flto', '-march=native']"
+30,21.094,1439.282,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+75,131.836,1541.841,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+200,937.5,1018.817,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+1200,33750.0,427.4,['matmult_nkm'],nkm,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations']"
+30,21.094,3236.973,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+75,131.836,4719.947,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+200,937.5,4212.916,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+1200,33750.0,4082.284,['matmult_kmn'],kmn,"['-O3', '-funroll-loops', '-flto', '-march=native', '-ffast-math', '-funsafe-loop-optimizations', '-funsafe-math-optimizations', '-mavx2']"
+30,21.094,1417.23,['matmult_knm'],knm,['-O3']
+75,131.836,1351.153,['matmult_knm'],knm,['-O3']
+200,937.5,971.582,['matmult_knm'],knm,['-O3']
+1200,33750.0,425.678,['matmult_knm'],knm,['-O3']
+30,21.094,1422.062,['matmult_knm'],knm,"['-O3', '-funroll-loops']"
+75,131.836,1504.372,['matmult_knm'],knm,"['-O3', '-funroll-loops']"
+200,937.5,975.405,['matmult_knm'],knm,"['-O3', '-funroll-loops']"
+1200,33750.0,425.718,['matmult_knm'],knm,"['-O3', '-funroll-loops']"

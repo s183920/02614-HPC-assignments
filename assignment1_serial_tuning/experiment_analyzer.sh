@@ -13,7 +13,6 @@ echo "SIZES=$SIZES" >> results/$EXPNAME/setup.txt
 
 # analyzer options
 JID=${LSB_JOBID}
-# TODO: Add L3
 HWCOUNT="-h dch,on,dcm,on,l2h,on,l2m,on,l3h,on,l3m,on" # L1 hits, L1 misses, L2 hits, L2 misses
 
 
