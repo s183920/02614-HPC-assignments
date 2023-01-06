@@ -4,7 +4,6 @@
 export EXPNAME=caches_$(date +%Y%m%d_%H%M%S)
 mkdir -p results/$EXPNAME
 mkdir -p hpc_logs
-
 #!/bin/bash
 # 02614 - High-Performance Computing, January 2022
 # 
