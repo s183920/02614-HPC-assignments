@@ -1,12 +1,19 @@
-# files=("-g -O3" "-g -Ofast")
-# # count=0
-# # for i in "${out[@]}"; do
-# #     echo $i
-# #     echo $count
-# #     count=$((count+1))
-# # done
+# compile the code
+module load gcc
+make realclean
+make test
 
-# # print length of array
-# echo ${#out[@]}
+# write files
+files=(
+    "experiment*.sh"
+    "Makefile"
+    "libmatmult.so"
+    "matrix.c"
+    "matmult_c.gcc"
+    "plot*.py"
+    "help_funcs.py"
+    "compiler_optimization.py"
+)
 
-zip -r test.zip experiment_analyzer.sh experiment.sh
+# make zip
+zip -r code.zip $files
