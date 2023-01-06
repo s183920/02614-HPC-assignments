@@ -63,8 +63,8 @@ def get_sizes(exp, fname = "setup_sizes.txt"):
 
 if __name__ == "__main__":
     sns.set_theme()
-    exp = "results_saved/blk_size_30_p2_20230106_125532/"
-    df = get_data(exp, 'output_files/30.txt')
+    exp = "results_saved/blk_size_1200_p2/"
+    df = get_data(exp, 'output_files/1200.txt')
     df = df.groupby('blocksize', as_index=False).mean()
     # setup_data = get_setup(exp)
     # size_data = print(get_sizes(exp))
@@ -75,9 +75,9 @@ if __name__ == "__main__":
     # g.set_xticks([16 + i*16 for i in range(16)])
     g.set_xlabel("Block Size")
     g.set_xscale("log", base=2)
-    g.set_ylabel("Performance (MBit/s)")
-    g.set_title("Blocksize for matrix size 30x30")
-    g.axhline(3885.675, color='k', linestyle='--', label='Baseline')
+    g.set_ylabel("Performance (MFlops/s)")
+    g.set_title("Blocksize for matrix size 1200x1200")
+    g.axhline(6541.119, color='k', linestyle='--', label='Baseline')
     g.legend()
-    plt.savefig("Blocksize.png")
+    plt.savefig("plot_for_report/Blocksize1200.png")
 
