@@ -4,68 +4,14 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set()
 
-remove = ["", " ", "#"]
+from help_funcs import get_data, get_sizes, get_setup, get_compiler_optimizations, remove
+
+
 
 # plot settings
 plt.rcParams["font.size"] = 16
 plt.rcParams["axes.labelsize"] = 16
 plt.rcParams["axes.titlesize"] = 16
-
-def get_data(exp, fname):
-    data = pd.DataFrame(columns = ["memory", "performance", "info"])
-
-    with open(exp + fname) as f:
-        lines = f.readlines()
-        
-        for i, line in enumerate(lines):
-            line = line.split(" ")
-            line = [l.strip() for l in line if l not in remove]
-            data.loc[i, "memory"] = line[0]
-            data.loc[i, "performance"] = line[1]
-            data.loc[i, "info"] = line[2:]
-    
-    data["memory"] = data["memory"].astype(float)
-    data["performance"] = data["performance"].astype(float)
-
-    return data
-
-# setup data
-def get_sizes(exp, fname = "setup_sizes.txt"):
-    setup_data = {}
-    name_translator = {"SIZES": "mat_size"}
-    int_vars = ["SIZES"]
-    with open(exp + fname) as f:
-        lines = f.readlines()
-        for line in lines:
-            name, line = line.split("=")
-            setup_data[name_translator[name]] = [int(l.strip()) if name in int_vars else l.strip() for l in line.split(" ") if l not in remove]
-
-    return setup_data
-
-def get_setup(exp, fname = "setup.txt"):
-    setup_data = {}
-    with open(exp + fname, "r") as f:
-        lines = f.readlines()
-        for line in lines:
-            name, line = line.split(": ")
-            try:
-                setup_data[name.strip()] = eval(line.strip())
-            except:
-                setup_data[name.strip()] = line.strip()
-
-    return setup_data
-
-def get_compiler_optimizations(exp):
-    filename = "compile.log"
-    remove_flags = ["gcc", "-g", "-fPIC", "-o", "libmatmult.so", "-shared", "matrix.o", "-lm"]
-
-    with open(exp + filename, "r") as f:
-        lines = f.readlines()
-        assert len(lines) == 1
-        line = lines[0]
-        compile_flags = line.split(" ")
-        compile_optimizations = [l.strip() for l in compile_flags if l.strip() not in remove_flags]
-    return compile_optimizations
 
 
 if __name__ == "__main__":
@@ -74,13 +20,16 @@ if __name__ == "__main__":
 
     def_exp = "large_20230104_222614"
     def_folder = "results_saved"
+    def_compile_count = ""
 
     # argparser
     parser = argparse.ArgumentParser()
     parser.add_argument("--exp", type = str, default = def_exp)
     parser.add_argument("--folder", type = str, default = def_folder)
+    parser.add_argument("--compile_count", type = str, default = def_compile_count)
     args = parser.parse_args()
     exp = args.folder + "/" + args.exp + "/"
+    opt = "_" + args.compile_count if args.compile_count != "" else ""
     
     # make folder for plots
     os.makedirs(exp + "plots", exist_ok = True)
@@ -101,7 +50,7 @@ if __name__ == "__main__":
     n_cols = 2
 
     fig, axes = plt.subplots(n_rows, n_cols, figsize = (n_cols * 7.5, n_rows * 5))
-    fig.suptitle("Performance for different matrix sizes \n Compiler optimizations: " + str(" ".join(get_compiler_optimizations(exp))))
+    fig.suptitle("Performance for different matrix sizes \n Compiler optimizations: " + str(" ".join(get_compiler_optimizations(exp, f"compile{opt}.log"))))
 
     # performance plot
     ax = axes[0]
@@ -146,12 +95,12 @@ if __name__ == "__main__":
         # ax.set_xticklabels(["$2^{"+ str(t) + "}$" for t in ticks])
         ax.set_xticks(ticks)
         ticks[::2] = [""]*len(ticks[::2])
-        ax.set_xticklabels(ticks)
+        ax.set_xticklabels(ticks) 
 
         # time vs size plot
         ax = axes[1]
         ax.plot(data["mat_size"], flops/(1e6*data["performance"]), label = name)
-        ax.set_yscale("log", base = 2)
+        # ax.set_yscale("log", base = 2)
 
         # performance vs size plot
         # ax = axes[2]
@@ -160,6 +109,6 @@ if __name__ == "__main__":
     
     # for ax in axes:
     #     ax.legend(title = "Permutation")
-    axes[1].legend(title = "Permutation", bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+    axes[1].legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
     plt.tight_layout()
     plt.savefig(exp + "plots/size_performance.pdf")

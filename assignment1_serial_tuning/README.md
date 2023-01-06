@@ -38,4 +38,23 @@ FLOPS = 2mnk
 
 ## Assumptions
 
-The cache is warmed up by the driver and the program is therefore only ran once for each size.
+- The cache is warmed up by the driver and the program is therefore only ran once for each size.
+- The minimum runtime of 3s is not dislayed in the timing plot, which shows an average
+
+## Compiler options to try
+
+- [ ] -O3
+- [ ] -Ofast
+- [ ] -ftree-vectorize
+- [ ] -funroll-all-loops
+- [ ] -funsafe-loop-optimizations
+- [ ] -funsafe-math-optimizations
+
+Other
+- [ ] -march=broadwell
+- [ ] -mavx2
+- [ ] -fprefetch-loop-arrays
+- [ ] -restrict
+- [ ] -flto
+- [ ] -funroll-loops
+- [ ] -march=broadwell -funroll-loops

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # experiments name
-export EXPNAME=big_size_$(date +%Y%m%d_%H%M%S)
+export EXPNAME=caches_$(date +%Y%m%d_%H%M%S)
 mkdir -p results/$EXPNAME
 mkdir -p hpc_logs
 
@@ -18,6 +18,7 @@ mkdir -p hpc_logs
 #BSUB -e hpc_logs/%J.err
 #BSUB -q hpcintro
 #BSUB -n 1
+### BSUB -w "exit(15152889)" # job dependency
 #BSUB -R "rusage[mem=2048]"
 #BSUB -W 15
 # uncomment the following line, if you want to assure that your job has
@@ -25,7 +26,7 @@ mkdir -p hpc_logs
 #BSUB -R "span[hosts=1] affinity[socket(1)]"
 
 # set compiler flags
-OPT_FLAGS="-g -O3"
+OPT_FLAGS="-g"
 
 
 # compile the code
@@ -51,13 +52,15 @@ echo "Jobid: ${LSB_JOBID}" >> results/$EXPNAME/setup.txt # write setup to file
 cp compile.log results/$EXPNAME/compile.log
 
 # define the mkn values in the MKN variable
-export SIZES="5 10 100 150 250 350 500 600 700 800"
+export SIZES="5 10 20 30 75 100 150 200 250 500 800 1000 1200 1500"
+# export SIZES="30"
 
 # uncomment and set a reasonable BLKSIZE for the blk version
 export BLKSIZE=1
 
 # permuations
-export PERMS="mkn mnk kmn knm nmk nkm"
+# export PERMS="mkn mnk kmn knm nmk nkm"
+export perms="nat lib"
 
 # driver options
 # export MATMULT_RESULTS=      # {[0]|1}       print result matrices (in Matlab format, def: 0)

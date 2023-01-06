@@ -11,7 +11,7 @@ touch results/$EXPNAME/setup_sizes.txt # file for setup of size exp
 
 
 # save the mkn values in the MKN variable
-echo "SIZES=$SIZES" >> results/$EXPNAME/setup_sizes.txt
+echo "SIZES=$SIZES" > results/$EXPNAME/setup_sizes.txt
 
 # write message
 echo "Running size experiment..."
@@ -20,7 +20,12 @@ echo "Running size experiment..."
 for PERM in $PERMS ; do
 echo "PERM=$PERM"
 # loop over matrix sizes
-FILENAME="${SIZE_DIR}/${PERM}.txt"
+if [ "$COUNT" == "" ]; then
+    FILENAME="${SIZE_DIR}/${PERM}.txt"
+else
+    FILENAME="${SIZE_DIR}/${PERM}_${COUNT}.txt"
+fi
+
 # touch FILENAME
 for S in $SIZES; do
     echo "SIZE=$S"
@@ -29,5 +34,5 @@ done
 done
 
 # make plot
-echo "Making plot..."
-python3 plot_size.py --exp $EXPNAME --folder results
+echo "Making plot of size experiment..."
+python3 plot_size.py --exp $EXPNAME --folder results --compile_count $COUNT
