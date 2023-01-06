@@ -48,7 +48,7 @@ if __name__ == "__main__":
     data.to_csv(exp + "data.csv", index = False)
 
     print(data.shape)
-    print(data.iloc[np.argmax(data["performance"]), 5])
+    print(data.iloc[np.argmax(data["performance"]), :])
 
     # get optimization levels
     opts = {opt:get_compiler_optimizations(exp, f"compile_{opt}.log") for opt in range(len(np.unique(data["optimization"])))}
