@@ -31,15 +31,15 @@ OPT_FLAGS=(
     "-g -O3 -funroll-loops -flto"
     "-g -O3 -funroll-loops -flto -march=native"
     "-g -O3 -funroll-loops -flto -march=native -ffast-math"
-    "-g -Ofast -funroll-loops -flto -march=native -ffast-math"
-    # "-g -O3 -funroll-loops -flto -march=native -ffast-math -funsafe-loop-optimizations"
-    # "-g -O3 -funroll-loops -flto -march=native -ffast-math -funsafe-loop-optimizations -funsafe-math-optimizations"
-    # "-g -O3 -funroll-loops -flto -march=native -ffast-math -funsafe-loop-optimizations -funsafe-math-optimizations -mavx2"
-    # "-g -O3 -funroll-loops -flto -march=native -ffast-math -funsafe-loop-optimizations -funsafe-math-optimizations -mavx2 -mtune=native"
+    "-g -O3 -funroll-loops -flto -march=native -ffast-math -funsafe-loop-optimizations"
+    "-g -O3 -funroll-loops -flto -march=native -ffast-math -funsafe-loop-optimizations -funsafe-math-optimizations"
+    "-g -O3 -funroll-loops -flto -march=native -ffast-math -funsafe-loop-optimizations -funsafe-math-optimizations -mavx2"
+    "-g -O3 -funroll-loops -flto -march=native -ffast-math -funsafe-loop-optimizations -funsafe-math-optimizations -mavx2 -mtune=native"
+    "-g -Ofast -funroll-loops -flto -march=native -ffast-math -funsafe-loop-optimizations -funsafe-math-optimizations -mavx2 -mtune=native"
 )
 # experiments name
 # export EXPNAME=C${#OPT_FLAGS[@]}_$(date +%Y%m%d_%H%M%S)
-export EXPNAME=no_fpic_$(date +%Y%m%d_%H%M%S)
+export EXPNAME=part2_$(date +%Y%m%d_%H%M%S)
 mkdir -p results/$EXPNAME
 mkdir -p results/$EXPNAME/compile_logs
 
