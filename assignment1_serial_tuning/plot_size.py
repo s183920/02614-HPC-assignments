@@ -50,7 +50,7 @@ if __name__ == "__main__":
     n_cols = 2
 
     fig, axes = plt.subplots(n_rows, n_cols, figsize = (n_cols * 7.5, n_rows * 5))
-    fig.suptitle("Performance for different matrix sizes \n Compiler optimizations: " + str(" ".join(get_compiler_optimizations(exp, f"compile{opt}.log"))))
+    fig.suptitle("Performance for different matrix sizes")# \n Compiler optimizations: " + str(" ".join(get_compiler_optimizations(exp, f"compile{opt}.log"))))
 
     # performance plot
     ax = axes[0]

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # experiments name
-export EXPNAME=part1_$(date +%Y%m%d_%H%M%S)
+export EXPNAME=part2_$(date +%Y%m%d_%H%M%S)
 mkdir -p results/$EXPNAME
 mkdir -p hpc_logs
 mkdir -p results/$EXPNAME/compile_logs
@@ -27,7 +27,8 @@ mkdir -p results/$EXPNAME/compile_logs
 #BSUB -R "span[hosts=1] affinity[socket(1)]"
 
 # set compiler flags
-OPT_FLAGS="-g"
+# OPT_FLAGS="-g"
+OPT_FLAGS="-g -O3 -funroll-loops -flto -march=native -ffast-math -funsafe-loop-optimizations -funsafe-math-optimizations -mavx2"
 
 
 # compile the code
@@ -60,8 +61,8 @@ export SIZES="5 10 20 30 75 100 150 200 250 500 800 1000 1200 1500"
 export BLKSIZE=1
 
 # permuations
-# export PERMS="mkn mnk kmn knm nmk nkm"
-export PERMS="nat lib"
+export PERMS="mkn mnk kmn knm nmk nkm lib"
+# export PERMS="nat lib"
 
 # driver options
 # export MATMULT_RESULTS=      # {[0]|1}       print result matrices (in Matlab format, def: 0)

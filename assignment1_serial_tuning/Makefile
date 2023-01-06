@@ -15,13 +15,9 @@ XLIBS	=
 
 
 $(TARGET): $(LIBOBJS)
-	# @module load gcc
 	$(CC) $(CFLAGS) -o $@ $(SOFLAGS) $(LIBOBJS) $(XLIBS) $(LIBSRCS)
 	@echo $(CC) $(CFLAGS) -o $@ $(SOFLAGS) $(LIBOBJS) $(XLIBS) $(LIBSRCS) > compile.log
 
-# load modules
-loadmodules:
-	@module load gcc
 	
 # cleaning functions
 clean:
