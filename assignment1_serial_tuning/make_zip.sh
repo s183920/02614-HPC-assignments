@@ -10,10 +10,11 @@ files=(
     "libmatmult.so"
     "matrix.c"
     "matmult_c.gcc"
-    "plot*.py"
+    "plot_blk.py"
+    "plot_size.py"
     "help_funcs.py"
     "compiler_optimization.py"
 )
 
 # make zip
-zip -r code.zip $files
+zip -r code.zip "${files[@]}"
