@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # experiments name
-export EXPNAME=big_size_$(date +%Y%m%d_%H%M%S)
+export EXPNAME=blk_size_30_p2_$(date +%Y%m%d_%H%M%S)
 mkdir -p results/$EXPNAME
 mkdir -p hpc_logs
 #!/bin/bash
@@ -24,7 +24,7 @@ mkdir -p hpc_logs
 #BSUB -R "span[hosts=1] affinity[socket(1)]"
 
 # set compiler flags
-OPT_FLAGS="-g -O3"
+OPT_FLAGS="-g -O3 -funroll-loops -flto -march=native -ffast-math -funsafe-loop-optimizations -funsafe-math-optimizations -mavx2"
 
 
 # compile the code
@@ -50,24 +50,24 @@ echo "Jobid: ${LSB_JOBID}" >> results/$EXPNAME/setup.txt # write setup to file
 cp compile.log results/$EXPNAME/compile.log
 
 # define the mkn values in the MKN variable
-export SIZES="5 10 100 150 250 350 500 600 700 800"
+export SIZES="100"
 
 # uncomment and set a reasonable BLKSIZE for the blk version
-export BLKSIZE=1
+export BLKSIZE=32
 
 # permuations
-export PERMS="mkn mnk kmn knm nmk nkm"
+export PERMS="blk mkn"
 
 # driver options
 # export MATMULT_RESULTS=      # {[0]|1}       print result matrices (in Matlab format, def: 0)
 export MATMULT_COMPARE=0   # {0|[1]}       control result comparison (def: 1); enable(1)/disable(0) result checking
-# export MFLOPS_MIN_T=         # [3.0]         the minimum run-time (def: 3.0 s)
+export MFLOPS_MIN_T=5.0         # [3.0]         the minimum run-time (def: 3.0 s)
 # export MFLOPS_MAX_IT=1000        # [infinity]    max. no of iterations; set if you want to do profiling.
 
 # perform the experiments
-sh experiment_size.sh # uncomment to perform size experiment
-# sh experiment_blk.sh # uncomment to perform blk experiment
-#sh experiment_analyzer.sh # uncomment to perform tuning experiment
+#sh experiment_size.sh # uncomment to perform size experiment
+sh experiment_blk.sh # uncomment to perform blk experiment
+# sh experiment_analyzer.sh # uncomment to perform tuning experiment
 
 # copy hpc logs to results folder
 if [ "$LSB_JOBID" != "" ]; then

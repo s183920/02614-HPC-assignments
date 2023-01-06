@@ -38,7 +38,7 @@ cleanresults:
 matrix.o: matrix.c
 
 # save results
-SAVEKEY="large"
+SAVEKEY="blk"
 saveresults: 
 	@mkdir -p results_saved
 	@cp -r results/*$(SAVEKEY)* results_saved/
