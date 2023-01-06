@@ -24,6 +24,6 @@ echo "PERM=$PERM"
 # FILENAME=results/$EXPNAME/$PERM
 for S in $SIZES; do
     EXPOUT="${ANALYZER_DIR}/${PERM}_$S.er"
-    collect -o $EXPOUT $HWCOUNT ./$EXECUTABLE $PERM $S $S $S $BLKSIZE
+    collect -o $EXPOUT $HWCOUNT ./$EXECUTABLE $ $S $S $S $BLKSIZE
 done
 done

@@ -28,6 +28,7 @@ void matmult_nat(int m,int n,int k,double **A,double **B,double **C){
 
 // Matrix multiplication with library function
 void matmult_lib(int m,int n,int k,double **A,double **B,double **C){
+    C = init_C(C,m,n);
      // C = A * B using cblas_dgemm see https://www.intel.com/content/www/us/en/develop/documentation/mkl-tutorial-c/top/multiplying-matrices-using-dgemm.html
     cblas_dgemm(
         //Indicates that the matrices are stored in row major order, with the elements of each row of the matrix stored contiguously as shown in the figure above.
@@ -108,11 +109,11 @@ void matmult_blk(int m,int n,int k,double **A,double **B,double **C, int bs){
     C = init_C(C,m,n);
     
     for(int i1=0;i1<m;i1+=bs){
-            for(int l1=0;l1<k;l1+=bs){
-                for(int i2=0; i2 < min(m-i1, bs); i2++){
-                    for(int l2=0; l2 < min(m-l1, bs); l2++){
-                        for(int j=0;j<n;j++){
-                            C[i1+i2][j] += A[i1+i2][l1 + l2]*B[l1 + l2][j];
+        for(int l1=0;l1<k;l1+=bs){
+            for(int i2=0; i2 < min(m-i1, bs); i2++){
+                for(int l2=0; l2 < min(k-l1, bs); l2++){
+                    for(int j=0; j < n; j++){
+                        C[i1+i2][j] += A[i1+i2][l1+l2]*B[l1+l2][j];
                     }
                 }
             }

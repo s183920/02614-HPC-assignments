@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-PATH = "results/matmult_test_20230105_095258/output_files/20.txt"
+PATH = "results/blk_outer_inner_20230106_090532/output_files/500.txt"
 remove = ["", " ", "#"]
 # plot settings
 plt.rcParams["font.size"] = 16
@@ -50,7 +50,7 @@ def get_setup(exp, fname = "setup.txt"):
 
 def get_sizes(exp, fname = "setup_sizes.txt"):
     setup_data = {}
-    name_translator = {"SIZES": "mat_size"}
+    name_translator = {"SIZES": "mat_size", "BLKSIZE": "block_size"}
     int_vars = ["SIZES"]
     with open(exp + fname) as f:
         lines = f.readlines()
@@ -63,19 +63,21 @@ def get_sizes(exp, fname = "setup_sizes.txt"):
 
 if __name__ == "__main__":
     sns.set_theme()
-    exp = "results/blk_test_20230105_112546/"
+    exp = "results_saved/blk_size_30_p2_20230106_125532/"
     df = get_data(exp, 'output_files/30.txt')
     df = df.groupby('blocksize', as_index=False).mean()
-    setup_data = get_setup(exp)
-    size_data = print(get_sizes(exp))
+    # setup_data = get_setup(exp)
+    # size_data = print(get_sizes(exp))
 
-    print(size_data)
+    # print(size_data)
 
     g = sns.lineplot(df, x="blocksize", y="performance")
     # g.set_xticks([16 + i*16 for i in range(16)])
     g.set_xlabel("Block Size")
+    g.set_xscale("log", base=2)
     g.set_ylabel("Performance (MBit/s)")
-    g.set_title("")
-
-    plt.savefig("Blcksze.png")
+    g.set_title("Blocksize for matrix size 30x30")
+    g.axhline(3885.675, color='k', linestyle='--', label='Baseline')
+    g.legend()
+    plt.savefig("Blocksize.png")
 
