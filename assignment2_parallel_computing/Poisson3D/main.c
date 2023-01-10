@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include "alloc3d.h"
 #include "print.h"
+#include <math.h>
 
 #ifdef _JACOBI
 #include "jacobi.h"
@@ -28,6 +29,8 @@ main(int argc, char *argv[]) {
     char        *output_ext    = "";
     char	output_filename[FILENAME_MAX];
     double 	***u = NULL;
+    double ***f = NULL;
+    double ***u_true = NULL;
 
 
     /* get the paramters from the command line */
@@ -40,11 +43,48 @@ main(int argc, char *argv[]) {
     }
 
     // allocate memory
-    if ( (u = malloc_3d(N, N, N)) == NULL ) {
+    if ( (u = malloc_3d(N+2,N+2,N+2)) == NULL ) {
+        perror("array u: allocation failed");
+        exit(-1);
+    }
+    if ( (f = malloc_3d(N+2,N+2,N+2)) == NULL ) {
+        perror("array f: allocation failed");
+        exit(-1);
+    }
+    if ( (u_true = malloc_3d(N+2,N+2,N+2)) == NULL ) {
         perror("array u: allocation failed");
         exit(-1);
     }
 
+    
+    double x,y,z;
+    double step_size = 2.0 / ((double)N+1);
+
+    for (int i = 0; i <= N+1; i++){
+        z = -1.0 + step_size*i;
+        for (int j = 0; j <= N+1; j++){
+            y = -1.0 + step_size*j;
+            for (int k = 0; k <= N+1; k++){
+                x = -1.0 + step_size*k;
+                
+                f[i][j][k] = -3.0*M_PI*M_PI*sin(M_PI*x)*sin(M_PI*y)*sin(M_PI*z);
+                u_true[i][j][k] = sin(M_PI*x)*sin(M_PI*y)*sin(M_PI*z);
+                u[i][j][k] = 0;
+
+                // printf("i: %d, j: %d, k:%d. x: %lf, y: %lf, z: %lf\n", i, j, k, x, y, z);
+                // u[i+1][j+1][k+1] = start_T;
+                // f[i][j][k] = 
+            }
+        }
+    }
+
+    #ifdef _GAUSS_SEIDEL
+    gauss_seidel(N, tolerance, iter_max, u, f, step_size);
+    #endif
+
+    print_binary("f.txt", N+2, f);
+    print_binary("u_true.txt", N+2, u_true);
+    print_binary("u.txt", N+2, u);
     /*
      *
      * fill in your code here 
@@ -75,7 +115,12 @@ main(int argc, char *argv[]) {
     }
 
     // de-allocate memory
-    free_3d(u);
+    free_3d(u, N+2, N+2, N+2);
+    free_3d(f, N+2, N+2, N+2);
 
     return(0);
 }
+
+
+
+

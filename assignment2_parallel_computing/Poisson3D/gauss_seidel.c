@@ -9,7 +9,7 @@ gauss_seidel(int N, double threshold, int iter_max, double ***U, double ***f, do
     // fill in your code here
     int i, j, k;
     int M = N + 2;
-    double d = 1/6;
+    double d = 1.0/6.0;
 
     double tmp;
     double diff = 100000000000000;
@@ -25,6 +25,7 @@ gauss_seidel(int N, double threshold, int iter_max, double ***U, double ***f, do
                                     U[i][j - 1][k] + U[i][j + 1][k] + 
                                     U[i][j][k - 1] + U[i][j][k + 1] + 
                                     delta * delta * f[i][j][k]);
+                    //printf("f: %lf\n", d);
                     diff += (tmp - U[i][j][k]) * (tmp - U[i][j][k]) * (tmp - U[i][j][k]);
                     U[i][j][k] = tmp;
                 }
@@ -33,6 +34,6 @@ gauss_seidel(int N, double threshold, int iter_max, double ***U, double ***f, do
         iteration++;
         
     }
-    printf("Number of iterations: %d with diff: %f", k, diff); 
+    printf("Number of iterations: %d with diff: %f", iteration, diff); 
 }
 
