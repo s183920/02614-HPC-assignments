@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include "alloc3d.h"
 #include "print.h"
+#ifndef M_PI
+#    define M_PI 3.14159265
+#endif
 #include <math.h>
 
 #ifdef _JACOBI
@@ -29,8 +32,9 @@ main(int argc, char *argv[]) {
     char        *output_ext    = "";
     char	output_filename[FILENAME_MAX];
     double 	***u = NULL;
-    double ***f = NULL;
-    double ***u_true = NULL;
+    double 	***u_old = NULL;
+    double  ***f = NULL;
+    double  ***u_true = NULL;
 
 
     /* get the paramters from the command line */
@@ -44,6 +48,10 @@ main(int argc, char *argv[]) {
 
     // allocate memory
     if ( (u = malloc_3d(N+2,N+2,N+2)) == NULL ) {
+        perror("array u: allocation failed");
+        exit(-1);
+    }
+    if ( (u_old = malloc_3d(N+2,N+2,N+2)) == NULL ) {
         perror("array u: allocation failed");
         exit(-1);
     }
@@ -77,6 +85,10 @@ main(int argc, char *argv[]) {
             }
         }
     }
+
+    #ifdef _JACOBI
+    jacobi(N, tolerance, iter_max, u_true, u, f, step_size);
+    #endif
 
     #ifdef _GAUSS_SEIDEL
     gauss_seidel(N, tolerance, iter_max, u, f, step_size);
@@ -115,8 +127,8 @@ main(int argc, char *argv[]) {
     }
 
     // de-allocate memory
-    free_3d(u, N+2, N+2, N+2);
-    free_3d(f, N+2, N+2, N+2);
+    free_3d(u);
+    free_3d(f);
 
     return(0);
 }
