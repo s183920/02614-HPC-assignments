@@ -9,7 +9,11 @@ def read_binary(filename):
 
 
 # x = read_binary("poisson_res_5.bin")
-u = read_binary("u.txt")
-u_true = read_binary("u_true.txt")
+# u = read_binary("u.txt")
+# u_true = read_binary("u_true.txt")
 
-print(np.mean(u - u_true))
+u = read_binary("../test_res/test_20.bin")
+# u_true = [[[np.sin(np.pi)]]]
+
+# print(np.mean(u - u_true))
+print(u)
