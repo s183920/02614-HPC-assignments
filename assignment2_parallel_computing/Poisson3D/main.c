@@ -115,8 +115,8 @@ main(int argc, char *argv[]) {
     }
 
     // de-allocate memory
-    free_3d(u, N+2, N+2, N+2);
-    free_3d(f, N+2, N+2, N+2);
+    free_3d(u);
+    free_3d(f);
 
     return(0);
 }
