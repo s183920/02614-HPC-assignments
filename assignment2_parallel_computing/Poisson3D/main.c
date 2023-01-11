@@ -33,7 +33,7 @@ main(int argc, char *argv[]) {
     char	output_filename[FILENAME_MAX];
     double 	***U = NULL;
     double ***F = NULL;
-    double ***U_true = NULL;
+    // double ***U_true = NULL;
 
 
     /* get the paramters from the command line */
