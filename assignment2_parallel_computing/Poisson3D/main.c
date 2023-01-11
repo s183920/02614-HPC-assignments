@@ -5,14 +5,17 @@
 #include <stdlib.h>
 #include "alloc3d.h"
 #include "print.h"
+#include "helper.h"
 #include <math.h>
 
 #ifdef _JACOBI
 #include "jacobi.h"
+#define solver jacobi
 #endif
 
 #ifdef _GAUSS_SEIDEL
 #include "gauss_seidel.h"
+#define solver gauss_seidel
 #endif
 
 #define N_DEFAULT 100
@@ -28,9 +31,9 @@ main(int argc, char *argv[]) {
     char	*output_prefix = "poisson_res";
     char        *output_ext    = "";
     char	output_filename[FILENAME_MAX];
-    double 	***u = NULL;
-    double ***f = NULL;
-    double ***u_true = NULL;
+    double 	***U = NULL;
+    double ***F = NULL;
+    // double ***U_true = NULL;
 
 
     /* get the paramters from the command line */
@@ -43,16 +46,12 @@ main(int argc, char *argv[]) {
     }
 
     // allocate memory
-    if ( (u = malloc_3d(N+2,N+2,N+2)) == NULL ) {
-        perror("array u: allocation failed");
+    if ( (U = malloc_3d(N+2,N+2,N+2)) == NULL ) {
+        perror("array U: allocation failed");
         exit(-1);
     }
-    if ( (f = malloc_3d(N+2,N+2,N+2)) == NULL ) {
-        perror("array f: allocation failed");
-        exit(-1);
-    }
-    if ( (u_true = malloc_3d(N+2,N+2,N+2)) == NULL ) {
-        perror("array u: allocation failed");
+    if ( (F = malloc_3d(N+2,N+2,N+2)) == NULL ) {
+        perror("array F: allocation failed");
         exit(-1);
     }
 
@@ -67,9 +66,9 @@ main(int argc, char *argv[]) {
             for (int k = 0; k <= N+1; k++){
                 x = -1.0 + step_size*k;
                 
-                f[i][j][k] = -3.0*M_PI*M_PI*sin(M_PI*x)*sin(M_PI*y)*sin(M_PI*z);
-                u_true[i][j][k] = sin(M_PI*x)*sin(M_PI*y)*sin(M_PI*z);
-                u[i][j][k] = 0;
+                F[i][j][k] = f(x,y,z);
+                // u_true[i][j][k] = sin(M_PI*x)*sin(M_PI*y)*sin(M_PI*z);
+                U[i][j][k] = 0;
 
                 // printf("i: %d, j: %d, k:%d. x: %lf, y: %lf, z: %lf\n", i, j, k, x, y, z);
                 // u[i+1][j+1][k+1] = start_T;
@@ -78,13 +77,39 @@ main(int argc, char *argv[]) {
         }
     }
 
-    #ifdef _GAUSS_SEIDEL
-    gauss_seidel(N, tolerance, iter_max, u, f, step_size);
+    // solver(N, tolerance, iter_max, U, F, step_size);
+
+    #ifdef _JACOBI
+    printf("Using Jacobi\n");
+    double ***U_new = NULL;
+    if ( (U_new = malloc_3d(N+2,N+2,N+2)) == NULL ) {
+        perror("array u: allocation failed");
+        exit(-1);
+    }
+    jacobi(N, tolerance, iter_max, U, U_new, F, step_size);
     #endif
 
-    print_binary("f.txt", N+2, f);
-    print_binary("u_true.txt", N+2, u_true);
-    print_binary("u.txt", N+2, u);
+    #ifdef _GAUSS_SEIDEL
+    printf("Using Gauss-Seidel\n");
+    gauss_seidel(N, tolerance, iter_max, U, F, step_size);
+    #endif
+
+
+    #ifdef _TEST
+    output_prefix = "../test_res/test";
+    double err = test_case(N, U);
+    printf("Set tolerance: %lf\n", tolerance);
+    // printf("Obtained tolerance: %lf\n", tol);
+    printf("Error: %lf\n", err);
+    printf("Pct diff: %lf\n", (err - tolerance)/tolerance);
+    #endif
+
+
+    printf("End of running\n");
+
+    // print_binary("f.txt", N+2, F);
+    // print_binary("u_true.txt", N+2, U_true);
+    // print_binary("u.txt", N+2, U);
     /*
      *
      * fill in your code here 
@@ -101,13 +126,13 @@ main(int argc, char *argv[]) {
 	    output_ext = ".bin";
 	    sprintf(output_filename, "%s_%d%s", output_prefix, N, output_ext);
 	    fprintf(stderr, "Write binary dump to %s: ", output_filename);
-	    print_binary(output_filename, N, u);
+	    print_binary(output_filename, N, U);
 	    break;
 	case 4:
 	    output_ext = ".vtk";
 	    sprintf(output_filename, "%s_%d%s", output_prefix, N, output_ext);
 	    fprintf(stderr, "Write VTK file to %s: ", output_filename);
-	    print_vtk(output_filename, N, u);
+	    print_vtk(output_filename, N, U);
 	    break;
 	default:
 	    fprintf(stderr, "Non-supported output type!\n");
@@ -115,8 +140,8 @@ main(int argc, char *argv[]) {
     }
 
     // de-allocate memory
-    free_3d(u, N+2, N+2, N+2);
-    free_3d(f, N+2, N+2, N+2);
+    free_3d(U);
+    free_3d(F);
 
     return(0);
 }
