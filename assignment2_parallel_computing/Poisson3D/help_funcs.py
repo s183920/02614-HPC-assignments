@@ -1,4 +1,6 @@
 import numpy as np
+import os
+import argparse
 
 def read_binary(filename):
     x = np.fromfile(filename, dtype=float)
@@ -8,12 +10,16 @@ def read_binary(filename):
     return x
 
 
-# x = read_binary("poisson_res_5.bin")
-# u = read_binary("u.txt")
-# u_true = read_binary("u_true.txt")
+def get_plot_folder():
+    # argparser
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--save_folder", type = str, default="../results")
+    args = parser.parse_args()
 
-u = read_binary("../test_res/test_20.bin")
-# u_true = [[[np.sin(np.pi)]]]
+    # exp = args.folder + "/" + args.exp + "/"
+    plot_folder = args.save_folder + "/plots/"
 
-# print(np.mean(u - u_true))
-print(u)
+    # make folder for plots
+    os.makedirs(plot_folder, exist_ok = True)
+
+    return plot_folder
