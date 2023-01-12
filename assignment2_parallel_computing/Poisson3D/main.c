@@ -8,6 +8,12 @@
 #include "helper.h"
 #include <math.h>
 
+#ifdef _TEST
+#include "matrix_init_test.h"
+#else
+#include "matrix_init.h"
+#endif
+
 #ifdef _JACOBI
 #include "jacobi.h"
 #define solver jacobi

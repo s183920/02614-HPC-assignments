@@ -4,11 +4,15 @@ TARGET_J  = poisson_j		# Jacobi
 TARGET_GS = poisson_gs		# Gauss-Seidel
 
 SOURCES	= main.c print.c alloc3d.c helper.c
-OBJECTS	= print.o alloc3d.o helper.o
+OBJECTS	= print.o alloc3d.o helper.o matrix_init_test.o # matrix_init.o matrix_init_test.o
+# test: OBJECTS = print.o alloc3d.o helper.o matrix_init_test.o
 MAIN_J	= main_j.o
 MAIN_GS = main_gs.o
 OBJS_J	= $(MAIN_J) jacobi.o
 OBJS_GS	= $(MAIN_GS) gauss_seidel.o
+MATRIX_SOURCE = matrix_init.c
+MATRIX_OBJECT = matrix_init.o
+MATRIX_HEADER = matrix_init.h
 
 # options and settings for the GCC compilers
 #
@@ -25,14 +29,19 @@ CFLAGS	= $(DEFS) $(ARCH) $(OPT) $(ISA) $(CHIP) $(IPO) $(PARA) $(XOPTS)
 LDFLAGS = -lm 
 TEST_FLAG =
 
+# all: MATRIX_OBJECT = "matrix_init.o"
+# all: MATRIX_SOURCE = "matrix_init.c"
+# all: OBJECTS += $(MATRIX_OBJECT)
+all: SOURCES += $(MATRIX_SOURCE)
 all: realclean $(TARGET_J) $(TARGET_GS) 
+
 
 $(TARGET_J): $(OBJECTS) $(OBJS_J)
 	echo $(CC) -o $@ $(CFLAGS) $(OBJS_J) $(OBJECTS) $(LDFLAGS) > compile.log
-	$(CC) -o $@ $(CFLAGS) $(OBJS_J) $(OBJECTS) $(LDFLAGS)
+	$(CC) -o $@ $(TEST_FLAG) $(CFLAGS) $(OBJS_J) $(OBJECTS) $(LDFLAGS)
 $(TARGET_GS): $(OBJECTS) $(OBJS_GS)
 	echo $(CC) -o $@ $(CFLAGS) $(OBJS_GS) $(OBJECTS) $(LDFLAGS) >> compile.log
-	$(CC) -o $@ $(CFLAGS) $(OBJS_GS) $(OBJECTS) $(LDFLAGS)
+	$(CC) -o $@ $(TEST_FLAG) $(CFLAGS) $(OBJS_GS) $(OBJECTS) $(LDFLAGS)
 
 $(MAIN_J):
 	$(CC) -o $@ -D_JACOBI $(TEST_FLAG) $(CFLAGS) -c main.c 
@@ -58,9 +67,13 @@ saveresults:
 	@cp -r ../results/*$(SAVEKEY)* ../results_saved/
 
 test: TEST_FLAG += -D_TEST 
+test: MATRIX_OBJECT = matrix_init_test.o
+test: MATRIX_SOURCE = matrix_init_test.c
+test: MATRIX_HEADER = matrix_init_test.h
 test: all
 	@echo
 	@echo "Running Jacobi test"
+	@echo $(TEST_FLAG)
 	@echo
 	@echo "N = 20"
 	./poisson_j 20 20000 0.0001 0
@@ -80,7 +93,9 @@ test: all
 	@echo
 # DO NOT DELETE
 
-main_j.o: main.c print.h jacobi.h helper.h
-main_gs.o: main.c print.h gauss_seidel.h helper.h
+main_j.o: main.c print.h jacobi.h helper.h $(MATRIX_HEADER)
+main_gs.o: main.c print.h gauss_seidel.h helper.h $(MATRIX_HEADER)
 print.o: print.h
 helper.o: helper.h
+$(MATRIX_OBJECT): $(MATRIX_SOURCE) $(MATRIX_HEADER)
+# matrix_init_test.o: matrix_init_test.c matrix_init_test.h

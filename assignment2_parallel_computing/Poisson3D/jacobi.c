@@ -20,8 +20,8 @@ jacobi(int N, double threshold, int iter_max, double ***U_old, double ***U_new, 
         for (i = 1; i <= N ; i++) {
             for (j = 1; j <= N; j++) {
                 for (k = 1; k <= N; k++) {
-                    printf("%lf\n",U_old[i][j][k]);
-                    printf("%lf\n",U_new[i][j][k]);
+                    // printf("%lf\n",U_old[i][j][k]);
+                    // printf("%lf\n",U_new[i][j][k]);
                     U_new[i][j][k] = scale * ( // should this be initialised here when parallelising
                         U_old[i-1][j][k] + 
                         U_old[i+1][j][k] + 
