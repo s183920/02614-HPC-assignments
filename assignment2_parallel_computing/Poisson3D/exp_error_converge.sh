@@ -18,12 +18,12 @@ make realclean
 make test test_ext=_test
 
 # set Ns to test
-Ns="10 20 30 40 50 60 70 80 90 100"
+Ns="100 200 300 400 500 600 700"
 #Ns="10 30"
 
 # set tolerances to test
-# tolerances="0.1 0.01 0.001 0.0001 0.00001 0.000001 0.0000001 0.00000001"
-tolerances="0.1 0.01 0.0001"
+tolerances="0.1, 0.01 0.001 0.0001 0.00001 0.000001 0.0000001 0.00000001"
+#tolerances="0.1 0.01 0.0001"
 
 # save settings
 echo "start_T = $start_T" >> $EXP_DIR/setup.txt
@@ -50,4 +50,4 @@ done;echo
 
 # make plot
 echo "Making plots of error convergence..."
-python3 plot_error_convergence.py --save_folder $EXP_DIR
+python3 plot_error_convergence.py --save_folder $EXP_DIR --output_files $OUT_DIR

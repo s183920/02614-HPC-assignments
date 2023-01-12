@@ -21,13 +21,13 @@ mkdir -p ../hpc_logs
 ### -- set the job queue --
 #BSUB -q hpcintro
 ### -- ask for number of cores (default: 1) --
-#BSUB -n 2
+#BSUB -n 1
 ### -- specify that the cores MUST BE on a single host! It's a SMP job! --
-#BSUB -R "span[hosts=1] affinity[socket(1)]"
+#BSUB -R "span[hosts=1]"
 ### -- set walltime limit: hh:mm --
 #BSUB -W 00:15 
 ### -- specify that we need 4GB of memory per core/slot -- 
-#BSUB -R "rusage[mem=0.5GB]"
+#BSUB -R "rusage[mem=10GB]"
 ### -- Specify the output and error file. %J is the job-id -- 
 ### -- -o and -e mean append, -oo and -eo mean overwrite -- 
 #BSUB -o ../hpc_logs/%J.out
@@ -62,7 +62,7 @@ echo "Number of available cores: " $LSB_DJOB_NUMPROC >> $RESULT_FOLDER/setup.txt
 # set default values
 export start_T=0
 export max_iters=2000
-export tol=0.001
+export tol=0.01
 export N=50
 
 # save defualts
