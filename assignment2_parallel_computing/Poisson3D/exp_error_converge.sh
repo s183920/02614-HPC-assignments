@@ -11,15 +11,15 @@ touch "$EXP_DIR/setup.txt" # file for setup
 # get needed modules
 module load gcc
 module load python3
-source ../../../hpc_env/bin/activate
+source ../../../venv/bin/activate
 
 # compile code
 make realclean
 make test
 
 # set Ns to test
-# Ns="10 20 30 40 50 100"
-Ns="10 30"
+Ns="10 20 30 40 50 60 70 80 90 100"
+#Ns="10 30"
 
 # set tolerances to test
 # tolerances="0.1 0.01 0.001 0.0001 0.00001 0.000001 0.0000001 0.00000001"
