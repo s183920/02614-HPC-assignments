@@ -47,14 +47,14 @@ for opt_method in $opt_methods; do
     echo "Running memory scalability experiment for serial code"
     for n in $Ns; do
         echo "N = $n"
-        OMP_NUM_THREADS=1 ./poisson_j $n $max_iters $tol start_T 0 > $OUT_DIR/output_j_N_${n}_threads_${LSB_DJOB_NUMPROC}.txt
+        OMP_NUM_THREADS=1 ./poisson_j $n $max_iters $tol $start_T 0 > $OUT_DIR/output_j_N_${n}_threads_${LSB_DJOB_NUMPROC}.txt
         # todo: add other better implmentations
     done;echo
 
     echo "Running memory scalability experiment for parallel code"
     for n in $Ns; do
         echo "N = $n"
-        OMP_NUM_THREADS=$LSB_DJOB_NUMPROC ./poisson_j $n $max_iters $tol start_T 0 > $OUT_DIR/output_j_N_${n}_threads_${LSB_DJOB_NUMPROC}.txt
+        OMP_NUM_THREADS=$LSB_DJOB_NUMPROC ./poisson_j $n $max_iters $tol $start_T 0 > $OUT_DIR/output_j_N_${n}_threads_${LSB_DJOB_NUMPROC}.txt
     done;echo
 done
 

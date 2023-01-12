@@ -1,2 +1,2 @@
-gcc -o poisson_j -g -Ofast main_j.o jacobi.o print.o alloc3d.o helper.o -lm
-gcc -o poisson_gs -g -Ofast main_gs.o gauss_seidel.o print.o alloc3d.o helper.o -lm
+gcc -o poisson_j -g -Ofast main_j.o jacobi.o print.o alloc3d.o helper.o matrix_init_test.o -lm
+gcc -o poisson_gs -g -Ofast main_gs.o gauss_seidel.o print.o alloc3d.o helper.o matrix_init_test.o -lm
