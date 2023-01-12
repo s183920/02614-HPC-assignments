@@ -40,8 +40,8 @@ jacobi(int N, double threshold, int iter_max, double ***U_old, double ***U_new, 
         iteration++;
     }
     swap_3d(&U_old, &U_new);
-    printf("Number of iterations: %d with diff: %lf\n", iteration, diff); 
-
-    // return diff;
+    
+    printf("\tIterations: %d\n", iteration);
+    printf("\tConvergence_difference: %lf\n", diff);
 }
 

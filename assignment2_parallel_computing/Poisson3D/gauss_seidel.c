@@ -37,8 +37,8 @@ gauss_seidel(int N, double threshold, int iter_max, double ***U, double ***F, do
         diff = sqrt(diff_scale *diff);
         iteration++;
     }
-    printf("Number of iterations: %d with diff: %lf\n", iteration, diff); 
 
-    // return diff;
+    printf("\tIterations: %d\n", iteration);
+    printf("\tConvergence_difference: %lf\n", diff);
 }
 

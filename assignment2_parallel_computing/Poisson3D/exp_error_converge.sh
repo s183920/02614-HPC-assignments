@@ -15,7 +15,7 @@ source ../../../hpc_env/bin/activate
 
 # compile code
 make realclean
-make test
+make test test_ext=_test
 
 # set Ns to test
 # Ns="10 20 30 40 50 100"
