@@ -8,6 +8,17 @@
 #include "helper.h"
 #include <math.h>
 
+// timer function
+#ifdef _OPENMP
+#include <omp.h>
+#define mytimer omp_get_wtime
+#define delta_t(a,b) (1e3 * ((b)-(a)))
+#else
+#include <time.h>
+#define mytimer clock
+#define delta_t(a,b) (1e3 * ((b) - (a)) / CLOCKS_PER_SEC)
+#endif
+
 // get matrix init
 #ifdef _TEST
 #include "matrix_init_test.h"
@@ -41,6 +52,7 @@ void solver(int version, int N, double tolerance, int iter_max, double ***U, dou
 
 #ifdef _GAUSS_SEIDEL
 #include "gauss_seidel.h"
+
 // function for solving the Poisson problem
 void solver(int version, int N, double tolerance, int iter_max, double ***U, double ***F, double step_size){
     switch(version){
@@ -58,16 +70,6 @@ void solver(int version, int N, double tolerance, int iter_max, double ***U, dou
 }
 #endif
 
-// timer function
-#ifdef _OPENMP
-#include <omp.h>
-#define mytimer omp_get_wtime
-#define delta_t(a,b) (1e3 * ((b)-(a)))
-#else
-#include <time.h>
-#define mytimer clock
-#define delta_t(a,b) (1e3 * ((b) - (a)) / CLOCKS_PER_SEC)
-#endif
 
 #define N_DEFAULT 100
 
@@ -125,9 +127,6 @@ main(int argc, char *argv[]) {
     // get step size
     double step_size = calc_step_size(N);
 
-    // init matrices
-    init_grid_matrices(F, U, N);
-
     // print setup
     printf("Setup \n");
     char *version_name;
@@ -157,12 +156,13 @@ main(int argc, char *argv[]) {
     // print results
     printf("Results\n");
 
+    // init matrices
+    init_grid_matrices(F, U, N);
+
     // solve 
     t1 = mytimer();
-    #pragma omp parallel
-    {
+    // solve
     solver(version, N, tolerance, iter_max, U, F, step_size);
-    }
     t2 = mytimer();
 
     // print time results
