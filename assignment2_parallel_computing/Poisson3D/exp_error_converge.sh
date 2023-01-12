@@ -37,8 +37,8 @@ echo "tolerances = $tolerances" >> $EXP_DIR/setup.txt
 echo "Running error vs N experiment for tol=$tol"
 for n in $Ns; do
     echo "N = $n"
-    ./poisson_gs $n $max_iters $tol start_T 0 > $OUT_DIR/output_gs_N_${n}.txt
-    ./poisson_j $n $max_iters $tol start_T 0 > $OUT_DIR/output_j_N_${n}.txt
+    ./poisson_gs $n $max_iters $tol $start_T 0 > $OUT_DIR/output_gs_N_${n}.txt
+    ./poisson_j $n $max_iters $tol $start_T 0 > $OUT_DIR/output_j_N_${n}.txt
 done;echo
 
 echo "Running error vs tolerance experiment for N=$N"
