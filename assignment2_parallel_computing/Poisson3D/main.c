@@ -33,19 +33,18 @@
 void solver(int version, int N, double tolerance, int iter_max, double ***U, double ***F, double step_size){
     double ***U_new = NULL;
     if ( (U_new = malloc_3d(N+2,N+2,N+2)) == NULL ) {
-        perror("array u: allocation failed");
+        perror("array U_new: allocation failed");
         exit(-1);
     }
-    switch(version){
-    case 0:
+    if (version == 0){
         jacobi(N, tolerance, iter_max, U, U_new, F, step_size);
-        break;
-    case 1:
+    } else if (version == 1){
         jacobi_para_simpel(N, tolerance, iter_max, U, U_new, F, step_size);
-        break;
-    case 2:
+    } else if (version == 2){
         jacobi_para_opt(N, tolerance, iter_max, U, U_new, F, step_size);
-        break;
+    } else {
+        perror("Error: version not supported");
+        exit(-1);
     }
 }
 #endif
@@ -55,18 +54,16 @@ void solver(int version, int N, double tolerance, int iter_max, double ***U, dou
 
 // function for solving the Poisson problem
 void solver(int version, int N, double tolerance, int iter_max, double ***U, double ***F, double step_size){
-    switch(version){
-    case 0: 
+    if (version == 0){
         gauss_seidel(N, tolerance, iter_max, U, F, step_size);
-        break;
-    case 1:
+    } else if (version == 1){
         gauss_seidel_para_simpel(N, tolerance, iter_max, U, F, step_size);
-        break;
-    case 2:
+    } else if (version == 2){
         gauss_seidel_para_opt(N, tolerance, iter_max, U, F, step_size);
-        break;
+    } else {
+        perror("Error: version not supported");
+        exit(-1);
     }
-    gauss_seidel(N, tolerance, iter_max, U, F, step_size);
 }
 #endif
 
@@ -127,6 +124,9 @@ main(int argc, char *argv[]) {
     // get step size
     double step_size = calc_step_size(N);
 
+    // init matrices
+    init_grid_matrices(F, U, N);
+
     // print setup
     printf("Setup \n");
     char *version_name;
@@ -153,8 +153,7 @@ main(int argc, char *argv[]) {
     printf("\tStart_T: %lf\n", start_T);
     printf("\tStep_size: %lf\n", step_size);
 
-    // init matrices
-    init_grid_matrices(F, U, N);
+    
 
     // print results
     printf("Results\n");
