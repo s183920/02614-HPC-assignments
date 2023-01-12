@@ -24,7 +24,7 @@ module load studio
 EXECUTABLE=poisson_j
 
 # define any command line options for your executable here
-# EXECOPTS=
+EXECOPTS="50 20000 0.0001 0 0 1"
 
 # set some OpenMP variables here
 #
