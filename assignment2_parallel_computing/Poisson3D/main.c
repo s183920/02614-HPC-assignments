@@ -56,26 +56,27 @@ main(int argc, char *argv[]) {
     }
 
     
-    double x,y,z;
+    // double x,y,z;
     double step_size = 2.0 / ((double)N+1);
+    init_grid_matrices(F, U, N);
 
-    for (int i = 0; i <= N+1; i++){
-        z = -1.0 + step_size*i;
-        for (int j = 0; j <= N+1; j++){
-            y = -1.0 + step_size*j;
-            for (int k = 0; k <= N+1; k++){
-                x = -1.0 + step_size*k;
+    // for (int i = 0; i <= N+1; i++){
+    //     z = -1.0 + step_size*i;
+    //     for (int j = 0; j <= N+1; j++){
+    //         y = -1.0 + step_size*j;
+    //         for (int k = 0; k <= N+1; k++){
+    //             x = -1.0 + step_size*k;
                 
-                F[i][j][k] = f(x,y,z);
-                // u_true[i][j][k] = sin(M_PI*x)*sin(M_PI*y)*sin(M_PI*z);
-                U[i][j][k] = 0;
+    //             F[i][j][k] = f(x,y,z);
+    //             // u_true[i][j][k] = sin(M_PI*x)*sin(M_PI*y)*sin(M_PI*z);
+    //             U[i][j][k] = 0;
 
-                // printf("i: %d, j: %d, k:%d. x: %lf, y: %lf, z: %lf\n", i, j, k, x, y, z);
-                // u[i+1][j+1][k+1] = start_T;
-                // f[i][j][k] = 
-            }
-        }
-    }
+    //             // printf("i: %d, j: %d, k:%d. x: %lf, y: %lf, z: %lf\n", i, j, k, x, y, z);
+    //             // u[i+1][j+1][k+1] = start_T;
+    //             // f[i][j][k] = 
+    //         }
+    //     }
+    // }
 
     // solver(N, tolerance, iter_max, U, F, step_size);
 
@@ -126,13 +127,13 @@ main(int argc, char *argv[]) {
 	    output_ext = ".bin";
 	    sprintf(output_filename, "%s_%d%s", output_prefix, N, output_ext);
 	    fprintf(stderr, "Write binary dump to %s: ", output_filename);
-	    print_binary(output_filename, N, U);
+	    print_binary(output_filename, N+2, U);
 	    break;
 	case 4:
 	    output_ext = ".vtk";
 	    sprintf(output_filename, "%s_%d%s", output_prefix, N, output_ext);
 	    fprintf(stderr, "Write VTK file to %s: ", output_filename);
-	    print_vtk(output_filename, N, U);
+	    print_vtk(output_filename, N+2, U);
 	    break;
 	default:
 	    fprintf(stderr, "Non-supported output type!\n");
@@ -148,4 +149,4 @@ main(int argc, char *argv[]) {
 
 
 
-
+// number_of_iteration error wall_time cpu_time 

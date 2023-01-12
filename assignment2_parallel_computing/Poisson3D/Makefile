@@ -66,7 +66,7 @@ test: all
 	@echo "Running Gauss-Seidel test"
 	@echo
 	@echo "N = 20"
-	./poisson_gs 20 20000 0.0001 0 3
+	./poisson_gs 20 20000 0.0001 0
 	@echo
 	@echo "N = 50"
 	./poisson_gs 50 20000 0.0001 0
