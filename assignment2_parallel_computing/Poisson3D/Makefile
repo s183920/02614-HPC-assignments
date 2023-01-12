@@ -4,7 +4,7 @@ TARGET_J  = poisson_j		# Jacobi
 TARGET_GS = poisson_gs		# Gauss-Seidel
 
 SOURCES	= main.c print.c alloc3d.c helper.c
-OBJECTS	= print.o alloc3d.o helper.o matrix_init_test.o # matrix_init.o matrix_init_test.o
+OBJECTS	= print.o alloc3d.o helper.o matrix_init.o # matrix_init.o matrix_init_test.o
 # test: OBJECTS = print.o alloc3d.o helper.o matrix_init_test.o
 MAIN_J	= main_j.o
 MAIN_GS = main_gs.o
@@ -19,7 +19,7 @@ MATRIX_HEADER = matrix_init.h
 CC	= gcc
 DEFS	= 
 OPT	= -g #-std=c99 #note: -std=c99 does not support M_PI
-XOPTS	= -Ofast
+XOPTS	= 
 IPO	= 
 ISA	= 
 CHIP	= 

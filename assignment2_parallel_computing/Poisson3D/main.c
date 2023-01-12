@@ -85,7 +85,6 @@ main(int argc, char *argv[]) {
     // }
 
     // solver(N, tolerance, iter_max, U, F, step_size);
-
     #ifdef _JACOBI
     printf("Using Jacobi\n");
     double ***U_new = NULL;
