@@ -19,20 +19,41 @@
 #ifdef _JACOBI
 #include "jacobi.h"
 // function for solving the Poisson problem
-void solver(int N, double tolerance, int iter_max, double ***U, double ***F, double step_size){
+void solver(int version, int N, double tolerance, int iter_max, double ***U, double ***F, double step_size){
     double ***U_new = NULL;
     if ( (U_new = malloc_3d(N+2,N+2,N+2)) == NULL ) {
         perror("array u: allocation failed");
         exit(-1);
     }
-    jacobi(N, tolerance, iter_max, U, U_new, F, step_size);
+    switch(version){
+    case 0:
+        jacobi(N, tolerance, iter_max, U, U_new, F, step_size);
+        break;
+    case 1:
+        jacobi_para_simpel(N, tolerance, iter_max, U, U_new, F, step_size);
+        break;
+    case 2:
+        jacobi_para_opt(N, tolerance, iter_max, U, U_new, F, step_size);
+        break;
+    }
 }
 #endif
 
 #ifdef _GAUSS_SEIDEL
 #include "gauss_seidel.h"
 // function for solving the Poisson problem
-void solver(int N, double tolerance, int iter_max, double ***U, double ***F, double step_size){
+void solver(int version, int N, double tolerance, int iter_max, double ***U, double ***F, double step_size){
+    switch(version){
+    case 0: 
+        gauss_seidel(N, tolerance, iter_max, U, F, step_size);
+        break;
+    case 1:
+        gauss_seidel_para_simpel(N, tolerance, iter_max, U, F, step_size);
+        break;
+    case 2:
+        gauss_seidel_para_opt(N, tolerance, iter_max, U, F, step_size);
+        break;
+    }
     gauss_seidel(N, tolerance, iter_max, U, F, step_size);
 }
 #endif
@@ -65,6 +86,7 @@ main(int argc, char *argv[]) {
     char	output_filename[FILENAME_MAX];
     double 	***U = NULL;
     double ***F = NULL;
+    int version = 0;
     // double ***U_true = NULL;
 
 
@@ -75,6 +97,9 @@ main(int argc, char *argv[]) {
     start_T   = atof(argv[4]);  // start T for all inner grid points
     if (argc == 6) {
 	output_type = atoi(argv[5]);  // ouput type
+    }
+    if (argc == 7) {
+        version = atoi(argv[6]);
     }
 
     // allocate memory
@@ -105,11 +130,23 @@ main(int argc, char *argv[]) {
 
     // print setup
     printf("Setup \n");
+    char *version_name;
+    switch(version) {
+    case 0:
+        version_name = "Serial";
+        break;
+    case 1:
+        version_name = "Simpel parallel";
+        break;
+    case 2:
+        version_name = "Optimized parallel";
+        break;
+    }
     #ifdef _JACOBI
-    printf("\tMethod: Jacobi\n");
+    printf("\tMethod: Jacobi (%s)\n", version_name);
     #endif
     #ifdef _GAUSS_SEIDEL
-    printf("\tMethod: Gauss-Seidel\n");
+    printf("\tMethod: Gauss-Seidel (%s)\n", version_name);
     #endif
     printf("\tN: %d\n", N);
     printf("\tIter_max: %d\n", iter_max);
@@ -122,7 +159,7 @@ main(int argc, char *argv[]) {
 
     // solve 
     t1 = mytimer();
-    solver(N, tolerance, iter_max, U, F, step_size);
+    solver(version, N, tolerance, iter_max, U, F, step_size);
     t2 = mytimer();
 
     // print time results
