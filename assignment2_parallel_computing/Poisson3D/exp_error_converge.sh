@@ -11,7 +11,7 @@ touch "$EXP_DIR/setup.txt" # file for setup
 # get needed modules
 module load gcc
 module load python3
-source ../../../venv/bin/activate
+source ../../../hpc_env/bin/activate
 
 # compile code
 make realclean
