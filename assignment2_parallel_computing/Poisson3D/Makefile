@@ -103,6 +103,36 @@ test_par: all
 	@echo "8 threads"
 	OMP_NUM_THREADS=8 ./poisson_j 50 20000 0.0001 0 0 1
 	@echo
+
+test_races: CC = cc
+test_races: OPT = -g -fast -xopenmp -xloopinfo -xinstrument=datarace
+test_races: all
+	@echo
+	@echo "Running Jacobi parallel N=50"
+	@echo
+	@echo "Serial"
+	./poisson_j 50 20000 0.0001 0 0 0
+	@echo
+	@echo "Parallel simple"
+	OMP_NUM_THREADS=8 collect -r on ./poisson_j 50 50 0.0001 0 0 1
+	@echo
+	@echo "Parallel optimized"
+	OMP_NUM_THREADS=8 collect -r on ./poisson_j 50 50 0.0001 0 0 2
+
+	@echo
+	@echo "Running Gauss Seidel test for N=50"
+	@echo
+	@echo "Serial"
+	./poisson_gs 50 20000 0.0001 0 0 0
+	@echo
+	@echo "Parallel simple"
+	OMP_NUM_THREADS=8 collect -r on ./poisson_gs 50 50 0.0001 0 0 1
+	@echo
+	@echo "Parallel optimized"
+	OMP_NUM_THREADS=8 collect -r ./poisson_gs 50 20000 0.0001 0 0 2
+
+	@echo
+
 # DO NOT DELETE
 
 main_j.o: main.c print.h jacobi.h helper.h $(MATRIX_HEADER)

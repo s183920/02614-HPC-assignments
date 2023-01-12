@@ -41,7 +41,7 @@ export OMP_WAIT_POLICY=active
 # experiment name 
 #
 JID=${LSB_JOBID}
-EXPOUT="$LSB_JOBNAME.${JID}.er"
+EXPOUT="../er_tests/$LSB_JOBNAME.${JID}.er"
 
 # start the collect command with the above settings
 collect -o $EXPOUT ./$EXECUTABLE $EXECOPTS
