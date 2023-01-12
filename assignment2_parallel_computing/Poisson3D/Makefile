@@ -23,7 +23,7 @@ IPO	=
 ISA	= 
 CHIP	= 
 ARCH	= 
-PARA	= #-fopenmp
+PARA	= -fopenmp
 CFLAGS	= $(DEFS) $(ARCH) $(OPT) $(ISA) $(CHIP) $(IPO) $(PARA) $(XOPTS)
 LDFLAGS = -lm 
 TEST_FLAG =
@@ -65,24 +65,43 @@ saveresults:
 test: TEST_FLAG += -D_TEST 
 test: all
 	@echo
-	@echo "Running Jacobi test"
-	@echo $(TEST_FLAG)
+	@echo "Running Jacobi test for N=50"
 	@echo
-	@echo "N = 20"
-	./poisson_j 20 20000 0.0001 0
+	@echo "Serial"
+	./poisson_j 50 20000 0.0001 0 0 0
 	@echo
-	@echo "N = 50"
-	./poisson_j 50 20000 0.0001 0
+	@echo "Parallel simple"
+	./poisson_j 50 20000 0.0001 0 0 1
+	@echo
+	@echo "Parallel optimized"
+	./poisson_j 50 20000 0.0001 0 0 2
 
 	@echo
-	@echo "Running Gauss-Seidel test"
+	@echo "Running Gauss Seidel test for N=50"
 	@echo
-	@echo "N = 20"
-	@/usr/bin/time --format="Time = %E" ./poisson_gs 20 20000 0.0001 0
+	@echo "Serial"
+	./poisson_gs 50 20000 0.0001 0 0 0
 	@echo
-	@echo "N = 50"
-	@/usr/bin/time --format="Time = %E" ./poisson_gs 50 20000 0.0001 0
+	@echo "Parallel simple"
+	./poisson_gs 50 20000 0.0001 0 0 1
+	@echo
+	@echo "Parallel optimized"
+	./poisson_gs 50 20000 0.0001 0 0 2
 
+	@echo
+
+
+test_par: TEST_FLAG += -D_TEST 
+test_par: all
+	@echo
+	@echo "Serial"
+	./poisson_j 50 20000 0.0001 0 0 0
+	@echo
+	@echo "1 thread"
+	OMP_NUM_THREADS=1 ./poisson_j 50 20000 0.0001 0 0 1
+	@echo
+	@echo "8 threads"
+	OMP_NUM_THREADS=8 ./poisson_j 50 20000 0.0001 0 0 1
 	@echo
 # DO NOT DELETE
 
