@@ -4,15 +4,14 @@ TARGET_J  = poisson_j		# Jacobi
 TARGET_GS = poisson_gs		# Gauss-Seidel
 
 SOURCES	= main.c print.c alloc3d.c helper.c
-OBJECTS	= print.o alloc3d.o helper.o matrix_init.o # matrix_init.o matrix_init_test.o
-# test: OBJECTS = print.o alloc3d.o helper.o matrix_init_test.o
+OBJECTS	= print.o alloc3d.o helper.o $(MATRIX_OBJECT)
 MAIN_J	= main_j.o
 MAIN_GS = main_gs.o
 OBJS_J	= $(MAIN_J) jacobi.o
 OBJS_GS	= $(MAIN_GS) gauss_seidel.o
-MATRIX_SOURCE = matrix_init.c
-MATRIX_OBJECT = matrix_init.o
-MATRIX_HEADER = matrix_init.h
+MATRIX_SOURCE = matrix_init$(test_ext).c
+MATRIX_OBJECT = matrix_init$(test_ext).o
+MATRIX_HEADER = matrix_init$(test_ext).h
 
 # options and settings for the GCC compilers
 #
@@ -24,14 +23,11 @@ IPO	=
 ISA	= 
 CHIP	= 
 ARCH	= 
-PARA	= 
+PARA	= #-fopenmp
 CFLAGS	= $(DEFS) $(ARCH) $(OPT) $(ISA) $(CHIP) $(IPO) $(PARA) $(XOPTS)
 LDFLAGS = -lm 
 TEST_FLAG =
 
-# all: MATRIX_OBJECT = "matrix_init.o"
-# all: MATRIX_SOURCE = "matrix_init.c"
-# all: OBJECTS += $(MATRIX_OBJECT)
 all: SOURCES += $(MATRIX_SOURCE)
 all: realclean $(TARGET_J) $(TARGET_GS) 
 
@@ -67,9 +63,6 @@ saveresults:
 	@cp -r ../results/*$(SAVEKEY)* ../results_saved/
 
 test: TEST_FLAG += -D_TEST 
-test: MATRIX_OBJECT = matrix_init_test.o
-test: MATRIX_SOURCE = matrix_init_test.c
-test: MATRIX_HEADER = matrix_init_test.h
 test: all
 	@echo
 	@echo "Running Jacobi test"
@@ -85,10 +78,10 @@ test: all
 	@echo "Running Gauss-Seidel test"
 	@echo
 	@echo "N = 20"
-	./poisson_gs 20 20000 0.0001 0
+	@/usr/bin/time --format="Time = %E" ./poisson_gs 20 20000 0.0001 0
 	@echo
 	@echo "N = 50"
-	./poisson_gs 50 20000 0.0001 0
+	@/usr/bin/time --format="Time = %E" ./poisson_gs 50 20000 0.0001 0
 
 	@echo
 # DO NOT DELETE
@@ -98,4 +91,3 @@ main_gs.o: main.c print.h gauss_seidel.h helper.h $(MATRIX_HEADER)
 print.o: print.h
 helper.o: helper.h
 $(MATRIX_OBJECT): $(MATRIX_SOURCE) $(MATRIX_HEADER)
-# matrix_init_test.o: matrix_init_test.c matrix_init_test.h

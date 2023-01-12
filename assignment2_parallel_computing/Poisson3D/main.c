@@ -8,23 +8,49 @@
 #include "helper.h"
 #include <math.h>
 
+// get matrix init
 #ifdef _TEST
 #include "matrix_init_test.h"
 #else
 #include "matrix_init.h"
 #endif
 
+// get solver function
 #ifdef _JACOBI
 #include "jacobi.h"
-#define solver jacobi
+// function for solving the Poisson problem
+void solver(int N, double tolerance, int iter_max, double ***U, double ***F, double step_size){
+    double ***U_new = NULL;
+    if ( (U_new = malloc_3d(N+2,N+2,N+2)) == NULL ) {
+        perror("array u: allocation failed");
+        exit(-1);
+    }
+    jacobi(N, tolerance, iter_max, U, U_new, F, step_size);
+}
 #endif
 
 #ifdef _GAUSS_SEIDEL
 #include "gauss_seidel.h"
-#define solver gauss_seidel
+// function for solving the Poisson problem
+void solver(int N, double tolerance, int iter_max, double ***U, double ***F, double step_size){
+    gauss_seidel(N, tolerance, iter_max, U, F, step_size);
+}
+#endif
+
+// timer function
+#ifdef _OPENMP
+#include <omp.h>
+#define mytimer omp_get_wtime
+#define delta_t(a,b) (1e3 * ((b)-(a)))
+#else
+#include <time.h>
+#define mytimer clock
+#define delta_t(a,b) (1e3 * ((b) - (a)) / CLOCKS_PER_SEC)
 #endif
 
 #define N_DEFAULT 100
+
+
 
 int
 main(int argc, char *argv[]) {
@@ -61,67 +87,59 @@ main(int argc, char *argv[]) {
         exit(-1);
     }
 
+    // SETUP TIMER
+    #ifdef _OPENMP
+    double t1, t2;
+    fprintf(stderr, "OpenMP version: timing wallclock time (in ms)!\n");
+    #else
+    clock_t t1, t2;
+    fprintf(stderr, "Serial version: timing CPU time (in ms)!\n");
+    #endif
+
     
-    // double x,y,z;
-    double step_size = 2.0 / ((double)N+1);
+    // get step size
+    double step_size = calc_step_size(N);
+
+    // init matrices
     init_grid_matrices(F, U, N);
 
-    // for (int i = 0; i <= N+1; i++){
-    //     z = -1.0 + step_size*i;
-    //     for (int j = 0; j <= N+1; j++){
-    //         y = -1.0 + step_size*j;
-    //         for (int k = 0; k <= N+1; k++){
-    //             x = -1.0 + step_size*k;
-                
-    //             F[i][j][k] = f(x,y,z);
-    //             // u_true[i][j][k] = sin(M_PI*x)*sin(M_PI*y)*sin(M_PI*z);
-    //             U[i][j][k] = 0;
-
-    //             // printf("i: %d, j: %d, k:%d. x: %lf, y: %lf, z: %lf\n", i, j, k, x, y, z);
-    //             // u[i+1][j+1][k+1] = start_T;
-    //             // f[i][j][k] = 
-    //         }
-    //     }
-    // }
-
-    // solver(N, tolerance, iter_max, U, F, step_size);
+    // print setup
+    printf("Setup \n");
     #ifdef _JACOBI
-    printf("Using Jacobi\n");
-    double ***U_new = NULL;
-    if ( (U_new = malloc_3d(N+2,N+2,N+2)) == NULL ) {
-        perror("array u: allocation failed");
-        exit(-1);
-    }
-    jacobi(N, tolerance, iter_max, U, U_new, F, step_size);
+    printf("\tMethod: Jacobi\n");
     #endif
-
     #ifdef _GAUSS_SEIDEL
-    printf("Using Gauss-Seidel\n");
-    gauss_seidel(N, tolerance, iter_max, U, F, step_size);
+    printf("\tMethod: Gauss-Seidel\n");
     #endif
+    printf("\tN: %d\n", N);
+    printf("\tIter_max: %d\n", iter_max);
+    printf("\tTolerance: %lf\n", tolerance);
+    printf("\tStart_T: %lf\n", start_T);
+    printf("\tStep_size: %lf\n", step_size);
 
+    // print results
+    printf("Results\n");
 
+    // solve 
+    t1 = mytimer();
+    solver(N, tolerance, iter_max, U, F, step_size);
+    t2 = mytimer();
+
+    // print time results
+    printf("\tTime: %lf\n", delta_t(t1,t2));
+
+    // print error if testing
     #ifdef _TEST
     output_prefix = "../test_res/test";
     double err = test_case(N, U);
-    printf("Set tolerance: %lf\n", tolerance);
     // printf("Obtained tolerance: %lf\n", tol);
-    printf("Error: %lf\n", err);
-    printf("Pct diff: %lf\n", (err - tolerance)/tolerance);
+    printf("\tError: %lf\n", err);
+    // printf("Pct diff: %lf\n", (err - tolerance)/tolerance);
     #endif
 
+    
 
-    printf("End of running\n");
 
-    // print_binary("f.txt", N+2, F);
-    // print_binary("u_true.txt", N+2, U_true);
-    // print_binary("u.txt", N+2, U);
-    /*
-     *
-     * fill in your code here 
-     *
-     *
-     */
 
     // dump  results if wanted 
     switch(output_type) {
@@ -151,7 +169,3 @@ main(int argc, char *argv[]) {
 
     return(0);
 }
-
-
-
-// number_of_iteration error wall_time cpu_time 
