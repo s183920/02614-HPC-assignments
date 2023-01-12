@@ -153,11 +153,11 @@ main(int argc, char *argv[]) {
     printf("\tStart_T: %lf\n", start_T);
     printf("\tStep_size: %lf\n", step_size);
 
-    // print results
-    printf("Results\n");
-
     // init matrices
     init_grid_matrices(F, U, N);
+
+    // print results
+    printf("Results\n");
 
     // solve 
     t1 = mytimer();
