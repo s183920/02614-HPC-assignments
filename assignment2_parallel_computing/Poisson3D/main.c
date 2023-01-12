@@ -159,7 +159,10 @@ main(int argc, char *argv[]) {
 
     // solve 
     t1 = mytimer();
+    #pragma omp parallel
+    {
     solver(version, N, tolerance, iter_max, U, F, step_size);
+    }
     t2 = mytimer();
 
     // print time results
