@@ -61,7 +61,7 @@ jacobi_para_simpel(int N, double threshold, int iter_max, double ***U_old, doubl
 
     while (diff > threshold && iteration <= iter_max) {
         diff = 0;
-        #pragma omp parallel for private(i,j,k) shared(diff, diff_scale, U_old, U_new, F, scale, delta)
+        #pragma omp parallel for private(i,j,k) reduction(+:diff)
         for (i = 1; i <= N ; i++) {
             for (j = 1; j <= N; j++) {
                 for (k = 1; k <= N; k++) {
