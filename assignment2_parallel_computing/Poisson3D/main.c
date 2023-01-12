@@ -105,6 +105,12 @@ main(int argc, char *argv[]) {
 
     // print setup
     printf("Setup \n");
+    #ifdef _JACOBI
+    printf("\tMethod: Jacobi\n");
+    #endif
+    #ifdef _GAUSS_SEIDEL
+    printf("\tMethod: Gauss-Seidel\n");
+    #endif
     printf("\tN: %d\n", N);
     printf("\tIter_max: %d\n", iter_max);
     printf("\tTolerance: %lf\n", tolerance);
@@ -163,7 +169,3 @@ main(int argc, char *argv[]) {
 
     return(0);
 }
-
-
-
-// number_of_iteration error wall_time cpu_time 

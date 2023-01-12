@@ -23,7 +23,7 @@ IPO	=
 ISA	= 
 CHIP	= 
 ARCH	= 
-PARA	= 
+PARA	= #-fopenmp
 CFLAGS	= $(DEFS) $(ARCH) $(OPT) $(ISA) $(CHIP) $(IPO) $(PARA) $(XOPTS)
 LDFLAGS = -lm 
 TEST_FLAG =
@@ -78,10 +78,10 @@ test: all
 	@echo "Running Gauss-Seidel test"
 	@echo
 	@echo "N = 20"
-	./poisson_gs 20 20000 0.0001 0
+	@/usr/bin/time --format="Time = %E" ./poisson_gs 20 20000 0.0001 0
 	@echo
 	@echo "N = 50"
-	./poisson_gs 50 20000 0.0001 0
+	@/usr/bin/time --format="Time = %E" ./poisson_gs 50 20000 0.0001 0
 
 	@echo
 # DO NOT DELETE
