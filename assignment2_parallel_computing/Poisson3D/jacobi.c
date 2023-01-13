@@ -8,15 +8,14 @@
 void
 jacobi(int N, double threshold, int iter_max, double ***U_old, double ***U_new, double ***F, double delta) {
     int i, j, k;
-    i=j=k=0;
     double scale = 1.0/6.0;
 
     double diff_tmp;
     double diff = INFINITY;
     double diff_scale = 1./(N*N*N);
-    int iteration = 1; // 1-indiced iterations
+    int iteration = 0; // 1-indiced iterations
 
-    while (diff > threshold && iteration <= iter_max) {
+    while (diff > threshold && iteration < iter_max) {
         diff = 0;
         // printf("\t In iter %d\n", iteration);
         for (i = 1; i <= N ; i++) {
@@ -35,10 +34,13 @@ jacobi(int N, double threshold, int iter_max, double ***U_old, double ***U_new, 
                         U_old[i][j][k+1] + 
                         delta * delta * F[i][j][k]);
                     diff += (U_old[i][j][k] - U_new[i][j][k])*(U_old[i][j][k] - U_new[i][j][k]);
+                    // printf("U_new=%lf\n", U_new[i][j][k]);
+                    // printf("F=%lf\n", F[i][j][k]);
                 }
             }
         }
         diff = sqrt(diff_scale *diff);
+        // printf("diff=%lf\n", diff);
         swap_3d(&U_old, &U_new);
 
         iteration++;
@@ -98,9 +100,9 @@ jacobi_para_opt(int N, double threshold, int iter_max, double ***U_old, double *
     double diff_tmp;
     double diff = INFINITY;
     double diff_scale = 1./(N*N*N);
-    int iteration = 1; // 1-indiced iterations
+    int iteration = 0; // 1-indiced iterations
 
-    while (diff > threshold && iteration <= iter_max) {
+    while (diff > threshold && iteration < iter_max) {
         diff = 0;
         for (i = 1; i <= N ; i++) {
             for (j = 1; j <= N; j++) {

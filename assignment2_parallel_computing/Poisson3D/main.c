@@ -125,7 +125,7 @@ main(int argc, char *argv[]) {
     double step_size = calc_step_size(N);
 
     // init matrices
-    init_grid_matrices(F, U, N);
+    init_grid_matrices(F, U, N, start_T);
 
     // print setup
     printf("Setup \n");

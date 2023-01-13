@@ -51,13 +51,13 @@ void init_F(double ***F, double N){
     }
 }
 
-void init_U(double ***U, double N){
+void init_U(double ***U, double N, double start_T){
     int i, j, k;
     printf("\t- init U\n");
     for (i = 1; i <= N; i++){
         for (j = 1; j <= N; j++){
             for (k = 1; k <= N; k++){
-                U[i][j][k] = 0;
+                U[i][j][k] = start_T;
             }
         }
     }
@@ -104,11 +104,11 @@ void init_constant(double ***F, double ***U, double N){
     }
 }
 
-void init_grid_matrices(double ***F, double ***U, int N){
+void init_grid_matrices(double ***F, double ***U, int N, double start_T){
     printf("Initializing grid matrices for program\n");
     init_constant(F, U, N);
     init_F(F, N);
-    init_U(U, N);
+    init_U(U, N, start_T);
 }
 
 // #endif
