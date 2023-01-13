@@ -8,6 +8,17 @@
 #include "helper.h"
 #include <math.h>
 
+// timer function
+#ifdef _OPENMP
+#include <omp.h>
+#define mytimer omp_get_wtime
+#define delta_t(a,b) (1e3 * ((b)-(a)))
+#else
+#include <time.h>
+#define mytimer clock
+#define delta_t(a,b) (1e3 * ((b) - (a)) / CLOCKS_PER_SEC)
+#endif
+
 // get matrix init
 #ifdef _TEST
 #include "matrix_init_test.h"
@@ -22,52 +33,40 @@
 void solver(int version, int N, double tolerance, int iter_max, double ***U, double ***F, double step_size){
     double ***U_new = NULL;
     if ( (U_new = malloc_3d(N+2,N+2,N+2)) == NULL ) {
-        perror("array u: allocation failed");
+        perror("array U_new: allocation failed");
         exit(-1);
     }
-    switch(version){
-    case 0:
+    if (version == 0){
         jacobi(N, tolerance, iter_max, U, U_new, F, step_size);
-        break;
-    case 1:
+    } else if (version == 1){
         jacobi_para_simpel(N, tolerance, iter_max, U, U_new, F, step_size);
-        break;
-    case 2:
+    } else if (version == 2){
         jacobi_para_opt(N, tolerance, iter_max, U, U_new, F, step_size);
-        break;
+    } else {
+        perror("Error: version not supported");
+        exit(-1);
     }
 }
 #endif
 
 #ifdef _GAUSS_SEIDEL
 #include "gauss_seidel.h"
+
 // function for solving the Poisson problem
 void solver(int version, int N, double tolerance, int iter_max, double ***U, double ***F, double step_size){
-    switch(version){
-    case 0: 
+    if (version == 0){
         gauss_seidel(N, tolerance, iter_max, U, F, step_size);
-        break;
-    case 1:
+    } else if (version == 1){
         gauss_seidel_para_simpel(N, tolerance, iter_max, U, F, step_size);
-        break;
-    case 2:
+    } else if (version == 2){
         gauss_seidel_para_opt(N, tolerance, iter_max, U, F, step_size);
-        break;
+    } else {
+        perror("Error: version not supported");
+        exit(-1);
     }
-    gauss_seidel(N, tolerance, iter_max, U, F, step_size);
 }
 #endif
 
-// timer function
-#ifdef _OPENMP
-#include <omp.h>
-#define mytimer omp_get_wtime
-#define delta_t(a,b) (1e3 * ((b)-(a)))
-#else
-#include <time.h>
-#define mytimer clock
-#define delta_t(a,b) (1e3 * ((b) - (a)) / CLOCKS_PER_SEC)
-#endif
 
 #define N_DEFAULT 100
 
@@ -154,15 +153,15 @@ main(int argc, char *argv[]) {
     printf("\tStart_T: %lf\n", start_T);
     printf("\tStep_size: %lf\n", step_size);
 
+    
+
     // print results
     printf("Results\n");
 
     // solve 
     t1 = mytimer();
-    #pragma omp parallel
-    {
+    // solve
     solver(version, N, tolerance, iter_max, U, F, step_size);
-    }
     t2 = mytimer();
 
     // print time results

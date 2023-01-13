@@ -17,14 +17,14 @@ MATRIX_HEADER = matrix_init$(test_ext).h
 #
 CC	= gcc
 DEFS	= 
-OPT	= -g #-std=c99 #note: -std=c99 does not support M_PI
+OPT	= #-g #-std=c99 #note: -std=c99 does not support M_PI
 XOPTS	= 
 IPO	= 
 ISA	= 
 CHIP	= 
 ARCH	= 
-PARA	= #-fopenmp
-CFLAGteS	= $(DEFS) $(ARCH) $(OPT) $(ISA) $(CHIP) $(IPO) $(PARA) $(XOPTS)
+PARA	= -fopenmp
+CFLAGS	= $(DEFS) $(ARCH) $(OPT) $(ISA) $(CHIP) $(IPO) $(PARA) $(XOPTS)
 LDFLAGS = -lm 
 TEST_FLAG =
 
@@ -89,6 +89,67 @@ test: all
 	./poisson_gs 50 20000 0.0001 0 0 2
 
 	@echo
+
+
+test_par: TEST_FLAG += -D_TEST 
+test_par: all
+	# @echo
+	# @echo "Serial"
+	# ./poisson_j 50 200 0.0001 0 0 0
+	# @echo
+	# @echo "1 thread"
+	# OMP_NUM_THREADS=1 ./poisson_j 50 200 0.0001 0 0 1
+	# @echo
+	# @echo "8 threads"
+	# OMP_NUM_THREADS=8 ./poisson_j 50 200 0.0001 0 0 1
+	# @echo
+
+	@echo
+	@echo "Serial"
+	./poisson_gs 50 250 0.0001 0 0 0
+	@echo
+	@echo "1 thread"
+	OMP_NUM_THREADS=1 ./poisson_gs 50 250 0.0001 0 0 1
+	@echo
+	@echo "8 threads"
+	OMP_NUM_THREADS=8 ./poisson_gs 50 250 0.0001 0 0 1
+	@echo
+	@echo "1 thread"
+	OMP_NUM_THREADS=1 ./poisson_gs 50 250 0.0001 0 0 2
+	@echo
+	@echo "8 threads"
+	OMP_NUM_THREADS=8 ./poisson_gs 50 250 0.0001 0 0 2
+	@echo
+
+test_races: CC = cc
+test_races: OPT = -g -fast -xopenmp -xloopinfo -xinstrument=datarace
+test_races: all
+	@echo
+	@echo "Running Jacobi parallel N=50"
+	@echo
+	@echo "Serial"
+	./poisson_j 50 20000 0.0001 0 0 0
+	@echo
+	@echo "Parallel simple"
+	OMP_NUM_THREADS=8 collect -r on ./poisson_j 50 50 0.0001 0 0 1
+	@echo
+	@echo "Parallel optimized"
+	OMP_NUM_THREADS=8 collect -r on ./poisson_j 50 50 0.0001 0 0 2
+
+	@echo
+	@echo "Running Gauss Seidel test for N=50"
+	@echo
+	@echo "Serial"
+	./poisson_gs 50 20000 0.0001 0 0 0
+	@echo
+	@echo "Parallel simple"
+	OMP_NUM_THREADS=8 collect -r on ./poisson_gs 50 50 0.0001 0 0 1
+	@echo
+	@echo "Parallel optimized"
+	OMP_NUM_THREADS=8 collect -r ./poisson_gs 50 20000 0.0001 0 0 2
+
+	@echo
+
 # DO NOT DELETE
 
 main_j.o: main.c print.h jacobi.h helper.h $(MATRIX_HEADER)
