@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set()
+sns.set_style("whitegrid")
 from help_funcs import get_plot_folder, get_args, get_dataframe
 
 # plot settings
@@ -30,8 +31,8 @@ def plot_error(df, plot_folder):
     
     err_n_jacobi = df[df['file'].str.contains("_j_N")].sort_values(by=['N'])
     err_n_gauss_seidel = df[df['file'].str.contains("_gs_N")].sort_values(by=['N'])
-    ax.plot(err_n_jacobi.N, err_n_jacobi.iterations, marker = "x", color = "C0", label = "Jacobi iterations vs N, tol = 0.001")
-    ax.plot(err_n_gauss_seidel.N, err_n_gauss_seidel.iterations, marker = "o", color = "C1", label = "Gauss-Seidel iterations vs N, tol = 0.001")
+    ax.plot(err_n_jacobi.N, err_n_jacobi.iterations, marker = "x", color = "C0", label = "Jacobi iterations vs N, tol = 0.01")
+    ax.plot(err_n_gauss_seidel.N, err_n_gauss_seidel.iterations, marker = "o", color = "C1", label = "Gauss-Seidel iterations vs N, tol = 0.01")
     ax.legend(loc="best", fontsize = 12, fancybox = True, framealpha = 1)
     fig.tight_layout()
 

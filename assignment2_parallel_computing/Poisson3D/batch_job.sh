@@ -61,7 +61,7 @@ echo "Number of available cores: " $LSB_DJOB_NUMPROC >> $RESULT_FOLDER/setup.txt
 
 # set default values
 export start_T=0
-export max_iters=2000
+export max_iters=400000
 export tol=0.01
 export N=100
 
