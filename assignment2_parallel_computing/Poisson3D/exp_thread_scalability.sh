@@ -19,11 +19,15 @@ module load gcc
 make realclean
 make PARA=-fopenmp
 
+module load gcc
+module load python3
+source ../../../venv/bin/activate
+
 # set Ns to test
-Ns="10 50 100"
+Ns="50"
 thread_step_size=1
 
-LSB_DJOB_NUMPROC=4
+#LSB_DJOB_NUMPROC=4
 
 
 
@@ -42,9 +46,12 @@ for n_threads in $( eval echo {1..$LSB_DJOB_NUMPROC..$thread_step_size} ); do
     echo "Threads = $n_threads"
     for n in $Ns; do
         echo "N = $n"
-        OMP_NUM_THREADS=$n_threads ./poisson_j $n $max_iters $tol $start_T 0 > $OUT_DIR/output_j_N_${n}_threads_${n_threads}_ser.txt
-        OMP_NUM_THREADS=$n_threads ./poisson_gs $n $max_iters $tol $start_T 0 > $OUT_DIR/output_gs_N_${n}_threads_${n_threads}_ser.txt
-        OMP_NUM_THREADS=$n_threads ./poisson_j $n $max_iters $tol $start_T 0 1 > $OUT_DIR/output_j_N_${n}_threads_${n_threads}_sim.txt
-        OMP_NUM_THREADS=$n_threads ./poisson_gs $n $max_iters $tol $start_T 0 1 > $OUT_DIR/output_gs_N_${n}_threads_${n_threads}_sim.txt
+        OMP_NUM_THREADS=$n_threads ./poisson_j $n $max_iters $tol $start_T 0 0 1 > $OUT_DIR/output_j_N_${n}_threads_${n_threads}_v1.txt
+        OMP_NUM_THREADS=$n_threads ./poisson_gs $n $max_iters $tol $start_T 0 0 1 > $OUT_DIR/output_gs_N_${n}_threads_${n_threads}_v1.txt
+        OMP_NUM_THREADS=$n_threads ./poisson_j $n $max_iters $tol $start_T 0 0 2 > $OUT_DIR/output_j_N_${n}_threads_${n_threads}_v2.txt
+        #OMP_NUM_THREADS=$n_threads ./poisson_gs $n $max_iters $tol $start_T 0 0 2 > $OUT_DIR/output_gs_N_${n}_threads_${n_threads}_v2.txt
     done
 done
+
+echo "Making plots of thread scalability..."
+python3 plot_threads.py --save_folder $EXP_DIR --output_files $OUT_DIR

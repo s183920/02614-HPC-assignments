@@ -42,7 +42,6 @@ void init_F(double ***F, double N){
     i_lwr = (int)ceil(((1.0 - 2.0/3.0) / step_size));
     i_upr = (int)(1.0 / step_size);
     
-    printf("i_lwr: %d, i_upr: %d, j_upr: %d, k_upr: %d\n", i_lwr, i_upr, j_upr, k_upr);
 
     for (i = i_lwr; i <= i_upr; i++){
         for (j = 0; j <= j_upr; j++){
