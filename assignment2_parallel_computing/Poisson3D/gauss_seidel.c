@@ -111,5 +111,5 @@ void gauss_seidel_para_opt(int N, double threshold, int iter_max, double ***U, d
 
     // print results
     printf("\tIterations: %d\n", iteration);
-    printf("\tConvergence_difference: %lf\n", 0);
+    printf("\tConvergence_difference: %lf\n", 0.0);
 }

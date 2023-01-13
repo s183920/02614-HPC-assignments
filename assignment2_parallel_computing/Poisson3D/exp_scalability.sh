@@ -57,12 +57,12 @@ for opt_method in $opt_methods; do
             echo "N = $n"
             for v in $versions; do
                 echo "Version = $v"
-                OMP_NUM_THREADS=${n_threads} ./poisson_serial $n $max_iters $tol $start_T 0 $v > $OUT_DIR/output_serial_N_${n}_threads_${n_threads}_v${v}.txt
+                OMP_NUM_THREADS=${n_threads} ./poisson_j $n $max_iters $tol $start_T 0 $v > $OUT_DIR/output_j_N_${n}_threads_${n_threads}_v${version}.txt
             done
         done;
-        version=2
+        v=2
         # OMP_NUM_THREADS=${n_threads} ./poisson_j $n $max_iters $tol $start_T 0 $version > $OUT_DIR/output_j_N_${n}_threads_${n_threads}_v${version}.txt
-        OMP_NUM_THREADS=${n_threads} ./poisson_gs $n $max_iters $tol $start_T 0 $version > $OUT_DIR/output_gs_N_${n}_threads_${n_threads}_v${version}.txt
+        OMP_NUM_THREADS=${n_threads} ./poisson_gs $n $max_iters $tol $start_T 0 $v > $OUT_DIR/output_gs_N_${n}_threads_${n_threads}_v${version}.txt
     done;echo
 done
 
