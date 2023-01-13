@@ -86,17 +86,20 @@ void init_U(double ***U, double N, double start_T){
     // }
 }
 
-void init_constant(double ***F, double ***U, double N){
-    int i, j, k;
+void init_constant(double ***F, double ***U, int N){
+    // int i, j, k;
     double x, y, z, step_size;
     x = y = z = 0;
     step_size = calc_step_size(N);
     printf("\t- Constant init\n");
-    for (i = 0; i <= N+1; i++){
+    #pragma omp parallel for \
+            private(x, y, z) \
+            shared(F, U, N, step_size)
+    for (int i = 0; i < N+2; i++){
         z = -1.0 + step_size*i;
-        for (j = 0; j <= N+1; j++){
+        for (int j = 0; j < N+2; j++){
             y = -1.0 + step_size*j;
-            for (k = 0; k <= N+1; k++){
+            for (int k = 0; k < N+2; k++){
                 x = -1.0 + step_size*k;
 
                 F[i][j][k] = 0;

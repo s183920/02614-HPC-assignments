@@ -13,8 +13,9 @@
 #
 #BSUB -J collector
 #BSUB -q hpcintro
-#BSUB -n 4
+#BSUB -n 20
 #BSUB -W 15
+#BSUB -R "rusage[mem=10GB]"
 
 
 module load studio
@@ -24,7 +25,7 @@ module load studio
 EXECUTABLE=poisson_j
 
 # define any command line options for your executable here
-EXECOPTS="100 20000 0.01 0 0 2"
+EXECOPTS="700lf 5 0.01 0 0 2"
 
 # set some OpenMP variables here
 #
@@ -35,13 +36,16 @@ export OMP_NUM_THREADS=$LSB_DJOB_NUMPROC
 export OMP_WAIT_POLICY=active
 #
 # if you use a runtime schedule, define it below
-export OMP_SCHEDULE=static,50
+export OMP_SCHEDULE=static,1
+export OMP_PLACES=cores
+export OMP_PROC_BIND=spread
 
 
 # experiment name 
 #
 JID=${LSB_JOBID}
 EXPOUT="../er_tests/$LSB_JOBNAME.${JID}_static.er"
+HWCOUNT = "-h dch,on,dcm,on,l2h,on,l2m,on,l3h,on,l3m,on"
 
 # start the collect command with the above settings
-collect -o $EXPOUT ./$EXECUTABLE $EXECOPTS
+collect -o $HWCOUNT $EXPOUT ./$EXECUTABLE $EXECOPTS

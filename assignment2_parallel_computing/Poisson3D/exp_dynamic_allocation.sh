@@ -17,11 +17,11 @@ make PARA=-fopenmp
 
 # set Ns to test
 N=500
-step_size=1
-max_chunk=10
+step_size=10
+max_chunk=100
 versions=2
 
-# LSB_DJOB_NUMPROC=20
+# LSB_DJOB_NUMPROC=4
 
 
 
@@ -39,10 +39,13 @@ echo "thread_step_size = $thread_step_size" >> $EXP_DIR/setup.txt
 echo "Running dynamic chunksize experiment for parallel code"
 #OMP_NUM_THREADS=$LSB_DJOB_NUMPROC ./poisson_gs $N $max_iters $tol $start_T 0 $version > $OUT_DIR/output_gs_N_${n}_threads_${LSB_DJOB_NUMPROC}_v_static.txt
   
+
+export OMP_PLACES=cores
+export OMP_PROC_BIND=spread
 for chunk_size in $( eval echo {1..$max_chunk..$step_size} ); do
     echo '"'"Chunk_size=${chunk_size}"'"'
     
-    OMP_SCHEDULE=static,$chunk_size OMP_NUM_THREADS=$LSB_DJOB_NUMPROC ./poisson_j $N $max_iters $tol $start_T 0 2 > $OUT_DIR/output_j_N_${n}_threads_${LSB_DJOB_NUMPROC}_v_static_${chunk_size}.txt
+    OMP_SCHEDULE=static,$chunk_size OMP_NUM_THREADS=$LSB_DJOB_NUMPROC ./poisson_j $N $max_iters $tol $start_T 0 2 > $OUT_DIR/output_j_N_${N}_threads_${LSB_DJOB_NUMPROC}_v_static_${chunk_size}.txt
     #OMP_SCHEDULE=“dynamic,$chunk_size” OMP_NUM_THREADS=$LSB_DJOB_NUMPROC ./poisson_gs $N $max_iters $tol $start_T 0 $version > $OUT_DIR/output_gs_N_${n}_threads_${LSB_DJOB_NUMPROC}_v_dynamic_${chunk_size}.txt
-    OMP_SCHEDULE=dynamic,$chunk_size OMP_NUM_THREADS=$LSB_DJOB_NUMPROC ./poisson_j $N $max_iters $tol $start_T 0 2 > $OUT_DIR/output_j_N_${n}_threads_${LSB_DJOB_NUMPROC}_v_dynamic_${chunk_size}.txt
+    OMP_SCHEDULE=dynamic,$chunk_size OMP_NUM_THREADS=$LSB_DJOB_NUMPROC ./poisson_j $N $max_iters $tol $start_T 0 2 > $OUT_DIR/output_j_N_${N}_threads_${LSB_DJOB_NUMPROC}_v_dynamic_${chunk_size}.txt
 done
