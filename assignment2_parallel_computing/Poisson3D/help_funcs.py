@@ -19,8 +19,6 @@ def get_args():
     return args
 
 def get_plot_folder(args):
-    # argparser
-
     # exp = args.folder + "/" + args.exp + "/"
     plot_folder = args.save_folder + "/plots/"
 
@@ -56,7 +54,10 @@ def get_dataframe(args): # TODO update
             iterations.append(data[5])
             diffs.append(data[6])
             time.append(data[7])
-            error.append(data[8])
+            if len(data) == 9:
+                error.append(data[8])
+            else:
+                error.append(np.inf)
     
     df = pd.DataFrame({'file': files,
                         'max_iter': max_iter,
