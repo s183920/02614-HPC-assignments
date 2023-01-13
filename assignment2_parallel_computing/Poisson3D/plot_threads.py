@@ -1,4 +1,5 @@
 import os
+import re
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -15,26 +16,27 @@ plt.rcParams["axes.titlesize"] = 16
 def plot_threads(df, plot_folder):
     # make plot
     fig, axes = plt.subplots(1,1, figsize=(15, 10))
-
+    print(df)
     ax = axes
     ax.set_ylabel("Speedup")
     ax.set_xlabel("Number of Threads")
-    ax.set_title("Number of iterations before convergence over N") # TODO: fix plot when results have been obtained
+    ax.set_title("Speedup over number of Threads") # TODO: fix plot when results have been obtained
     #df["threads"] = df["file"].str.extract(r"_(\d+)t_")
-    
+    #df["threads"] = [int(re.findall(r"[-+]?(?:\d*\.*\d+)", df["file"][i])[1]) for i in range(len(df["file"]))]
+    #df.sort_values(by=['threads'], inplace = True)
     threads = list(range(1,21))
-    threads_n_jacobi_ser = df[df['file'].str.contains(r'^(?=.*_j_)(?=.*v1)')]
-    threads_n_gauss_seidel_ser = df[df['file'].str.contains(r'^(?=.*_gs_)(?=.*v1)')]
-    threads_n_jacobi_sim = df[df['file'].str.contains(r'^(?=.*_j_)(?=.*v2)')]
-    threads_n_jacobi_ser["speedup"] = threads_n_jacobi_ser.time.iloc[0]/threads_n_jacobi_ser.time
-    threads_n_gauss_seidel_ser["speedup"] = threads_n_gauss_seidel_ser.time.iloc[0]/threads_n_gauss_seidel_ser.time
-    threads_n_jacobi_sim["speedup"] = threads_n_jacobi_sim.time.iloc[0]/threads_n_jacobi_sim.time
-
+    threads_n_jacobi_v1 = df[df['file'].str.contains(r'^(?=.*_j_)(?=.*v1)')]
+    threads_n_gauss_seidel_v1 = df[df['file'].str.contains(r'^(?=.*_gs_)(?=.*v1)')]
+    threads_n_jacobi_v2 = df[df['file'].str.contains(r'^(?=.*_j_)(?=.*v2)')]
+    threads_n_jacobi_v1["speedup"] = threads_n_jacobi_v1.time.iloc[0]/threads_n_jacobi_v1.time
+    threads_n_gauss_seidel_v1["speedup"] = threads_n_gauss_seidel_v1.time.iloc[0]/threads_n_gauss_seidel_v1.time
+    threads_n_jacobi_v2["speedup"] = threads_n_jacobi_v2.time.iloc[0]/threads_n_jacobi_v2.time
+    print(threads_n_jacobi_v1)
 
     #threads_n_gauss_seidel_sim = df[df['file'].str.contains(r'^(?=.*_gs_)(?=.*v2)')]
-    ax.plot(threads, threads_n_jacobi_ser.speedup, marker = "x", color = "C0", label = "Jacobi_parallel")
-    ax.plot(threads, threads_n_gauss_seidel_ser.speedup, marker = "o", color = "C1", label = "Gauss-Seidel_parallel")
-    ax.plot(threads, threads_n_jacobi_sim.speedup, marker = "^", color = "C2", label = "Jacobi_modified_parallel")
+    ax.plot(threads, threads_n_jacobi_v1.speedup, marker = "x", color = "C0", label = "Jacobi_v1")
+    ax.plot(threads, threads_n_gauss_seidel_v1.speedup, marker = "o", color = "C1", label = "Gauss-Seidel_v2")
+    ax.plot(threads, threads_n_jacobi_v2.speedup, marker = "^", color = "C2", label = "Jacobi_v2")
     #ax.plot(threads_n_gauss_seidel_sim.threads, threads_n_gauss_seidel_sim.time, marker = "v", color = "C3", label = "Gauss-Seidel_simple")
     ax.legend(loc="best", fontsize = 12, fancybox = True, framealpha = 1)
     fig.tight_layout()

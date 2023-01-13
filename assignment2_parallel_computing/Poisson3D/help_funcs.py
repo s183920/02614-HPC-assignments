@@ -26,6 +26,12 @@ def get_plot_folder(args):
     os.makedirs(plot_folder, exist_ok = True)
 
     return plot_folder
+    
+numbers = re.compile(r'(\d+)')
+def numericalSort(value):
+    parts = numbers.split(value)
+    parts[1::2] = map(int, parts[1::2])
+    return parts
 
 def get_dataframe(args): # TODO update
     folder = args.output_files 
@@ -39,7 +45,7 @@ def get_dataframe(args): # TODO update
     diffs = []
     tolerances = []
     error = []
-    for file in os.listdir(folder):
+    for file in sorted(os.listdir(folder), key=numericalSort):
         #print(os.path.join(folder, file))
         with open(os.path.join(folder, file), 'r') as f:
             files.append(file)
@@ -75,6 +81,9 @@ def get_dataframe(args): # TODO update
                     'time':'float'})
     #print(df)
     # make folder for plots
+    #df.sort_values(by='file', inplace=True)
+    df.sort_index()
+
     output_folder = args.save_folder + "/df/"
     os.makedirs(output_folder, exist_ok = True)
     df.to_csv(output_folder + "results.csv")

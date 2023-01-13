@@ -24,7 +24,7 @@ module load python3
 source ../../../venv/bin/activate
 
 # set Ns to test
-Ns="50"
+Ns="200"
 thread_step_size=1
 
 #LSB_DJOB_NUMPROC=4
@@ -46,9 +46,9 @@ for n_threads in $( eval echo {1..$LSB_DJOB_NUMPROC..$thread_step_size} ); do
     echo "Threads = $n_threads"
     for n in $Ns; do
         echo "N = $n"
-        OMP_NUM_THREADS=$n_threads ./poisson_j $n $max_iters $tol $start_T 0 0 1 > $OUT_DIR/output_j_N_${n}_threads_${n_threads}_v1.txt
-        OMP_NUM_THREADS=$n_threads ./poisson_gs $n $max_iters $tol $start_T 0 0 1 > $OUT_DIR/output_gs_N_${n}_threads_${n_threads}_v1.txt
-        OMP_NUM_THREADS=$n_threads ./poisson_j $n $max_iters $tol $start_T 0 0 2 > $OUT_DIR/output_j_N_${n}_threads_${n_threads}_v2.txt
+        OMP_NUM_THREADS=$n_threads ./poisson_j $n $max_iters $tol $start_T 0 1 > $OUT_DIR/output_j_N_${n}_threads_${n_threads}_v1.txt
+        OMP_NUM_THREADS=$n_threads ./poisson_gs $n $max_iters $tol $start_T 0 2 > $OUT_DIR/output_gs_N_${n}_threads_${n_threads}_v1.txt
+        OMP_NUM_THREADS=$n_threads ./poisson_j $n $max_iters $tol $start_T 0 2 > $OUT_DIR/output_j_N_${n}_threads_${n_threads}_v2.txt
         #OMP_NUM_THREADS=$n_threads ./poisson_gs $n $max_iters $tol $start_T 0 0 2 > $OUT_DIR/output_gs_N_${n}_threads_${n_threads}_v2.txt
     done
 done
