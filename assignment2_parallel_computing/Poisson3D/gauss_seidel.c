@@ -47,9 +47,6 @@ void gauss_seidel(int N, double threshold, int iter_max, double ***U, double ***
 
 
 // parallel
-
-// obtained error not the same, convergence difference ignored as this is a bottleneck
-// error seems to be influenced by calculation of convergence difference
 void gauss_seidel_para_simpel(int N, double threshold, int iter_max, double ***U, double ***F, double delta) {
     // constants
     double gauss_scale = 1.0/6.0; // d in slides
@@ -71,15 +68,14 @@ void gauss_seidel_para_simpel(int N, double threshold, int iter_max, double ***U
                 #pragma omp ordered depend(sink: i-1,j) depend(sink: i,j-1) 
                 for (k = 1; k <= N; k++) {
                     double new_u = gauss_seidel_update(U, F, i, j, k, gauss_scale, delta2);
-                    // #pragma omp atomic
-                    // convergence += (new_u - U[i][j][k])*(new_u - U[i][j][k]);
+                    #pragma omp atomic
+                    convergence += (new_u - U[i][j][k])*(new_u - U[i][j][k]); // convergence difference ignored as this is a bottleneck
                     U[i][j][k] = new_u;
                 }
                 #pragma omp ordered depend(source)
             }
         } // end parallel
-        // convergence = sqrt(norm_scale * convergence);
-        iteration++;
+        convergence = sqrt(norm_scale * convergence);
     }
 
     // print results
@@ -89,38 +85,38 @@ void gauss_seidel_para_simpel(int N, double threshold, int iter_max, double ***U
 
 
 // parallel opt
-void
-gauss_seidel_para_opt(int N, double threshold, int iter_max, double ***U, double ***F, double delta) {
+void gauss_seidel_para_opt(int N, double threshold, int iter_max, double ***U, double ***F, double delta) {
+    // constants
+    double gauss_scale = 1.0/6.0; // d in slides
+    double norm_scale = 1./(N*N*N); // normalisation
+    double delta2 = delta*delta;
+
+    // loop vars
     int i, j, k;
-    double scale = 1.0/6.0;
+    int iteration;
 
-    double diff_tmp;
-    double diff = INFINITY;
-    double diff_scale = 1./(N*N*N);
-    int iteration = 1; // 1-indiced iterations
-
-    while (diff > threshold && iteration <= iter_max) {
-        diff = 0;
+    // convergence
+    double convergence = INFINITY;
+    
+    for (iteration = 0; iteration < iter_max; iteration++) {
+        convergence = 0;
+        #pragma omp parallel for schedule(static,1) ordered(2) private(i,j,k)
         for (i = 1; i <= N ; i++) {
             for (j = 1; j <= N; j++) {
+                #pragma omp ordered depend(sink: i-1,j) depend(sink: i,j-1) 
                 for (k = 1; k <= N; k++) {
-                    diff_tmp = scale * ( // should this be initialised here when parallelising
-                        U[i-1][j][k] + 
-                        U[i+1][j][k] + 
-                        U[i][j-1][k] + 
-                        U[i][j+1][k] + 
-                        U[i][j][k-1] + 
-                        U[i][j][k+1] + 
-                        delta * delta * F[i][j][k]);
-                    diff += (diff_tmp - U[i][j][k])*(diff_tmp - U[i][j][k]);
-                    U[i][j][k] = diff_tmp;
+                    double new_u = gauss_seidel_update(U, F, i, j, k, gauss_scale, delta2);
+                    // #pragma omp atomic
+                    // convergence += (new_u - U[i][j][k])*(new_u - U[i][j][k]); // convergence difference ignored as this is a bottleneck
+                    U[i][j][k] = new_u;
                 }
+                #pragma omp ordered depend(source)
             }
-        }
-        diff = sqrt(diff_scale *diff);
-        iteration++;
+        } // end parallel
+        convergence = sqrt(norm_scale * convergence);
     }
 
+    // print results
     printf("\tIterations: %d\n", iteration);
-    printf("\tConvergence_difference: %lf\n", diff);
+    printf("\tConvergence_difference: %lf\n", convergence);
 }

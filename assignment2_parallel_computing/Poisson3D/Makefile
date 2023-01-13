@@ -114,6 +114,12 @@ test_par: all
 	@echo "8 threads"
 	OMP_NUM_THREADS=8 ./poisson_gs 50 250 0.0001 0 0 1
 	@echo
+	@echo "1 thread"
+	OMP_NUM_THREADS=1 ./poisson_gs 50 250 0.0001 0 0 2
+	@echo
+	@echo "8 threads"
+	OMP_NUM_THREADS=8 ./poisson_gs 50 250 0.0001 0 0 2
+	@echo
 
 test_races: CC = cc
 test_races: OPT = -g -fast -xopenmp -xloopinfo -xinstrument=datarace
