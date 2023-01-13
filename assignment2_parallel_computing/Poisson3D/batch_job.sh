@@ -21,7 +21,7 @@ mkdir -p ../hpc_logs
 ### -- set the job queue --
 #BSUB -q hpcintro
 ### -- ask for number of cores (default: 1) --
-#BSUB -n 3
+#BSUB -n 20
 ### -- specify that the cores MUST BE on a single host! It's a SMP job! --
 #BSUB -R "span[hosts=1]"
 ### -- set walltime limit: hh:mm --

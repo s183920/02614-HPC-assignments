@@ -12,13 +12,13 @@ plt.rcParams["axes.labelsize"] = 16
 plt.rcParams["axes.titlesize"] = 16
 
 # get data
-def get_data(): # TODO update
-    Ns = range(10, 100, 10)
-    iterations_jacobi = np.random.gamma(1, 0.1, size = len(Ns))
-    iterations_gauss_seidel = np.random.gamma(1, 0.1, size = len(Ns))
-    times_jacobi = np.random.gamma(1, 0.1, size = len(Ns))
-    times_gauss_seidel = np.random.gamma(1, 0.1, size = len(Ns))
-    return Ns, iterations_jacobi, iterations_gauss_seidel, times_jacobi, times_gauss_seidel
+#def get_data(): # TODO update
+ #   Ns = range(10, 100, 10)
+  #  iterations_jacobi = np.random.gamma(1, 0.1, size = len(Ns))
+   # iterations_gauss_seidel = np.random.gamma(1, 0.1, size = len(Ns))
+    #times_jacobi = np.random.gamma(1, 0.1, size = len(Ns))
+    #times_gauss_seidel = np.random.gamma(1, 0.1, size = len(Ns))
+    #return Ns, iterations_jacobi, iterations_gauss_seidel, times_jacobi, times_gauss_seidel
 
 def plot_error(df, plot_folder):
     # make plot
@@ -27,12 +27,12 @@ def plot_error(df, plot_folder):
     ax = axes
     ax.set_ylabel("Iterations")
     ax.set_xlabel("N")
-    ax.set_title("Number of iterations before convergence over N") # TODO: fix plot when results have been obtained
+    ax.set_title("Number of iterations before convergence") # TODO: fix plot when results have been obtained
     
     err_n_jacobi = df[df['file'].str.contains("_j_N")].sort_values(by=['N'])
     err_n_gauss_seidel = df[df['file'].str.contains("_gs_N")].sort_values(by=['N'])
-    ax.plot(err_n_jacobi.N, err_n_jacobi.iterations, marker = "x", color = "C0", label = "Jacobi iterations vs N, tol = " + str(err_n_jacobi.tolerance.iloc[0]))
-    ax.plot(err_n_gauss_seidel.N, err_n_gauss_seidel.iterations, marker = "o", color = "C1", label = "Gauss-Seidel iterations vs N, tol = " + str(err_n_gauss_seidel.tolerance.iloc[0]))
+    ax.plot(err_n_jacobi.N, err_n_jacobi.iterations, marker = "x", color = "C0", label = "Serial Jacobi, tol = " + str(err_n_jacobi.tolerance.iloc[0]))
+    ax.plot(err_n_gauss_seidel.N, err_n_gauss_seidel.iterations, marker = "o", color = "C1", label = "Serial Gauss-Seidel, tol = " + str(err_n_gauss_seidel.tolerance.iloc[0]))
     ax.legend(loc="best", fontsize = 12, fancybox = True, framealpha = 1)
     fig.tight_layout()
 
