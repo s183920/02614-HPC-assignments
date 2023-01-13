@@ -39,6 +39,19 @@ def plot_error(df, plot_folder):
     # save plot
     plt.savefig(plot_folder + 'iteration.png')
 
+    ax = axes
+    ax.set_ylabel("Iterations")
+    ax.set_xlabel("N")
+    ax.set_title("Number of iterations/s before convergence") # TODO: fix plot when results have been obtained
+    
+    ax.plot(err_n_jacobi.N, err_n_jacobi.iterations/err_n_jacobi.time, marker = "x", color = "C0", label = "Serial Jacobi, tol = " + str(err_n_jacobi.tolerance.iloc[0]))
+    ax.plot(err_n_gauss_seidel.N, err_n_gauss_seidel.iterations/err_n_gauss_seidel.time, marker = "o", color = "C1", label = "Serial Gauss-Seidel, tol = " + str(err_n_gauss_seidel.tolerance.iloc[0]))
+    ax.legend(loc="best", fontsize = 12, fancybox = True, framealpha = 1)
+    fig.tight_layout()
+
+    # save plot
+    plt.savefig(plot_folder + 'iteration.png')
+
 if __name__ == "__main__":
     args = get_args()
     plot_folder = get_plot_folder(args)

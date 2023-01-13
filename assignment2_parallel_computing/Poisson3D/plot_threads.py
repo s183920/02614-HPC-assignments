@@ -21,22 +21,30 @@ def plot_threads(df, plot_folder):
     ax.set_ylabel("Speedup")
     ax.set_xlabel("Number of Threads")
     ax.set_title("Speedup over number of Threads") # TODO: fix plot when results have been obtained
-    #df["threads"] = df["file"].str.extract(r"_(\d+)t_")
-    #df["threads"] = [int(re.findall(r"[-+]?(?:\d*\.*\d+)", df["file"][i])[1]) for i in range(len(df["file"]))]
-    #df.sort_values(by=['threads'], inplace = True)
+    
     threads = list(range(1,21))
-    threads_n_jacobi_v1 = df[df['file'].str.contains(r'^(?=.*_j_)(?=.*v1)')]
-    threads_n_gauss_seidel_v1 = df[df['file'].str.contains(r'^(?=.*_gs_)(?=.*v1)')]
-    threads_n_jacobi_v2 = df[df['file'].str.contains(r'^(?=.*_j_)(?=.*v2)')]
-    threads_n_jacobi_v1["speedup"] = threads_n_jacobi_v1.time.iloc[0]/threads_n_jacobi_v1.time
-    threads_n_gauss_seidel_v1["speedup"] = threads_n_gauss_seidel_v1.time.iloc[0]/threads_n_gauss_seidel_v1.time
-    threads_n_jacobi_v2["speedup"] = threads_n_jacobi_v2.time.iloc[0]/threads_n_jacobi_v2.time
-    print(threads_n_jacobi_v1)
+    threads_n_jacobi_v1_128 = df[df['file'].str.contains(r'^(?=.*_j_N_128)(?=.*v1)')]
+    threads_n_jacobi_v1_256 = df[df['file'].str.contains(r'^(?=.*_j_N_256)(?=.*v1)')]
+    threads_n_gauss_seidel_v1_128 = df[df['file'].str.contains(r'^(?=.*_gs_N_128)(?=.*v1)')]
+    threads_n_gauss_seidel_v1_256 = df[df['file'].str.contains(r'^(?=.*_gs_N_256)(?=.*v1)')]
+    threads_n_jacobi_v2_128 = df[df['file'].str.contains(r'^(?=.*_j_N_128)(?=.*v2)')]
+    threads_n_jacobi_v2_256 = df[df['file'].str.contains(r'^(?=.*_j_N_256)(?=.*v2)')]
+    #speedups
+    threads_n_jacobi_v1_128["speedup"] = threads_n_jacobi_v1_128.time.iloc[0]/threads_n_jacobi_v1_128.time
+    threads_n_jacobi_v1_256["speedup"] = threads_n_jacobi_v1_256.time.iloc[0]/threads_n_jacobi_v1_256.time
+    threads_n_gauss_seidel_v1_128["speedup"] = threads_n_gauss_seidel_v1_128.time.iloc[0]/threads_n_gauss_seidel_v1_128.time
+    threads_n_gauss_seidel_v1_256["speedup"] = threads_n_gauss_seidel_v1_256.time.iloc[0]/threads_n_gauss_seidel_v1_256.time
+    threads_n_jacobi_v2_128["speedup"] = threads_n_jacobi_v2_128.time.iloc[0]/threads_n_jacobi_v2_128.time
+    threads_n_jacobi_v2_256["speedup"] = threads_n_jacobi_v2_256.time.iloc[0]/threads_n_jacobi_v2_256.time
 
-    #threads_n_gauss_seidel_sim = df[df['file'].str.contains(r'^(?=.*_gs_)(?=.*v2)')]
-    ax.plot(threads, threads_n_jacobi_v1.speedup, marker = "x", color = "C0", label = "Jacobi_v1")
-    ax.plot(threads, threads_n_gauss_seidel_v1.speedup, marker = "o", color = "C1", label = "Gauss-Seidel_v2")
-    ax.plot(threads, threads_n_jacobi_v2.speedup, marker = "^", color = "C2", label = "Jacobi_v2")
+    #plot speedup
+    ax.plot(threads, threads_n_jacobi_v1_128.speedup, marker = "x", color = "C0", label = "Jacobi_v1_N=128")
+    ax.plot(threads, threads_n_jacobi_v1_256.speedup, marker = "o", color = "C1", label = "Jacobi_v1_N=256")
+    ax.plot(threads, threads_n_gauss_seidel_v1_128.speedup, marker = "^", color = "C2", label = "Gauss-Seidel_v1_N=128")
+    ax.plot(threads, threads_n_gauss_seidel_v1_256.speedup, marker = "v", color = "C3", label = "Gauss-Seidel_v1_N=256")
+    ax.plot(threads, threads_n_jacobi_v2_128.speedup, marker = "*", color = "C4", label = "Jacobi_v2_N=128")
+    ax.plot(threads, threads_n_jacobi_v2_256.speedup, marker = "s", color = "C5", label = "Jacobi_v2_N=256")
+
     #plot linear speedup
     ax.plot(threads, threads, marker = "v", color = "C3", label = "Linear speedup")
     #ax.plot(threads_n_gauss_seidel_sim.threads, threads_n_gauss_seidel_sim.time, marker = "v", color = "C3", label = "Gauss-Seidel_simple")
