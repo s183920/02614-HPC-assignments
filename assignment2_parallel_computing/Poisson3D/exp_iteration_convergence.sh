@@ -19,7 +19,7 @@ source ../../../venv/bin/activate
 
 # set Ns to test
 Ns="20 40 60 80 100 120 140 160 180 200"
-
+export max_iters=10000
 # save settings
 echo "start_T = $start_T" >> $EXP_DIR/setup.txt
 echo "max_iters = $max_iters" >> $EXP_DIR/setup.txt

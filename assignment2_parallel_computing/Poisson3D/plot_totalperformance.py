@@ -18,9 +18,9 @@ def plot_threads(df, plot_folder):
     fig, axes = plt.subplots(1,1, figsize=(15, 10))
     print(df)
     ax = axes
-    ax.set_ylabel("Speedup")
+    ax.set_ylabel("MLups/s")
     ax.set_xlabel("Number of Threads")
-    ax.set_title("Speedup over number of Threads") # TODO: fix plot when results have been obtained
+    ax.set_title("Total Performance over number of Threads") # TODO: fix plot when results have been obtained
     #df["threads"] = df["file"].str.extract(r"_(\d+)t_")
     #df["threads"] = [int(re.findall(r"[-+]?(?:\d*\.*\d+)", df["file"][i])[1]) for i in range(len(df["file"]))]
     #df.sort_values(by=['threads'], inplace = True)
@@ -28,22 +28,22 @@ def plot_threads(df, plot_folder):
     threads_n_jacobi_v1 = df[df['file'].str.contains(r'^(?=.*_j_)(?=.*v1)')]
     threads_n_gauss_seidel_v1 = df[df['file'].str.contains(r'^(?=.*_gs_)(?=.*v1)')]
     threads_n_jacobi_v2 = df[df['file'].str.contains(r'^(?=.*_j_)(?=.*v2)')]
-    threads_n_jacobi_v1["speedup"] = threads_n_jacobi_v1.time.iloc[0]/threads_n_jacobi_v1.time
-    threads_n_gauss_seidel_v1["speedup"] = threads_n_gauss_seidel_v1.time.iloc[0]/threads_n_gauss_seidel_v1.time
-    threads_n_jacobi_v2["speedup"] = threads_n_jacobi_v2.time.iloc[0]/threads_n_jacobi_v2.time
-    print(threads_n_jacobi_v1)
+    threads_n_jacobi_v1["performance"] = threads_n_jacobi_v1.N**3/threads_n_jacobi_v1.time/1000*threads_n_jacobi_v1.iterations
+    threads_n_gauss_seidel_v1["performance"] = threads_n_gauss_seidel_v1.N**3/threads_n_gauss_seidel_v1.time/1000*threads_n_gauss_seidel_v1.iterations
+    threads_n_jacobi_v2["performance"] = threads_n_jacobi_v2.N**3/threads_n_jacobi_v2.time/1000*threads_n_jacobi_v2.iterations
+    #print(threads_n_jacobi_v1)
 
     #threads_n_gauss_seidel_sim = df[df['file'].str.contains(r'^(?=.*_gs_)(?=.*v2)')]
-    ax.plot(threads, threads_n_jacobi_v1.speedup, marker = "x", color = "C0", label = "Jacobi_v1")
-    ax.plot(threads, threads_n_gauss_seidel_v1.speedup, marker = "o", color = "C1", label = "Gauss-Seidel_v2")
-    ax.plot(threads, threads_n_jacobi_v2.speedup, marker = "^", color = "C2", label = "Jacobi_v2")
+    ax.plot(threads, threads_n_jacobi_v1.performance, marker = "x", color = "C0", label = "Jacobi_v1")
+    #ax.plot(threads, threads_n_gauss_seidel_v1.performance, marker = "o", color = "C1", label = "Gauss-Seidel_v2")
+    ax.plot(threads, threads_n_jacobi_v2.performance, marker = "^", color = "C2", label = "Jacobi_v2")
     #plot linear speedup
-    ax.plot(threads, threads, marker = "v", color = "C3", label = "Linear speedup")
+    #ax.plot(threads, threads, marker = "v", color = "C3", label = "Linear speedup")
     #ax.plot(threads_n_gauss_seidel_sim.threads, threads_n_gauss_seidel_sim.time, marker = "v", color = "C3", label = "Gauss-Seidel_simple")
     ax.legend(loc="best", fontsize = 12, fancybox = True, framealpha = 1)
     fig.tight_layout()
 
-    plt.savefig(plot_folder + 'threads.png')
+    plt.savefig(plot_folder + 'performance.png')
 
 if __name__ == "__main__":
     args = get_args()
