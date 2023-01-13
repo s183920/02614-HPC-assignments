@@ -36,6 +36,8 @@ double solver(int version, int N, double tolerance, int iter_max, double ***U, d
         perror("array U_new: allocation failed");
         exit(-1);
     }
+    
+    #pragma omp parallel for shared(U_new, N)
     for (int i = 0; i <= N+1; i++){
         for (int j = 0; j <= N+1; j++){
             for (int k = 0; k <= N+1; k++){

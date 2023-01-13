@@ -33,8 +33,10 @@ def numericalSort(value):
     parts[1::2] = map(int, parts[1::2])
     return parts
 
-def get_dataframe(args): # TODO update
+def get_dataframe(args, subfolder=None): # TODO update
     folder = args.output_files 
+    if subfolder is not None:
+        folder += "/" + subfolder
     files = []
     max_iter = []
     Ns = []

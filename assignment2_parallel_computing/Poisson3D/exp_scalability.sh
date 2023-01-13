@@ -15,7 +15,7 @@ opt_methods=("without_optimization with_optimization")
 
 # exp settings
 compiler_flags= "-Ofast"
-Ns="50 100 256"
+Ns="128 256"
 # Ns="10 50"
 thread_step_size=1
 
@@ -49,20 +49,45 @@ for opt_method in $opt_methods; do
 
     # run tests - WARNING the programs does not ouput the needed data yet
     # echo "Running memory scalability experiment for serial code"
-    versions="1 2"
+    #versions="1 2"
+    #for v in $versions; do
+    echo "Version = 1"
     for n_threads in $( eval echo {1..$LSB_DJOB_NUMPROC..$thread_step_size} ); do
         echo "Threads = $n_threads"
         echo "Version = $version"
         for n in $Ns; do
             echo "N = $n"
-            for v in $versions; do
-                echo "Version = $v"
-                OMP_NUM_THREADS=${n_threads} ./poisson_j $n $max_iters $tol $start_T 0 $v > $OUT_DIR/output_j_N_${n}_threads_${n_threads}_v${version}.txt
-            done
-        done;
-        v=2
-        # OMP_NUM_THREADS=${n_threads} ./poisson_j $n $max_iters $tol $start_T 0 $version > $OUT_DIR/output_j_N_${n}_threads_${n_threads}_v${version}.txt
-        OMP_NUM_THREADS=${n_threads} ./poisson_gs $n $max_iters $tol $start_T 0 $v > $OUT_DIR/output_gs_N_${n}_threads_${n_threads}_v${version}.txt
-    done;echo
-done
+                OMP_NUM_THREADS=${n_threads} ./poisson_j $n $max_iters $tol $start_T 0 1 > $OUT_DIR/output_j_N_${n}_threads_${n_threads}_v1.txt
+        done
+    done;
 
+    export OMP_PLACES=threads
+    export OMP_PROC_BIND=close
+    export OMP_SCHEDULE=dynamic,1
+
+    echo "Version = 2"
+    for n_threads in $( eval echo {1..$LSB_DJOB_NUMPROC..$thread_step_size} ); do
+        echo "Threads = $n_threads"
+        echo "Version = $version"
+        for n in $Ns; do
+            echo "N = $n"
+                OMP_NUM_THREADS=${n_threads} ./poisson_j $n $max_iters $tol $start_T 0 2 > $OUT_DIR/output_j_N_${n}_threads_${n_threads}_v2.txt
+        done
+    done;
+        
+    #done;echo
+
+
+    for n_threads in $( eval echo {1..$LSB_DJOB_NUMPROC..$thread_step_size} ); do
+        echo "Threads = $n_threads"
+        echo "Version = 2"
+        for n in $Ns; do
+            echo "N = $n"
+            # OMP_NUM_THREADS=${n_threads} ./poisson_j $n $max_iters $tol $start_T 0 $version > $OUT_DIR/output_j_N_${n}_threads_${n_threads}_v${version}.txt
+            OMP_NUM_THREADS=${n_threads} ./poisson_gs $n $max_iters $tol $start_T 0 2 > $OUT_DIR/output_gs_N_${n}_threads_${n_threads}_v2.txt
+        done
+    done
+done;
+
+echo "Making plots of optimization performance..."
+python3 plot_opt.py --save_folder $EXP_DIR --output_files $OUT_DIR

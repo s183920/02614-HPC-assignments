@@ -24,7 +24,7 @@ module load python3
 source ../../../venv/bin/activate
 
 # set Ns to test
-Ns="256"
+Ns="128 256"
 thread_step_size=1
 
 #LSB_DJOB_NUMPROC=4
