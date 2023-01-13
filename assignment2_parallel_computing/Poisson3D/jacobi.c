@@ -10,13 +10,12 @@ jacobi(int N, double threshold, int iter_max, double ***U_old, double ***U_new, 
     int i, j, k;
     double scale = 1.0/6.0;
 
-    double diff_tmp;
     double diff = INFINITY;
     double diff_scale = 1./(N*N*N);
     int iteration = 0; // 1-indiced iterations
 
-    FILE *fp;
-    fp = fopen("Output.txt", "w");// "w" means that we are going to write on this file
+    // FILE *fp;
+    // fp = fopen("Output.txt", "w");
     
     
 
@@ -45,7 +44,7 @@ jacobi(int N, double threshold, int iter_max, double ***U_old, double ***U_new, 
             }
         }
         diff = sqrt(diff_scale *diff);
-        fprintf(fp, "Iteration: %d, diff: %lf\n", iteration, diff);
+        // fprintf(fp, "Iteration: %d, diff: %lf\n", iteration, diff);
         // printf("diff=%lf\n", diff);
         swap_3d(&U_old, &U_new);
 
@@ -53,7 +52,7 @@ jacobi(int N, double threshold, int iter_max, double ***U_old, double ***U_new, 
         iteration++;
     }
     swap_3d(&U_old, &U_new);
-    fclose(fp);
+    // fclose(fp);
     
     printf("\tIterations: %d\n", iteration);
     printf("\tConvergence_difference: %lf\n", diff);
@@ -105,10 +104,9 @@ jacobi_para_opt(int N, double threshold, int iter_max, double ***U_old, double *
     int i, j, k;
     double scale = 1.0/6.0;
 
-    double diff_tmp;
     double diff = INFINITY;
     double diff_scale = 1./(N*N*N);
-    int iteration = 0; // 1-indiced iterations
+    int iteration = 0; 
 
     while (diff > threshold && iteration < iter_max) {
         diff = 0;
@@ -116,8 +114,6 @@ jacobi_para_opt(int N, double threshold, int iter_max, double ***U_old, double *
         for (i = 1; i <= N ; i++) {
             for (j = 1; j <= N; j++) {
                 for (k = 1; k <= N; k++) {
-                    // printf("%lf\n",U_old[i][j][k]);
-                    // printf("%lf\n",U_new[i][j][k]);
                     U_new[i][j][k] = scale * ( // should this be initialised here when parallelising
                         U_old[i-1][j][k] + 
                         U_old[i+1][j][k] + 
@@ -140,5 +136,3 @@ jacobi_para_opt(int N, double threshold, int iter_max, double ***U_old, double *
     printf("\tIterations: %d\n", iteration);
     printf("\tConvergence_difference: %lf\n", diff);
 }
-
-

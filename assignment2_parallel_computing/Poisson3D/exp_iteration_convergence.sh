@@ -13,13 +13,17 @@ module load gcc
 make realclean
 make 
 
+module load gcc
+module load python3
+source ../../../venv/bin/activate
+
 # set Ns to test
-Ns="60 70 80 90 100 110 120 130 140 150 160 170 180 190 200 220 240 260 280 300 350 400"
+Ns="20 40 60 80 100 120 140 160 180 200"
 
 # save settings
 echo "start_T = $start_T" >> $EXP_DIR/setup.txt
 echo "max_iters = $max_iters" >> $EXP_DIR/setup.txt
-echo "tol = 0.32" >> $EXP_DIR/setup.txt
+echo "tol = 0.01" >> $EXP_DIR/setup.txt
 echo "Ns = $Ns" >> $EXP_DIR/setup.txt
 
 
@@ -27,8 +31,8 @@ echo "Ns = $Ns" >> $EXP_DIR/setup.txt
 echo "Running iteration convergence experiment"
 for n in $Ns; do
     echo "N = $n"
-    ./poisson_gs $n $max_iters 0.32 $start_T 0 > $OUT_DIR/output_gs_N_${n}.txt
-    ./poisson_j $n $max_iters 0.32 $start_T 0 > $OUT_DIR/output_j_N_${n}.txt
+    ./poisson_gs $n $max_iters 0.01 $start_T 0 > $OUT_DIR/output_gs_N_${n}.txt
+    ./poisson_j $n $max_iters 0.01 $start_T 0 > $OUT_DIR/output_j_N_${n}.txt
 done;echo
 
 echo "Making plots of Iteration convergence..."

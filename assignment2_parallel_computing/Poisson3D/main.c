@@ -30,7 +30,7 @@
 #ifdef _JACOBI
 #include "jacobi.h"
 // function for solving the Poisson problem
-void solver(int version, int N, double tolerance, int iter_max, double ***U, double ***F, double step_size){
+double solver(int version, int N, double tolerance, int iter_max, double ***U, double ***F, double step_size){
     double ***U_new = NULL;
     if ( (U_new = malloc_3d(N+2,N+2,N+2)) == NULL ) {
         perror("array U_new: allocation failed");
@@ -43,7 +43,17 @@ void solver(int version, int N, double tolerance, int iter_max, double ***U, dou
             }
         }
     }
+
+    // SETUP TIMER
+    #ifdef _OPENMP
+    double t1, t2;
+    fprintf(stderr, "OpenMP version: timing wallclock time (in ms)!\n");
+    #else
+    clock_t t1, t2;
+    fprintf(stderr, "Serial version: timing CPU time (in ms)!\n");
+    #endif
     
+    t1 = mytimer();
     if (version == 0){
         jacobi(N, tolerance, iter_max, U, U_new, F, step_size);
     } else if (version == 1){
@@ -54,6 +64,8 @@ void solver(int version, int N, double tolerance, int iter_max, double ***U, dou
         perror("Error: version not supported");
         exit(-1);
     }
+    t2 = mytimer();
+    return delta_t(t1,t2);
 }
 #endif
 
@@ -61,7 +73,17 @@ void solver(int version, int N, double tolerance, int iter_max, double ***U, dou
 #include "gauss_seidel.h"
 
 // function for solving the Poisson problem
-void solver(int version, int N, double tolerance, int iter_max, double ***U, double ***F, double step_size){
+double solver(int version, int N, double tolerance, int iter_max, double ***U, double ***F, double step_size){
+    // SETUP TIMER
+    #ifdef _OPENMP
+    double t1, t2;
+    fprintf(stderr, "OpenMP version: timing wallclock time (in ms)!\n");
+    #else
+    clock_t t1, t2;
+    fprintf(stderr, "Serial version: timing CPU time (in ms)!\n");
+    #endif
+
+    t1 = mytimer();
     if (version == 0){
         gauss_seidel(N, tolerance, iter_max, U, F, step_size);
     } else if (version == 1){
@@ -72,6 +94,8 @@ void solver(int version, int N, double tolerance, int iter_max, double ***U, dou
         perror("Error: version not supported");
         exit(-1);
     }
+    t2 = mytimer();
+    return delta_t(t1,t2);
 }
 #endif
 
@@ -119,14 +143,7 @@ main(int argc, char *argv[]) {
         exit(-1);
     }
 
-    // SETUP TIMER
-    #ifdef _OPENMP
-    double t1, t2;
-    fprintf(stderr, "OpenMP version: timing wallclock time (in ms)!\n");
-    #else
-    clock_t t1, t2;
-    fprintf(stderr, "Serial version: timing CPU time (in ms)!\n");
-    #endif
+    
 
     
     // get step size
@@ -167,13 +184,13 @@ main(int argc, char *argv[]) {
     printf("Results\n");
 
     // solve 
-    t1 = mytimer();
+    // t1 = mytimer();
     // solve
-    solver(version, N, tolerance, iter_max, U, F, step_size);
-    t2 = mytimer();
+    double time = solver(version, N, tolerance, iter_max, U, F, step_size);
+    // t2 = mytimer();
 
     // print time results
-    printf("\tTime: %lf\n", delta_t(t1,t2));
+    printf("\tTime: %lf\n", time);
 
     // print error if testing
     #ifdef _TEST
