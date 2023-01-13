@@ -61,9 +61,10 @@ echo "Number of available cores: " $LSB_DJOB_NUMPROC >> $RESULT_FOLDER/setup.txt
 
 # set default values
 export start_T=0
-export max_iters=400000
-export tol=0.01
+export max_iters=4000
+export tol=0.5
 export N=100
+export LSB_DJOB_NUMPROC=2
 
 # save defualts
 echo "def_start_T = $start_T" >> $RESULT_FOLDER/setup.txt
@@ -73,9 +74,10 @@ echo "def_N = $N" >> $RESULT_FOLDER/setup.txt
 
 # run scripts
 #sh exp_error_converge.sh # runs the test case and experiments with different sizes of N and tolerance - used to find error
-sh exp_iteration_convergence.sh # runs the program and experiments with different granularity (N) - used to find convergence of iterations and iterations pr second
+# sh exp_iteration_convergence.sh # runs the program and experiments with different granularity (N) - used to find convergence of iterations and iterations pr second
 # sh exp_memory_scalability.sh # runs the program and experiments with different number of grid sizes wboth with and without both optimization and parallelization - used to find memory scalability
 # sh exp_thread_scalability.sh # runs the program and experiments with different number of threads - used to find thread scalability
+sh exp_scalability.sh
 
 # copy hpc logs to results folder
 if [ "$LSB_JOBID" != "" ]; then

@@ -15,6 +15,11 @@ jacobi(int N, double threshold, int iter_max, double ***U_old, double ***U_new, 
     double diff_scale = 1./(N*N*N);
     int iteration = 0; // 1-indiced iterations
 
+    FILE *fp;
+    fp = fopen("Output.txt", "w");// "w" means that we are going to write on this file
+    
+    
+
     while (diff > threshold && iteration < iter_max) {
         diff = 0;
         // printf("\t In iter %d\n", iteration);
@@ -40,12 +45,15 @@ jacobi(int N, double threshold, int iter_max, double ***U_old, double ***U_new, 
             }
         }
         diff = sqrt(diff_scale *diff);
+        fprintf(fp, "Iteration: %d, diff: %lf\n", iteration, diff);
         // printf("diff=%lf\n", diff);
         swap_3d(&U_old, &U_new);
+
 
         iteration++;
     }
     swap_3d(&U_old, &U_new);
+    fclose(fp);
     
     printf("\tIterations: %d\n", iteration);
     printf("\tConvergence_difference: %lf\n", diff);

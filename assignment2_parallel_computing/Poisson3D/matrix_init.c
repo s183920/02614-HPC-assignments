@@ -34,17 +34,19 @@
 
 void init_F(double ***F, double N){
     printf("\t- init F\n");
-    int i, j, k , i_upr, j_upr, k_lwr, k_upr;
+    int i, j, k , k_upr, j_upr, i_lwr, i_upr;
     double step_size = calc_step_size(N);
     
-    i_upr = (int)((1.0 - 3.0/8.0) / step_size);
+    k_upr = (int)((1.0 - 3.0/8.0) / step_size);
     j_upr = (int)((1.0 - 1.0/2.0) / step_size);
-    k_lwr = (int)ceil(((1.0 - 2.0/3.0) / step_size));
-    k_upr = (int)(1.0 / step_size);
+    i_lwr = (int)ceil(((1.0 - 2.0/3.0) / step_size));
+    i_upr = (int)(1.0 / step_size);
     
-    for (i = 0; i <= i_upr; i++){
+    printf("i_lwr: %d, i_upr: %d, j_upr: %d, k_upr: %d\n", i_lwr, i_upr, j_upr, k_upr);
+
+    for (i = i_lwr; i <= i_upr; i++){
         for (j = 0; j <= j_upr; j++){
-            for (k = k_lwr; k <= k_upr; k++){
+            for (k = 0; k <= k_upr; k++){
                 F[i][j][k] = 200;
             }
         }

@@ -36,6 +36,14 @@ void solver(int version, int N, double tolerance, int iter_max, double ***U, dou
         perror("array U_new: allocation failed");
         exit(-1);
     }
+    for (int i = 0; i <= N+1; i++){
+        for (int j = 0; j <= N+1; j++){
+            for (int k = 0; k <= N+1; k++){
+                U_new[i][j][k] = U[i][j][k];
+            }
+        }
+    }
+    
     if (version == 0){
         jacobi(N, tolerance, iter_max, U, U_new, F, step_size);
     } else if (version == 1){
