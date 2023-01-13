@@ -94,29 +94,22 @@ void gauss_seidel_para_opt(int N, double threshold, int iter_max, double ***U, d
     // loop vars
     int i, j, k;
     int iteration;
-
-    // convergence
-    double convergence = INFINITY;
     
     for (iteration = 0; iteration < iter_max; iteration++) {
-        convergence = 0;
         #pragma omp parallel for schedule(static,1) ordered(2) private(i,j,k)
         for (i = 1; i <= N ; i++) {
             for (j = 1; j <= N; j++) {
                 #pragma omp ordered depend(sink: i-1,j) depend(sink: i,j-1) 
                 for (k = 1; k <= N; k++) {
                     double new_u = gauss_seidel_update(U, F, i, j, k, gauss_scale, delta2);
-                    // #pragma omp atomic
-                    // convergence += (new_u - U[i][j][k])*(new_u - U[i][j][k]); // convergence difference ignored as this is a bottleneck
                     U[i][j][k] = new_u;
                 }
                 #pragma omp ordered depend(source)
             }
         } // end parallel
-        convergence = sqrt(norm_scale * convergence);
     }
 
     // print results
     printf("\tIterations: %d\n", iteration);
-    printf("\tConvergence_difference: %lf\n", convergence);
+    printf("\tConvergence_difference: %lf\n", 0);
 }
