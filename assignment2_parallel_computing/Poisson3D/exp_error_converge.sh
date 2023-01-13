@@ -10,8 +10,8 @@ touch "$EXP_DIR/setup.txt" # file for setup
 
 # get needed modules
 module load gcc
-module load python3
-source ../../../venv/bin/activate
+# module load python3
+# source ../../../venv/bin/activate
 
 # compile code
 make realclean
@@ -23,7 +23,7 @@ Ns="100 200 300 400 500 600 700"
 
 # set tolerances to test
 tolerances="0.1 0.01 0.001 0.0001 0.00001 0.000001 0.0000001 0.00000001"
-testtols="0.001"
+tol="0.001"
 #tolerances="0.1 0.01 0.0001"
 
 # save settings
