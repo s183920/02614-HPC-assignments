@@ -64,6 +64,7 @@ export start_T=0
 export max_iters=10000
 export tol=0.5
 export N=100
+export LSB_DJOB_NUMPROC=2
 
 # save defualts
 echo "def_start_T = $start_T" >> $RESULT_FOLDER/setup.txt
