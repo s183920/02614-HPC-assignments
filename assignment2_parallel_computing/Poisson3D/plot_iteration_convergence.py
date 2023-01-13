@@ -25,14 +25,14 @@ def plot_error(df, plot_folder):
     fig, axes = plt.subplots(1,1, figsize=(15, 10))
 
     ax = axes
-    ax.set_ylabel("Iterations per second")
+    ax.set_ylabel("Iterations")
     ax.set_xlabel("N")
-    ax.set_title("Number of iterations before convergence over N for different Thresholds") # TODO: fix plot when results have been obtained
+    ax.set_title("Number of iterations before convergence over N") # TODO: fix plot when results have been obtained
     
     err_n_jacobi = df[df['file'].str.contains("_j_N")].sort_values(by=['N'])
     err_n_gauss_seidel = df[df['file'].str.contains("_gs_N")].sort_values(by=['N'])
-    ax.plot(err_n_jacobi.N, err_n_jacobi.iterations, marker = "x", color = "C0", label = "Jacobi iterations vs N, tol = 0.01")
-    ax.plot(err_n_gauss_seidel.N, err_n_gauss_seidel.iterations, marker = "o", color = "C1", label = "Gauss-Seidel iterations vs N, tol = 0.01")
+    ax.plot(err_n_jacobi.N, err_n_jacobi.iterations, marker = "x", color = "C0", label = "Jacobi iterations vs N, tol = " + str(err_n_jacobi.tolerance.iloc[0]))
+    ax.plot(err_n_gauss_seidel.N, err_n_gauss_seidel.iterations, marker = "o", color = "C1", label = "Gauss-Seidel iterations vs N, tol = " + str(err_n_gauss_seidel.tolerance.iloc[0]))
     ax.legend(loc="best", fontsize = 12, fancybox = True, framealpha = 1)
     fig.tight_layout()
 

@@ -114,9 +114,13 @@ double test_case(int N, double ***U){
 
 // swap function
 void swap_3d(double ****X, double ****Y){
+    // printf("Adress of ***X: %p\nAdress of ***Y: %p\n",*X,*Y);
     double ***temp = *X;
     *X = *Y;
     *Y = temp;
+    // printf("\nNew Adress of ***X: %p\nNew Adress of ***Y: %p\n",*X,*Y);
+
+
 }
 
 double calc_step_size(int N){

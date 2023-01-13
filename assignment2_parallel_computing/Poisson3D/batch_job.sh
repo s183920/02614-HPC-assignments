@@ -72,12 +72,11 @@ echo "def_tol = $tol" >> $RESULT_FOLDER/setup.txt
 echo "def_N = $N" >> $RESULT_FOLDER/setup.txt
 
 # run scripts
-#sh exp_error_converge.sh # runs the test case and experiments with different sizes of N and tolerance - used to find error
+# sh exp_error_converge.sh # runs the test case and experiments with different sizes of N and tolerance - used to find error
 # sh exp_iteration_convergence.sh # runs the program and experiments with different granularity (N) - used to find convergence of iterations and iterations pr second
 # sh exp_memory_scalability.sh # runs the program and experiments with different number of grid sizes wboth with and without both optimization and parallelization - used to find memory scalability
 # sh exp_thread_scalability.sh # runs the program and experiments with different number of threads - used to find thread scalability
-sh exp_scalability.sh
-
+sh exp_dynamic_allocation.sh
 # copy hpc logs to results folder
 if [ "$LSB_JOBID" != "" ]; then
     cp ../hpc_logs/${LSB_JOBID}.out $RESULT_FOLDER/hpc_logs.out
