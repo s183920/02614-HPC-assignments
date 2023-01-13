@@ -28,7 +28,7 @@ for opt_method in $opt_methods; do
     mkdir -p $OUT_DIR
 
     # set Ns to test
-    Ns="100 200 500 700"
+    Ns="500"
 
     # asert more than 1 thread available
     # if [ "$LSB_DJOB_NUMPROC" = "" ] || [ "$LSB_DJOB_NUMPROC" = "1" ]; then
@@ -65,7 +65,7 @@ for opt_method in $opt_methods; do
         for place in $places; do
             export OMP_PLACES=$place
             export OMP_PROC_BIND=$bind
-            export OMP_SCHEDULE=dynamic,1
+            export OMP_SCHEDULE=static,1
             for n in $Ns; do
                 echo "N = $n"
                 OMP_NUM_THREADS=$LSB_DJOB_NUMPROC ./poisson_j $n $max_iters $tol $start_T 0 2 > $OUT_DIR/output_j_N_${n}_threads_${LSB_DJOB_NUMPROC}_${place}_${bind}.txt
