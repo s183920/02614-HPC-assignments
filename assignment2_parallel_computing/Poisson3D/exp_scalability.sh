@@ -60,9 +60,9 @@ for opt_method in $opt_methods; do
                 OMP_NUM_THREADS=${n_threads} ./poisson_j $n $max_iters $tol $start_T 0 $v > $OUT_DIR/output_j_N_${n}_threads_${n_threads}_v${version}.txt
             done
         done;
-        version=2
+        v=2
         # OMP_NUM_THREADS=${n_threads} ./poisson_j $n $max_iters $tol $start_T 0 $version > $OUT_DIR/output_j_N_${n}_threads_${n_threads}_v${version}.txt
-        OMP_NUM_THREADS=${n_threads} ./poisson_gs $n $max_iters $tol $start_T 0 $version > $OUT_DIR/output_gs_N_${n}_threads_${n_threads}_v${version}.txt
+        OMP_NUM_THREADS=${n_threads} ./poisson_gs $n $max_iters $tol $start_T 0 $v > $OUT_DIR/output_gs_N_${n}_threads_${n_threads}_v${version}.txt
     done;echo
 done
 
