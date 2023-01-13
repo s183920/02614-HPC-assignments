@@ -50,7 +50,7 @@ def plot_error(df, plot_folder):
     fig.tight_layout()
 
     # save plot
-    plt.savefig(plot_folder + 'iteration.png')
+    plt.savefig(plot_folder + 'iterationands.png')
 
 if __name__ == "__main__":
     args = get_args()
