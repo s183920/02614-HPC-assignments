@@ -68,3 +68,5 @@ assignment2_parallel_computing/hpc_logs/*
 assignment2_parallel_computing/test_res/*
 assignment2_parallel_computing/Poisson3D/collector*
 assignment2_parallel_computing/Poisson3D/*.er
+assignment2_parallel_computing/Poisson3D/poisson_gs
+assignment2_parallel_computing/Poisson3D/poisson_j
