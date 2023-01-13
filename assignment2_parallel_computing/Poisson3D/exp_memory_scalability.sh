@@ -28,7 +28,7 @@ for opt_method in $opt_methods; do
     mkdir -p $OUT_DIR
 
     # set Ns to test
-    Ns="10 20 30 40 50 100"
+    Ns="100 200 500 700"
 
     # asert more than 1 thread available
     # if [ "$LSB_DJOB_NUMPROC" = "" ] || [ "$LSB_DJOB_NUMPROC" = "1" ]; then
@@ -45,16 +45,32 @@ for opt_method in $opt_methods; do
 
     # run tests - WARNING the programs does not ouput the needed data yet
     echo "Running memory scalability experiment for serial code"
-    for n in $Ns; do
-        echo "N = $n"
-        OMP_NUM_THREADS=1 ./poisson_j $n $max_iters $tol $start_T 0 > $OUT_DIR/output_j_N_${n}_threads_${LSB_DJOB_NUMPROC}.txt
-        # todo: add other better implmentations
-    done;echo
+    # for n in $Ns; do
+    #     echo "N = $n"
+    #     OMP_NUM_THREADS=1 ./poisson_j $n $max_iters $tol $start_T 0 > $OUT_DIR/output_j_N_${n}_threads_${LSB_DJOB_NUMPROC}.txt
+    #     # todo: add other better implmentations
+    # done;echo
 
-    echo "Running memory scalability experiment for parallel code"
-    for n in $Ns; do
-        echo "N = $n"
-        OMP_NUM_THREADS=$LSB_DJOB_NUMPROC ./poisson_j $n $max_iters $tol $start_T 0 > $OUT_DIR/output_j_N_${n}_threads_${LSB_DJOB_NUMPROC}.txt
+    # echo "Running memory scalability experiment for parallel code"
+    
+    # for n in $Ns; do
+    #     echo "N = $n"
+    #     OMP_NUM_THREADS=$LSB_DJOB_NUMPROC ./poisson_j $n $max_iters $tol $start_T 0 1> $OUT_DIR/output_j_N_${n}_threads_${LSB_DJOB_NUMPROC}.txt
+    # done;echo
+
+    echo "Running memory scalability experiment for optimized parallel code"
+    places="threads cores numa_domains sockets"
+    binds="close spread"
+    for bind in $binds; do
+        for place in $places; do
+            export OMP_PLACES=$place
+            export OMP_PROC_BIND=$bind
+            export OMP_SCHEDULE=dynamic,1
+            for n in $Ns; do
+                echo "N = $n"
+                OMP_NUM_THREADS=$LSB_DJOB_NUMPROC ./poisson_j $n $max_iters $tol $start_T 0 2 > $OUT_DIR/output_j_N_${n}_threads_${LSB_DJOB_NUMPROC}_${place}_${bind}.txt
+            done;echo  
+        done;echo
     done;echo
 done
 
