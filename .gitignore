@@ -65,9 +65,10 @@ assignment1_serial_tuning/hpc_logs/*
 assignment2_parallel_computing/Poisson3D/__pycache__/*
 assignment2_parallel_computing/results/*
 assignment2_parallel_computing/hpc_logs/*
-assignment2_parallel_computing/test_res/*
+# assignment2_parallel_computing/test_res/*
 assignment2_parallel_computing/er_tests/*
 assignment2_parallel_computing/Poisson3D/collector*
 assignment2_parallel_computing/Poisson3D/*.er
 assignment2_parallel_computing/Poisson3D/poisson_gs
 assignment2_parallel_computing/Poisson3D/poisson_j
+*.er
