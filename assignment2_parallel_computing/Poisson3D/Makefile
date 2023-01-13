@@ -68,51 +68,57 @@ test: all
 	@echo "Running Jacobi test for N=50"
 	@echo
 	@echo "Serial"
-	./poisson_j 50 20000 0.0001 0 0 0
+	./poisson_j 50 2000 0.0001 0 0 0
 	@echo
 	@echo "Parallel simple"
-	./poisson_j 50 20000 0.0001 0 0 1
+	./poisson_j 50 2000 0.0001 0 0 1
 	@echo
 	@echo "Parallel optimized"
-	./poisson_j 50 20000 0.0001 0 0 2
+	./poisson_j 50 2000 0.0001 0 0 2
 
 	@echo
 	@echo "Running Gauss Seidel test for N=50"
 	@echo
 	@echo "Serial"
-	./poisson_gs 50 20000 0.0001 0 0 0
+	./poisson_gs 50 2000 0.0001 0 0 0
 	@echo
 	@echo "Parallel simple"
-	./poisson_gs 50 20000 0.0001 0 0 1
+	./poisson_gs 50 2000 0.0001 0 0 1
 	@echo
 	@echo "Parallel optimized"
-	./poisson_gs 50 20000 0.0001 0 0 2
+	./poisson_gs 50 2000 0.0001 0 0 2
 
 	@echo
 
 
 test_par: TEST_FLAG += -D_TEST 
 test_par: all
-	# @echo
-	# @echo "Serial"
-	# ./poisson_j 50 200 0.0001 0 0 0
-	# @echo
-	# @echo "1 thread"
-	# OMP_NUM_THREADS=1 ./poisson_j 50 200 0.0001 0 0 1
-	# @echo
-	# @echo "8 threads"
-	# OMP_NUM_THREADS=8 ./poisson_j 50 200 0.0001 0 0 1
-	# @echo
+	@echo
+	@echo "Serial"
+	./poisson_j 100 200 0.0001 0 0 0
+	@echo
+	@echo "1 thread"
+	OMP_NUM_THREADS=1 ./poisson_j 100 200 0.0001 0 0 1
+	@echo
+	@echo "8 threads"
+	OMP_NUM_THREADS=8 ./poisson_j 100 200 0.0001 0 0 1
+	@echo
 
 	@echo
 	@echo "Serial"
-	./poisson_gs 50 200 0.0001 0 0 0
+	./poisson_gs 100 200 0.0001 0 0 0
 	@echo
 	@echo "1 thread"
-	OMP_NUM_THREADS=1 ./poisson_gs 50 200 0.0001 0 0 1
+	OMP_NUM_THREADS=1 ./poisson_gs 100 200 0.0001 0 0 1
 	@echo
 	@echo "8 threads"
-	OMP_NUM_THREADS=8 ./poisson_gs 50 200 0.0001 0 0 1
+	OMP_NUM_THREADS=8 ./poisson_gs 100 200 0.0001 0 0 1
+	@echo
+	@echo "1 thread"
+	OMP_NUM_THREADS=1 ./poisson_gs 100 200 0.0001 0 0 2
+	@echo
+	@echo "8 threads"
+	OMP_NUM_THREADS=8 ./poisson_gs 100 200 0.0001 0 0 2
 	@echo
 
 test_races: CC = cc

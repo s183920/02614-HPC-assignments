@@ -26,10 +26,10 @@ def get_data(): # TODO update
 
 def plot_error(df, plot_folder):
     # make plot
-    err_n_jacobi = df[df['file'].str.contains("_j_N")].sort_values(by=['N'])
-    err_n_gauss_seidel = df[df['file'].str.contains("_gs_N")].sort_values(by=['N'])
-    err_tol_jacobi = df[df['file'].str.contains("_j_tol")].sort_values(by=['tolerance'])
-    err_tol_gauss_seidel = df[df['file'].str.contains("_gs_tol")].sort_values(by=['tolerance'])
+    err_n_jacobi = df[(df['tolerance'] == 0.01) & (df['file'].str.contains("_j_N"))].sort_values(by=['N'])
+    err_n_gauss_seidel = df[(df['tolerance'] == 0.01) & (df['file'].str.contains("_gs_N"))].sort_values(by=['N'])
+    err_tol_jacobi = df[(df['N'] == 100) & (df['file'].str.contains("_j_tol"))].sort_values(by=['tolerance'])
+    err_tol_gauss_seidel = df[(df['N'] == 100) & (df['file'].str.contains("_gs_tol"))].sort_values(by=['tolerance'])
     fig, axes = plt.subplots(2,1, figsize=(15, 10))
 
     ax = axes
@@ -60,6 +60,26 @@ def plot_error(df, plot_folder):
 
     # save plot
     plt.savefig(plot_folder + 'error_convergence.png')
+
+    fig, axes = plt.subplots(1,1, figsize=(15, 10))
+
+    ax = axes
+    ax.set_ylabel("Iterations per second")
+    ax.set_xlabel("N")
+    ax.set_title("Number of iterations before convergence over N for different Thresholds") # TODO: fix plot when results have been obtained
+    testtols = [0.01, 0.001, 0.0001]
+    colors = ["C0", "C1", "C2", "C3", "C4", "C5"]
+    markers = ["x", "o", "s", "d", "v", "^"]
+    for i in range(len(testtols)):
+        err_n_jacobi = df[(df['tolerance'] == testtols[i]) & (df['file'].str.contains("_j_N"))].sort_values(by=['N'])
+        err_n_gauss_seidel = df[(df['tolerance'] == testtols[i]) & (df['file'].str.contains("_gs_N"))].sort_values(by=['N'])
+        ax.plot(err_n_jacobi.N, err_n_jacobi.iterations, marker = markers[i], color = colors[i], label = "Jacobi iterations vs N, tol = " + str(testtols[i]))
+        ax.plot(err_n_gauss_seidel.N, err_n_gauss_seidel.iterations, marker = markers[i+3], linestyle="--", color = colors[i+3], label = "Gauss-Seidel iterations vs N, tol = " + str(testtols[i]))
+    ax.legend(loc="best", fontsize = 12, fancybox = True, framealpha = 1)
+    fig.tight_layout()
+
+    # save plot
+    plt.savefig(plot_folder + 'iteration.png')
 
 if __name__ == "__main__":
     args = get_args()

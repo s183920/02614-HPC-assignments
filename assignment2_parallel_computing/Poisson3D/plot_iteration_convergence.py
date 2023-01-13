@@ -3,7 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set()
-from help_funcs import get_plot_folder
+sns.set_style("whitegrid")
+from help_funcs import get_plot_folder, get_args, get_dataframe
 
 # plot settings
 plt.rcParams["font.size"] = 16
@@ -19,24 +20,27 @@ def get_data(): # TODO update
     times_gauss_seidel = np.random.gamma(1, 0.1, size = len(Ns))
     return Ns, iterations_jacobi, iterations_gauss_seidel, times_jacobi, times_gauss_seidel
 
-def plot_error(Ns, iterations_jacobi, iterations_gauss_seidel, times_jacobi, times_gauss_seidel, plot_folder):
+def plot_error(df, plot_folder):
     # make plot
-    fig, axes = plt.subplots(1,1, figsize=(10, 10))
+    fig, axes = plt.subplots(1,1, figsize=(15, 10))
 
     ax = axes
-    ax.set_ylabel("Iterations per second")
+    ax.set_ylabel("Iterations")
     ax.set_xlabel("N")
-    ax.set_title("UNFINISHED PLOT") # TODO: fix plot when results have been obtained
+    ax.set_title("Number of iterations before convergence over N") # TODO: fix plot when results have been obtained
     
-    ax.plot(Ns, iterations_jacobi/times_jacobi, label = "Jacobi", color = "C0", marker = "x")
-    ax.plot(Ns, iterations_gauss_seidel/times_gauss_seidel, label = "Gauss-Seidel", color = "C1", marker = "o")
-    
+    err_n_jacobi = df[df['file'].str.contains("_j_N")].sort_values(by=['N'])
+    err_n_gauss_seidel = df[df['file'].str.contains("_gs_N")].sort_values(by=['N'])
+    ax.plot(err_n_jacobi.N, err_n_jacobi.iterations, marker = "x", color = "C0", label = "Jacobi iterations vs N, tol = " + str(err_n_jacobi.tolerance.iloc[0]))
+    ax.plot(err_n_gauss_seidel.N, err_n_gauss_seidel.iterations, marker = "o", color = "C1", label = "Gauss-Seidel iterations vs N, tol = " + str(err_n_gauss_seidel.tolerance.iloc[0]))
+    ax.legend(loc="best", fontsize = 12, fancybox = True, framealpha = 1)
     fig.tight_layout()
 
     # save plot
-    plt.savefig(plot_folder + 'iteration.pdf')
+    plt.savefig(plot_folder + 'iteration.png')
 
 if __name__ == "__main__":
-    plot_folder = get_plot_folder()
-    Ns, iterations_jacobi, iterations_gauss_seidel, times_jacobi, times_gauss_seidel = get_data()
-    plot_error(Ns, iterations_jacobi, iterations_gauss_seidel, times_jacobi, times_gauss_seidel, plot_folder )
+    args = get_args()
+    plot_folder = get_plot_folder(args)
+    df = get_dataframe(args)
+    plot_error(df, plot_folder)

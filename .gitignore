@@ -69,4 +69,5 @@ assignment2_parallel_computing/test_res/*
 assignment2_parallel_computing/er_tests/*
 assignment2_parallel_computing/Poisson3D/collector*
 assignment2_parallel_computing/Poisson3D/*.er
-assignment2_parallel_computing/Poisson3D/poisson*
+assignment2_parallel_computing/Poisson3D/poisson_gs
+assignment2_parallel_computing/Poisson3D/poisson_j

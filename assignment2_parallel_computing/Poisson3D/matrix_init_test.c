@@ -13,7 +13,7 @@ double u(double x, double y, double z) {
     return 0.0;
 }
 
-void init_grid_matrices(double ***F, double ***U, int N){
+void init_grid_matrices(double ***F, double ***U, int N, double start_T){
     printf("Initializing grid matrices for test\n");
     // double step_size = calc_step_size(N)
     double x, y, z, step_size;

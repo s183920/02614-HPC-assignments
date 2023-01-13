@@ -14,12 +14,12 @@ make realclean
 make 
 
 # set Ns to test
-Ns="10 20 30 40 50 100"
+Ns="60 70 80 90 100 110 120 130 140 150 160 170 180 190 200 220 240 260 280 300 350 400"
 
 # save settings
 echo "start_T = $start_T" >> $EXP_DIR/setup.txt
 echo "max_iters = $max_iters" >> $EXP_DIR/setup.txt
-echo "tol = $tol" >> $EXP_DIR/setup.txt
+echo "tol = 0.32" >> $EXP_DIR/setup.txt
 echo "Ns = $Ns" >> $EXP_DIR/setup.txt
 
 
@@ -27,6 +27,9 @@ echo "Ns = $Ns" >> $EXP_DIR/setup.txt
 echo "Running iteration convergence experiment"
 for n in $Ns; do
     echo "N = $n"
-    ./poisson_gs $n $max_iters $tol $start_T 0 > $OUT_DIR/output_gs_N_${n}.txt
-    ./poisson_j $n $max_iters $tol $start_T 0 > $OUT_DIR/output_j_N_${n}.txt
+    ./poisson_gs $n $max_iters 0.32 $start_T 0 > $OUT_DIR/output_gs_N_${n}.txt
+    ./poisson_j $n $max_iters 0.32 $start_T 0 > $OUT_DIR/output_j_N_${n}.txt
 done;echo
+
+echo "Making plots of Iteration convergence..."
+python3 plot_iteration_convergence.py --save_folder $EXP_DIR --output_files $OUT_DIR

@@ -13,6 +13,12 @@ touch "$EXP_DIR/setup.txt" # file for setup
 # set compiler flags
 opt_methods=("without_optimization with_optimization")
 
+# exp settings
+compiler_flags= #"-Ofast"
+# Ns="50 100 500"
+Ns="10 50"
+thread_step_size=1
+
 for opt_method in $opt_methods; do
     # compile code
     module load gcc
@@ -20,15 +26,13 @@ for opt_method in $opt_methods; do
     if [ opt_method = "without_optimization" ]; then
         make XOPTS= 
     else
-        make XOPTS=-Ofast
+        make XOPTS=$compiler_flags
     fi
 
     # set output dir
     OUT_DIR="$EXP_DIR/output_files/$opt_method"
     mkdir -p $OUT_DIR
 
-    # set Ns to test
-    Ns="10 20 30 40 50 100"
 
     # asert more than 1 thread available
     # if [ "$LSB_DJOB_NUMPROC" = "" ] || [ "$LSB_DJOB_NUMPROC" = "1" ]; then
@@ -44,17 +48,18 @@ for opt_method in $opt_methods; do
 
 
     # run tests - WARNING the programs does not ouput the needed data yet
-    echo "Running memory scalability experiment for serial code"
-    for n in $Ns; do
-        echo "N = $n"
-        OMP_NUM_THREADS=1 ./poisson_j $n $max_iters $tol $start_T 0 > $OUT_DIR/output_j_N_${n}_threads_${LSB_DJOB_NUMPROC}.txt
-        # todo: add other better implmentations
+    # echo "Running memory scalability experiment for serial code"
+    version=0
+    for n_threads in $( eval echo {1..$LSB_DJOB_NUMPROC..$thread_step_size} ); do
+        echo "Threads = $n_threads"
+        for n in $Ns; do
+            echo "N = $n"
+            OMP_NUM_THREADS=${n_threads} ./poisson_j $n $max_iters $tol $start_T 0 2 > $OUT_DIR/output_j_N_${n}_threads_${n_threads}_v${version}.txt
+            # todo: add other better implmentations
+        done
+        OMP_NUM_THREADS=${n_threads} ./poisson_gs $n $max_iters $tol $start_T 0 2 > $OUT_DIR/output_gs_N_${n}_threads_${n_threads}_v${version}.txt
     done;echo
 
-    echo "Running memory scalability experiment for parallel code"
-    for n in $Ns; do
-        echo "N = $n"
-        OMP_NUM_THREADS=$LSB_DJOB_NUMPROC ./poisson_j $n $max_iters $tol $start_T 0 > $OUT_DIR/output_j_N_${n}_threads_${LSB_DJOB_NUMPROC}.txt
-    done;echo
+   
 done
 

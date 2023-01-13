@@ -22,6 +22,6 @@
 // #endif
 
 // Initializes F and U as NxNxN tensors
-void init_grid_matrices(double ***F, double ***U, int N);
+void init_grid_matrices(double ***F, double ***U, int N, double start_T);
 
 #endif
