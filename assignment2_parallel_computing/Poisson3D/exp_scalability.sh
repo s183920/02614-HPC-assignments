@@ -14,7 +14,7 @@ touch "$EXP_DIR/setup.txt" # file for setup
 opt_methods=("without_optimization with_optimization")
 
 # exp settings
-compiler_flags= #"-Ofast"
+compiler_flags= "-Ofast"
 Ns="50 100 200"
 # Ns="10 50"
 thread_step_size=1
