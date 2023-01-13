@@ -17,7 +17,7 @@ MATRIX_HEADER = matrix_init$(test_ext).h
 #
 CC	= gcc
 DEFS	= 
-OPT	= -Og #-std=c99 #note: -std=c99 does not support M_PI
+OPT	= -Ofast -g #-std=c99 #note: -std=c99 does not support M_PI
 XOPTS	= 
 IPO	= 
 ISA	= 

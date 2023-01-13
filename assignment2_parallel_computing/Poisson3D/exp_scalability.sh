@@ -15,7 +15,7 @@ opt_methods=("without_optimization with_optimization")
 
 # exp settings
 compiler_flags= "-Ofast"
-Ns="50 100 200"
+Ns="50 100 256"
 # Ns="10 50"
 thread_step_size=1
 
