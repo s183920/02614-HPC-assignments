@@ -17,7 +17,7 @@ MATRIX_HEADER = matrix_init$(test_ext).h
 #
 CC	= gcc
 DEFS	= 
-OPT	= -g #-std=c99 #note: -std=c99 does not support M_PI
+OPT	= -Og #-std=c99 #note: -std=c99 does not support M_PI
 XOPTS	= 
 IPO	= 
 ISA	= 
@@ -116,7 +116,8 @@ test_par: all
 	@echo
 
 test_races: CC = cc
-test_races: OPT = -g -fast -xopenmp -xloopinfo -xinstrument=datarace
+test_races: OPT = -g -fast -xloopinfo -xinstrument=datarace
+test_races: PARA = -xopenmp 
 test_races: all
 	@echo
 	@echo "Running Jacobi parallel N=50"
@@ -140,7 +141,7 @@ test_races: all
 	OMP_NUM_THREADS=8 collect -r on ./poisson_gs 50 50 0.0001 0 0 1
 	@echo
 	@echo "Parallel optimized"
-	OMP_NUM_THREADS=8 collect -r ./poisson_gs 50 20000 0.0001 0 0 2
+	OMP_NUM_THREADS=8 collect -r on ./poisson_gs 50 20000 0.0001 0 0 2
 
 	@echo
 

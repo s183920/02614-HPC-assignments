@@ -39,8 +39,9 @@ jacobi(int N, double threshold, int iter_max, double ***U_old, double ***U_new, 
             }
         }
         diff = sqrt(diff_scale *diff);
+        printf("old: %lf, new: %lf\n", U_old[1][1][1], U_new[1][1][1]);
         swap_3d(&U_old, &U_new);
-
+        printf("old: %lf, new: %lf\n\n", U_old[1][1][1], U_new[1][1][1]);
         iteration++;
     }
     swap_3d(&U_old, &U_new);
@@ -102,6 +103,7 @@ jacobi_para_opt(int N, double threshold, int iter_max, double ***U_old, double *
 
     while (diff > threshold && iteration <= iter_max) {
         diff = 0;
+        #pragma omp parallel for private(i,j,k) reduction(+:diff) shared(U_old, U_new, F, scale, diff_scale) schedule(runtime)
         for (i = 1; i <= N ; i++) {
             for (j = 1; j <= N; j++) {
                 for (k = 1; k <= N; k++) {
