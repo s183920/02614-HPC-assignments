@@ -31,8 +31,10 @@ OPT_FLAGS="-g -O3 -funroll-loops -flto -march=native -ffast-math -funsafe-loop-o
 
 
 # compile the code
-module load gcc
-make realclean
+  module load nvhpc/22.11-nompi
+  module load cuda/11.8
+  module load gcc/11.3.0-binutils-2.38
+make clean
 make OPT="$OPT_FLAGS"
 
 # define the driver name to use

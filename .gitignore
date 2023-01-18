@@ -78,3 +78,4 @@ assignment3_gpu_computing/matmult/results/*
 assignment3_gpu_computing/poisson/results/*
 assignment3_gpu_computing/matmult/hpc_logs/*
 assignment3_gpu_computing/poisson/hpc_logs/*
+results
