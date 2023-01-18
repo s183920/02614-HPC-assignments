@@ -73,6 +73,7 @@ jacobi_para_opt(int N, double threshold, int iter_max, double ***U_old, double *
     printf("\tIterations: %d\n", iteration);
 }
 
+// GPU versin TODO: Segmentation fault fix
 void
 jacobi_GPU(int N, double threshold, int iter_max, double ***U_old, double ***U_new, 
             double ***F, double ***U_d, double ***U_new_d, double ***F_d, double *data, double delta) {
@@ -85,7 +86,6 @@ jacobi_GPU(int N, double threshold, int iter_max, double ***U_old, double ***U_n
     int i, j, k;
     double scale = 1.0/6.0;
     int iteration = 0;     
-
 
     //#pragma omp parallel shared(U_old, U_new, F, delta, scale) private(i, j, k, iteration)
     while (iteration < iter_max) {
@@ -111,3 +111,9 @@ jacobi_GPU(int N, double threshold, int iter_max, double ***U_old, double ***U_n
     
     printf("\tIterations: %d\n", iteration);
 }
+
+void copy(float *dst, float *src, int n) {
+    #pragma omp target teams loop is_device_ptr(dst, src)
+    for (int i = 0; i < n; i++)
+        dst[i] = src[i];
+    }
