@@ -3,7 +3,7 @@
 # experiments name
 export EXPNAME=blk_size_30_p2_$(date +%Y%m%d_%H%M%S)
 mkdir -p results/$EXPNAME
-mkdir -p results/$EXPNAME/hpc_logs
+mkdir -p hpc_logs
 mkdir -p results/$EXPNAME/compile_logs
 
 #!/bin/bash
@@ -24,20 +24,22 @@ mkdir -p results/$EXPNAME/compile_logs
 #BSUB -W 25
 # uncomment the following line, if you want to assure that your job has
 # a whole CPU for itself (shared L3 cache)
-#BSUB -R "span[hosts=1] affinity[socket(1)]"
+### BSUB -R "span[hosts=1] affinity[socket(1)]"
 
 # set compiler flags
 OPT_FLAGS="-g -O3 -funroll-loops -flto -march=native -ffast-math -funsafe-loop-optimizations -funsafe-math-optimizations -mavx2"
 
 
 # compile the code
-module load gcc
-make realclean
+  module load nvhpc/22.11-nompi
+  module load cuda/11.8
+  module load gcc/11.3.0-binutils-2.38
+make clean
 make OPT="$OPT_FLAGS"
 
 # define the driver name to use
 # cp matmult_c.gcc results/$EXPNAME/matmult_c.gcc
-export EXECUTABLE=matmult_c.gcc
+export EXECUTABLE=matmult_c.nvc++
 
 # create necesary files and directories
 export ANALYZER_DIR=results/${EXPNAME}/analyzer_files
@@ -69,12 +71,8 @@ export MATMULT_COMPARE=1   # {0|[1]}       control result comparison (def: 1); e
 export MFLOPS_MIN_T=5         # [3.0]         the minimum run-time (def: 3.0 s)
 # export MFLOPS_MAX_IT=1000        # [infinity]    max. no of iterations; set if you want to do profiling.
 
-# perform the experiments
-# sh experiment_size.sh # uncomment to perform size experiment
-# sh experiment_blk.sh # uncomment to perform blk experiment
-# sh experiment_analyzer.sh # uncomment to perform tuning experiment
-
 # copy hpc logs to results folder
+mkdir -p results/$EXPNAME/hpc_logs
 if [ "$LSB_JOBID" != "" ]; then
     cp hpc_logs/${LSB_JOBID}.out results/$EXPNAME/hpc_logs.out
     cp hpc_logs/${LSB_JOBID}.err results/$EXPNAME/hpc_logs.err

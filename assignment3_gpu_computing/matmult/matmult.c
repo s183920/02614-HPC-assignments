@@ -12,10 +12,11 @@
 // standard OpenMP versions
 void matmult_mkn_omp(int m,int n,int k,double **A,double **B,double **C){
     C = init_C(C,m,n);
-    #pragma omp parallel for
+    #pragma omp parallel for shared(m, n, k, A, B, C) schedule(runtime) 
     for(int i=0;i<m;i++){
         for(int l=0;l<k;l++){
             for(int j=0;j<n;j++){
+                #pragma omp atomic
                 #pragma omp atomic
                 C[i][j] += A[i][l]*B[l][j];
             }
@@ -24,13 +25,16 @@ void matmult_mkn_omp(int m,int n,int k,double **A,double **B,double **C){
 }
 
 void matmult_blk_omp(int m,int n,int k,double **A,double **B,double **C, int bs){
+    
     C = init_C(C,m,n);
     for(int i1=0;i1<m;i1+=bs){
         for(int l1=0;l1<k;l1+=bs){
-            for(int i2=0; i2 < min(m-i1, bs); i2++){
-                for(int l2=0; l2 < min(k-l1, bs); l2++){
-                    for(int j=0; j < n; j++){
-                        C[i1+i2][j] += A[i1+i2][l1+l2]*B[l1+l2][j];
+            for (int j1=0;j1 < n; j1+=bs){
+                for(int i2=0; i2 < min(m-i1, bs); i2++){
+                    for(int l2=0; l2 < min(k-l1, bs); l2++){
+                        for(int j2=0; j2 < min(n-j1, bs); j2++){
+                            C[i1+i2][j1+j2] += A[i1+i2][l1+l2]*B[l1+l2][j1+j2];
+                        }
                     }
                 }
             }
@@ -60,6 +64,26 @@ void matmult_lib(int m,int n,int k,double **A,double **B,double **C){
         );
 }
 
+
+
+void matmult_blk(int m,int n,int k,double **A,double **B,double **C, int bs){
+    C = init_C(C,m,n);
+    
+    for(int i1=0;i1<m;i1+=bs){
+        for(int l1=0;l1<k;l1+=bs){
+            for (int j1=0;j1<n;j1+=bs){
+                for(int i2=0; i2 < min(m-i1, bs); i2++){
+                    for(int l2=0; l2 < min(k-l1, bs); l2++){
+                        for(int j2=0; j2 < min(n-j1,bs); j2++){
+                            C[i1+i2][j1+j2] += A[i1+i2][l1+l2]*B[l1+l2][j1+j2];
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}
 // offload versions
 void matmult_mkn_offload(int m,int n,int k,double **A,double **B,double **C){
     C = init_C(C,m,n);
