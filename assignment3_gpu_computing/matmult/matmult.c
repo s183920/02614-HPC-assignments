@@ -91,14 +91,15 @@ void matmult_lib(int m,int n,int k,double **A,double **B,double **C){
 }
 
 // offload versions
-void matmult_mkn_offload(int m,int n,int k,double **A,double **B,double **C){
-    C = init_C_omp(C,m,n);
-    #pragma omp target teams distribute parallel for \
-    map(to: A[0:m][0:k], B[0:k][0:n]) map(from: C[0:m][0:n]) \
-    num_teams(32) thread_limit(32)
+void matmult_mkn_offload(int m,int n,int k,double **A,double **B, double **C){
+    C = init_C(C,m,n);
+    #pragma omp target teams loop \
+    map(to: A[0:m][0:k], B[0:k][0:n], m,k,n) map(tofrom: C[0:m][0:n]) \
+    num_teams(64) thread_limit(32)
     for(int i=0;i<m;i++){
         for(int l=0;l<k;l++){
             for(int j=0;j<n;j++){
+                #pragma omp atomic
                 C[i][j] += A[i][l]*B[l][j];
             }
         }
@@ -106,13 +107,14 @@ void matmult_mkn_offload(int m,int n,int k,double **A,double **B,double **C){
 }
 
 void matmult_mnk_offload(int m,int n,int k,double **A,double **B,double **C){
-    C = init_C_omp(C,m,n);
-    #pragma omp target teams distribute parallel for collapse(3) \
-    map(to: A[0:m][0:k], B[0:k][0:n]) map(from: C[0:m][0:n]) \
-    num_teams(108) thread_limit(32)
+    C = init_C(C,m,n);
+    #pragma omp target teams loop \
+    map(to: A[0:m][0:k], B[0:k][0:n], m,k,n) map(tofrom: C[0:m][0:n]) \
+    num_teams(32) thread_limit(32)
     for(int i=0;i<m;i++){
         for(int j=0;j<n;j++){
             for(int l=0;l<k;l++){
+                #pragma omp atomic
                 C[i][j] += A[i][l]*B[l][j];
             }
         }
@@ -127,8 +129,17 @@ int min(int a, int b)
     return (a < b) ? a : b;
 }
 
+double **init_C(double **C, int m, int n){
+    for(int i=0;i<m;i++){
+        for(int j=0;j<n;j++){
+            C[i][j] = 0;
+        }
+    }
+    return C;
+}
+
 double **init_C_omp(double **C, int m, int n){
-    #pragma omp for schedule(dynamic,32)
+    #pragma omp for
     for(int i=0;i<m;i++){
         for(int j=0;j<n;j++){
             C[i][j] = 0;

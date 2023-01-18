@@ -3,6 +3,7 @@
 
 // helper functions 
 int min(int a, int b);
+double **init_C(double **C, int m, int n);
 double **init_C_omp(double **C, int m, int n);
 
 // standard OMP versions

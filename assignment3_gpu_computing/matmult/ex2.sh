@@ -41,16 +41,17 @@ export EXECUTABLE=matmult_c.nvc++
 #mkdir results
 touch results/$EXPNAME/setup.txt # file for setup
 lscpu >> results/$EXPNAME/setup.txt # write setup to file
+/appl/cuda/11.8.0/extras/demo_suite/deviceQuery >> results/$EXPNAME/setup.txt # write setup to file
 echo "Jobid: ${LSB_JOBID}" >> results/$EXPNAME/setup.txt # write setup to file
 
 # safe compile options
 # cp compile.log results/$EXPNAME/compile_logs/compile.log
 
 # define the mkn values in the MKN variable
-export SIZES="30"
+export SIZES="512"
 
 # uncomment and set a reasonable BLKSIZE for the blk version
-export BLKSIZE=30
+export BLKSIZE=1
 
 # permuations
 export VERSIONS="mkn_offload mnk_offload"
@@ -63,15 +64,17 @@ export MFLOPS_MIN_T=3         # [3.0]         the minimum run-time (def: 3.0 s)
 
 # run the driver
 fnum=0
-# total=$VERSIONS* // VERSIONS * SIZES
 for VERSION in $VERSIONS; do
     for S in $SIZES; do
         echo "Starting run $fnum using $VERSION with size $SIZE"
         echo "version: $VERSION" > $OUTDIR/run_$fnum.txt
         echo "size: $S" >> $OUTDIR/run_$fnum.txt
+        echo "num_cpu_cores: $LSB_DJOB_NUMPROC" >> $OUTDIR/run_$fnum.txt
+        echo "num_gpu_cores: $LSB_DJOB_GPUS" >> $OUTDIR/run_$fnum.txt
         echo "result: $(./$EXECUTABLE $VERSION $S $S $S)"  >> $OUTDIR/run_$fnum.txt
         fnum=$((fnum+1))
     done
+    sh profiler.sh $VERSION $S $S $S
 done
 
 
