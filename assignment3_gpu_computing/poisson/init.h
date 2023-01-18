@@ -15,3 +15,5 @@ void init_grid_matrices(double ***F, double ***U, int N, double start_T);
 double f(double x, double y, double z);
 double u(double x, double y, double z);
 void init_grid_matrices_test(double ***F, double ***U, int N, double start_T);
+
+#endif
