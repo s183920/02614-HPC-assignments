@@ -7,7 +7,7 @@ def read_experiment(experiment_name: str):
     for file in output.glob("*.txt"):
         dfs.append(read_file(file))
     
-    return pd.concat(dfs).reset_index()
+    return pd.concat(dfs).reset_index(drop=True)
     
 def read_file(file: Path) -> pd.DataFrame:
     columns = []
