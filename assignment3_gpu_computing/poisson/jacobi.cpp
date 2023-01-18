@@ -10,12 +10,9 @@ void
 jacobi_map(int N, double threshold, int iter_max, double ***U_old, double ***U_new, double ***F, double delta) {
     int i, j, k;
     double scale = 1.0/6.0;
-
-    double diff = INFINITY;
-    double diff_scale = 1./(N*N*N);
-    int iteration;     
+    int iteration = 0;     
     
-    for (iteration = 0; iteration < iter_max; iteration++) {
+    while (iteration < iter_max) {
         //#pragma omp target teams loop map(to: U_old) map(from: U_new)
         for (i = 1; i <= N ; i++) {
             for (j = 1; j <= N; j++) {
@@ -28,17 +25,15 @@ jacobi_map(int N, double threshold, int iter_max, double ***U_old, double ***U_n
                         U_old[i][j][k-1] + 
                         U_old[i][j][k+1] + 
                         delta * delta * F[i][j][k]);
-                    diff += (U_old[i][j][k] - U_new[i][j][k])*(U_old[i][j][k] - U_new[i][j][k]);
                 }
             }
         }
-        diff = sqrt(diff_scale *diff);
         swap_3d(&U_old, &U_new);
+        iteration++;
     }
     swap_3d(&U_old, &U_new);
     
     printf("\tIterations: %d\n", iteration);
-    printf("\tConvergence_difference: %lf\n", diff);
 }
 
 // parallel version optimized
@@ -46,13 +41,12 @@ void
 jacobi_para_opt(int N, double threshold, int iter_max, double ***U_old, double ***U_new, double ***F, double delta) {
     int i, j, k;
     double scale = 1.0/6.0;
+    int iteration = 0; 
 
-    double diff = INFINITY;
-    double diff_scale = 1./(N*N*N);
-    int iteration; 
-
-    for (iteration = 0; iteration < iter_max; iteration++) {
-        #pragma omp parallel for private(i,j,k) reduction(+:diff) shared(U_old, U_new, F, scale, diff_scale) schedule(runtime)
+    #pragma omp parallel shared(U_old, U_new, F, delta, scale) private(i, j, k, iteration)
+    {
+    while(iteration < iter_max) {
+        #pragma omp for
         for (i = 1; i <= N ; i++) {
             for (j = 1; j <= N; j++) {
                 for (k = 1; k <= N; k++) {
@@ -68,9 +62,10 @@ jacobi_para_opt(int N, double threshold, int iter_max, double ***U_old, double *
             }
         }
         swap_3d(&U_old, &U_new);
+        iteration++;
+    }
     }
     swap_3d(&U_old, &U_new);
-    
+    printf("\tMax iterations: %d\n", iter_max);
     printf("\tIterations: %d\n", iteration);
-    printf("\tConvergence_difference: %lf\n", 0.0);
 }
