@@ -10,6 +10,7 @@ ISA	=
 PARA	=  -fopenmp
 INC   = -I$(CUDA_ROOT)/include -I/appl/nvhpc/2022_2211/Linux_x86_64/22.11/examples/OpenMP/SDK/include
 LIBS	=
+DEFS = -D_T50
 
 CXXFLAGS= $(OPT) $(PIC) $(INC) $(ISA) $(PARA) $(XOPT)
 CFLAGS= $(OPT) $(PIC) $(INC) $(ISA) $(PARA) $(XOPT)
@@ -17,7 +18,7 @@ CFLAGS= $(OPT) $(PIC) $(INC) $(ISA) $(PARA) $(XOPT)
 all: $(TARGET)
 
 $(TARGET): $(OBJS) 
-	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(LIBS)
+	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(LIBS) $(DEFS)
 
 # $(TARGET): $(OBJS) 
 # 	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
