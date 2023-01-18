@@ -25,7 +25,7 @@ $(TARGET): $(OBJS)
 clean:
 	@/bin/rm -f *.o $(TARGET)
 
-main.o: main.cpp jacobi.h init.h input.h print.h alloc3d.h
+main.o: main.cpp jacobi.h init.h print.h alloc3d.h
 jacobi.o: jacobi.h
 init.o: init.h
 # input.o: input.h
