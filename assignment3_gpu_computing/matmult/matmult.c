@@ -1,23 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "cblas.h"
-
-// helper function for creating the C matrix
-double **init_C(double **C, int m, int n){
-    for(int i=0;i<m;i++){
-        for(int j=0;j<n;j++){
-            C[i][j] = 0;
-        }
-    }
-    return C;
-}
-
-inline int min(int a, int b)
-{
-   return (a < b) ? a : b;
-}
+#include <cblas.h>
+#include <omp.h>
+#include "matmult.h"
 
 
+#ifndef _BLOCK_SIZE
+#define _BLOCK_SIZE 32
+#endif
+
+// standard OpenMP versions
 void matmult_mkn_omp(int m,int n,int k,double **A,double **B,double **C){
     C = init_C(C,m,n);
     #pragma omp parallel for shared(m, n, k, A, B, C) schedule(runtime) 
@@ -25,7 +17,23 @@ void matmult_mkn_omp(int m,int n,int k,double **A,double **B,double **C){
         for(int l=0;l<k;l++){
             for(int j=0;j<n;j++){
                 #pragma omp atomic
+                #pragma omp atomic
                 C[i][j] += A[i][l]*B[l][j];
+            }
+        }
+    }
+}
+
+void matmult_blk_omp(int m,int n,int k,double **A,double **B,double **C, int bs){
+    C = init_C(C,m,n);
+    for(int i1=0;i1<m;i1+=bs){
+        for(int l1=0;l1<k;l1+=bs){
+            for(int i2=0; i2 < min(m-i1, bs); i2++){
+                for(int l2=0; l2 < min(k-l1, bs); l2++){
+                    for(int j=0; j < n; j++){
+                        C[i1+i2][j] += A[i1+i2][l1+l2]*B[l1+l2][j];
+                    }
+                }
             }
         }
     }
@@ -73,25 +81,48 @@ void matmult_blk(int m,int n,int k,double **A,double **B,double **C, int bs){
     }
 
 }
-
-void matmult_blk_omp(int m,int n,int k,double **A,double **B,double **C, int bs){
+// offload versions
+void matmult_mkn_offload(int m,int n,int k,double **A,double **B,double **C){
     C = init_C(C,m,n);
-    
-    #pragma omp parallel for shared(m, n, k, A, B, C) schedule(runtime) 
-    for(int i1=0;i1<m;i1+=bs){
-        for(int l1=0;l1<k;l1+=bs){
-            for (int j1=0;j1<n;j1+=bs){
-                for(int i2=0; i2 < min(m-i1, bs); i2++){
-                    for(int l2=0; l2 < min(k-l1, bs); l2++){
-                        for(int j2=0; j2 < min(n-j1,bs); j2++){
-                            #pragma omp atomic
-                            C[i1+i2][j1+j2] += A[i1+i2][l1+l2]*B[l1+l2][j1+j2];
-                        }
-                    }
-                }
+    #pragma omp target teams distribute parallel for \
+    map(to: A[0:m][0:k], B[0:k][0:n]) map(from: C[0:m][0:n]) \
+    num_teams(32) thread_limit(32)
+    for(int i=0;i<m;i++){
+        for(int l=0;l<k;l++){
+            for(int j=0;j<n;j++){
+                C[i][j] += A[i][l]*B[l][j];
             }
         }
     }
-
 }
 
+void matmult_mnk_offload(int m,int n,int k,double **A,double **B,double **C){
+    C = init_C(C,m,n);
+    #pragma omp target teams distribute parallel for collapse(3) \
+    map(to: A[0:m][0:k], B[0:k][0:n]) map(from: C[0:m][0:n]) \
+    num_teams(108) thread_limit(32)
+    for(int i=0;i<m;i++){
+        for(int j=0;j<n;j++){
+            for(int l=0;l<k;l++){
+                C[i][j] += A[i][l]*B[l][j];
+            }
+        }
+    }
+}
+
+
+
+// define helper functions
+int min(int a, int b)
+{
+    return (a < b) ? a : b;
+}
+
+double **init_C(double **C, int m, int n){
+    for(int i=0;i<m;i++){
+        for(int j=0;j<n;j++){
+            C[i][j] = 0;
+        }
+    }
+    return C;
+}
