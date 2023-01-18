@@ -20,3 +20,6 @@ $(TARGET): $(OBJS)
 
 clean:
 	@/bin/rm -f $(TARGET) $(OBJS)
+
+# dependencies
+matmult.o: matmult.cpp
