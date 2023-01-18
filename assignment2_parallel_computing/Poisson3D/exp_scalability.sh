@@ -10,6 +10,10 @@ mkdir -p $OUT_DIR
 mkdir -p $COMPILE_LOG_DIR
 touch "$EXP_DIR/setup.txt" # file for setup
 
+module load gcc
+module load python3
+source ../../../venv/bin/activate
+
 # set compiler flags
 opt_methods=("without_optimization with_optimization")
 
