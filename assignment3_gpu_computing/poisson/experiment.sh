@@ -1,8 +1,10 @@
 #!/bin/sh
 
 # experiments name
-export EXPNAME=blk_size_30_p2_$(date +%Y%m%d_%H%M%S)
+EXPNAME=question6_$(date +%Y%m%d_%H%M%S)
+OUTDIR=results/$EXPNAME/output_files
 mkdir -p results/$EXPNAME
+mkdir -p $OUTDIR
 mkdir -p hpc_logs
 mkdir -p results/$EXPNAME/compile_logs
 
@@ -25,10 +27,6 @@ mkdir -p results/$EXPNAME/compile_logs
 # uncomment the following line, if you want to assure that your job has
 # a whole CPU for itself (shared L3 cache)
 ### BSUB -R "span[hosts=1] affinity[socket(1)]"
-
-# set compiler flags
-OPT_FLAGS="-g -O3 -funroll-loops -flto -march=native -ffast-math -funsafe-loop-optimizations -funsafe-math-optimizations -mavx2"
-
 
 # compile the code
   module load nvhpc/22.11-nompi
@@ -62,7 +60,20 @@ export DEFAULT_N=10           # {0|[1]}       control result comparison (def: 1)
 export DEFAULT_MAX_IT=1000    # [3.0]         max. no of iterations; set if you want to do profiling.
 export DEFAULT_T=0.32         # [0.32]        tolerance
 export DEFAULT_START_T=0      #Start time
-export DEFAULT_OUTPUT_ARG=0   #No output  
+export DEFAULT_OUTPUT_ARG=0   #No output 
+export VERSIONS="0 1"
+# run the driver
+fnum=0
+# total=$VERSIONS* // VERSIONS * SIZES
+for VERSION in $VERSIONS; do
+    for S in $SIZES; do
+        echo "Starting run $fnum using $VERSION with grid size $DEFAULT_N"
+        echo "version: $VERSION" > $OUTDIR/run_$fnum.txt
+        echo "size: $DEFAULT_N" >> $OUTDIR/run_$fnum.txt
+        echo "result: $(./$EXECUTABLE $DEFAULT_N $DEFAULT_MAX_IT $DEFAULT_T $DEFAULT_START $DEFAULT_OUTPUT_ARG $VERSION)"  >> $OUTDIR/run_$fnum.txt
+        fnum=$((fnum+1))
+    done
+done
 
 # copy hpc logs to results folder
 mkdir -p results/$EXPNAME/hpc_logs
