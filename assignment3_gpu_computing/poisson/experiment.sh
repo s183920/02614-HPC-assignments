@@ -38,7 +38,7 @@ make OPT="$OPT_FLAGS"
 # define the driver name to use
 # cp matmult_c.gcc results/$EXPNAME/matmult_c.gcc
 export EXECUTABLE=possion
-
+export CUDA_VISIBLE_DEVICES=0,1
 # create necesary files and directories
 export ANALYZER_DIR=results/${EXPNAME}/analyzer_files
 export SIZE_DIR=results/${EXPNAME}/output_files

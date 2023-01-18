@@ -12,8 +12,10 @@ jacobi_map(int N, double threshold, int iter_max, double ***U_old, double ***U_n
     double scale = 1.0/6.0;
     int iteration = 0;     
     
+    #pragma omp parallel shared(U_old, U_new, F, delta, scale) private(i, j, k, iteration)
     while (iteration < iter_max) {
-        //#pragma omp target teams loop map(to: U_old) map(from: U_new)
+        #pragma omp target map(to: U_old[0:N+1][0:N+1][0:N+1], F[0:N+1][0:N+1][0:N+1], delta, scale) map(tofrom: U_new[0:N+1][0:N+1][0:N+1])
+        #pragma omp for
         for (i = 1; i <= N ; i++) {
             for (j = 1; j <= N; j++) {
                 for (k = 1; k <= N; k++) {                    
@@ -30,7 +32,7 @@ jacobi_map(int N, double threshold, int iter_max, double ***U_old, double ***U_n
         }
         swap_3d(&U_old, &U_new);
         iteration++;
-    }
+        }
     swap_3d(&U_old, &U_new);
     
     printf("\tIterations: %d\n", iteration);
