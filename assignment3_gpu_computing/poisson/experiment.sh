@@ -57,7 +57,7 @@ export DEFAULT_MAX_IT=1000    # [3.0]         max. no of iterations; set if you 
 export DEFAULT_T=0.32         # [0.32]        tolerance
 export DEFAULT_START_T=0      #Start time
 export DEFAULT_OUTPUT_ARG=0   #No output 
-export VERSIONS="0 1"
+export VERSIONS="0 1 2"
 # run the driver
 fnum=0
 # total=$VERSIONS* // VERSIONS * SIZES
