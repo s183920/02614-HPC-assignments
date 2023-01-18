@@ -25,8 +25,8 @@ void matmult_mkn_omp(int m,int n,int k,double **A,double **B,double **C){
 }
 
 void matmult_blk_omp(int m,int n,int k,double **A,double **B,double **C, int bs){
+    
     C = init_C(C,m,n);
-
     for(int i1=0;i1<m;i1+=bs){
         for(int l1=0;l1<k;l1+=bs){
             for (int j1=0;j1 < n; j1+=bs){

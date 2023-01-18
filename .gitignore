@@ -72,3 +72,4 @@ assignment2_parallel_computing/Poisson3D/*.er
 assignment2_parallel_computing/Poisson3D/poisson_gs
 assignment2_parallel_computing/Poisson3D/poisson_j
 *.er
+results
