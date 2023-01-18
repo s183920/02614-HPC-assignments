@@ -22,9 +22,9 @@ plt.rcParams["axes.titlesize"] = 16
 
 def plot_error(df, plot_folder):
     # make plot
-    fig, axes = plt.subplots(1,1, figsize=(15, 10))
+    fig, axes = plt.subplots(2,1, figsize=(15, 10))
 
-    ax = axes
+    ax = axes[0]
     ax.set_ylabel("Iterations")
     ax.set_xlabel("N")
     ax.set_title("Number of iterations before convergence") # TODO: fix plot when results have been obtained
@@ -37,10 +37,11 @@ def plot_error(df, plot_folder):
     fig.tight_layout()
 
     # save plot
-    plt.savefig(plot_folder + 'iteration.png')
+    # plt.savefig(plot_folder + 'iteration.png')
+    # plt.show()
 
-    ax = axes
-    ax.set_ylabel("Iterations")
+    ax = axes[1]
+    ax.set_ylabel("Iterations/s")
     ax.set_xlabel("N")
     ax.set_title("Number of iterations/s before convergence") # TODO: fix plot when results have been obtained
     
