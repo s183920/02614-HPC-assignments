@@ -51,10 +51,12 @@ void matmult_blk_omp(int m,int n,int k,double **A,double **B,double **C, int bs)
     
     for(int i1=0;i1<m;i1+=bs){
         for(int l1=0;l1<k;l1+=bs){
-            for(int i2=0; i2 < min(m-i1, bs); i2++){
-                for(int l2=0; l2 < min(k-l1, bs); l2++){
-                    for(int j=0; j < n; j++){
-                        C[i1+i2][j] += A[i1+i2][l1+l2]*B[l1+l2][j];
+            for (int j1=0;j<n;j+=bs){
+                for(int i2=0; i2 < min(m-i1, bs); i2++){
+                    for(int l2=0; l2 < min(k-l1, bs); l2++){
+                        for(int j2=0; j2 < min(n-j1,bs); j++){
+                            C[i1+i2][j1+j2] += A[i1+i2][l1+l2]*B[l1+l2][j1+j2];
+                        }
                     }
                 }
             }
