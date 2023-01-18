@@ -53,8 +53,8 @@ jacobi_para_opt(int N, double threshold, int iter_max, double ***U_old, double *
     int i, j, k;
     double scale = 1.0/6.0;
 
-    //double diff = INFINITY;
-    //double diff_scale = 1./(N*N*N);
+    double diff = INFINITY;
+    double diff_scale = 1./(N*N*N);
     int iteration; 
 
     for (iteration = 0; iteration < iter_max; iteration++) {
