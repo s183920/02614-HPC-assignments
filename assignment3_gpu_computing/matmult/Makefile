@@ -22,4 +22,4 @@ clean:
 	@/bin/rm -f $(TARGET) $(OBJS)
 
 # dependencies
-matmult.o: matmult.cpp
+matmult.o: matmult.c
