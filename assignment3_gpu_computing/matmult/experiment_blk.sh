@@ -5,17 +5,15 @@
 
 
 ############ BSUB Tags ##############
-#BSUB -J mm_batch
+#BSUB -J Block Sizes
 #BSUB -o hpc_logs/%J.out
 #BSUB -e hpc_logs/%J.err
-#BSUB -q hpcintro
-#BSUB -n 1
-### BSUB -w "exit(15152889)" # job dependency
-#BSUB -R "rusage[mem=2048]"
-#BSUB -W 25
-# uncomment the following line, if you want to assure that your job has
-# a whole CPU for itself (shared L3 cache)
-### BSUB -R "span[hosts=1] affinity[socket(1)]"
+#BSUB -q hpcintrogpu
+#BSUB -n 4
+#BSUB -R "span[hosts=1]"
+#BSUB -gpu "num=1:mode=exclusive_process"
+#BSUB -W 10
+#BSUB -R "rusage[mem=2048]" 
 #########################################################################
 
 #### Compiler Options
@@ -24,21 +22,20 @@ OPT_FLAGS="-g -fast -Msafeptr -Minfo -mp=gpu -gpu=pinned -gpu=cc80 -gpu=lineinfo
 #### Driver Options
 export EXECUTABLE=matmult_c.nvc++ # Driver Name
 
-
 # export MATMULT_RESULTS=      # {[0]|1}       print result matrices (in Matlab format, def: 0)
 export MATMULT_COMPARE=1   # {0|[1]}       control result comparison (def: 1); enable(1)/disable(0) result checking
 export MFLOPS_MIN_T=3.0        # [3.0]         the minimum run-time (def: 3.0 s)
-export MFLOPS_MAX_IT=1000        # [infinity]    max. no of iterations; set if you want to do profiling.
+export MFLOPS_MAX_IT=100       # [infinity]    max. no of iterations; set if you want to do profiling.
 
 #### Experiment Options
 BLKSIZES={1..500..10}
-SIZE="100"
+SIZE="500"
 VERSIONS="blk blk_omp"
 export EXPNAME=blk_size_${SIZE}_$(date +%Y%m%d_%H%M%S) #Name of Experiment
 export EXPPATH=results/${EXPNAME} # Path to experiment folder
 # Sub-Folders
 export ANALYZER_DIR=$EXPPATH/analyzer_files
-export OUTPUT_DIR=$EXPPATH/output_files
+export OUTPUT_PATH=$EXPPATH/output_files
 
 #### Compile Code
 module load nvhpc/22.11-nompi
@@ -49,15 +46,15 @@ make OPT="$OPT_FLAGS"
 
 
 #### Run Experiment
-mkdir -p $OUTPUT_DIR
+mkdir -p $OUTPUT_PATH
 for V in $VERSIONS; do
 for BLK in $(eval echo $BLKSIZES) ; do
 FILENAME=${V}_${BLK}.txt
-echo "version: $V" >> $OUTPUT_DIR/$FILENAME
-echo "block_size: $BLK" >> $OUTPUT_DIR/$FILENAME
-echo "size: $SIZE" >> $OUTPUT_DIR/$FILENAME
+echo "version: $V" >> $OUTPUT_PATH/$FILENAME
+echo "block_size: $BLK" >> $OUTPUT_PATH/$FILENAME
+echo "size: $SIZE" >> $OUTPUT_PATH/$FILENAME
 echo "./$EXECUTABLE $V $SIZE $SIZE $SIZE $BLK >> $FILENAME"
-./$EXECUTABLE $V $SIZE $SIZE $SIZE $BLK >> $OUTPUT_DIR/$FILENAME
+echo "result: $(./$EXECUTABLE $V $SIZE $SIZE $SIZE)" >> $OUTPUT_PATH/$FILENAME
 done
 done
 
