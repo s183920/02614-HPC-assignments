@@ -53,9 +53,9 @@ mkdir -p $OUTPUT_DIR
 for V in $VERSIONS; do
 for BLK in $(eval echo $BLKSIZES) ; do
 FILENAME=${V}_${BLK}.txt
-echo "version: $V" >> $FILENAME
-echo "block_size: $BLK" >> $FILENAME
-echo "size: $SIZE" >> $FILENAME
+echo "version: $V" >> $OUTPUT_DIR/$FILENAME
+echo "block_size: $BLK" >> $OUTPUT_DIR/$FILENAME
+echo "size: $SIZE" >> $OUTPUT_DIR/$FILENAME
 echo "./$EXECUTABLE $V $SIZE $SIZE $SIZE $BLK >> $FILENAME"
 ./$EXECUTABLE $V $SIZE $SIZE $SIZE $BLK >> $OUTPUT_DIR/$FILENAME
 done
