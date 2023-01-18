@@ -48,10 +48,6 @@ export SIZE_DIR=results/${EXPNAME}/output_files
 touch results/$EXPNAME/setup.txt # file for setup
 lscpu >> results/$EXPNAME/setup.txt # write setup to file
 echo "Jobid: ${LSB_JOBID}" >> results/$EXPNAME/setup.txt # write setup to file
-
-# safe compile options
-cp compile.log results/$EXPNAME/compile_logs/compile.log
-
 # export PERMS="nat lib"
 
 # driver options
