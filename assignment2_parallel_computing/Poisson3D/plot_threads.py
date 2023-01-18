@@ -46,7 +46,7 @@ def plot_threads(df, plot_folder):
     ax.plot(threads, threads_n_jacobi_v2_256.speedup, marker = "s", color = "C5", label = "Jacobi_v2_N=256")
 
     #plot linear speedup
-    ax.plot(threads, threads, marker = "v", color = "C3", label = "Linear speedup")
+    ax.plot(threads, threads, marker = "P", color = "C6", label = "Linear speedup")
     #ax.plot(threads_n_gauss_seidel_sim.threads, threads_n_gauss_seidel_sim.time, marker = "v", color = "C3", label = "Gauss-Seidel_simple")
     ax.legend(loc="best", fontsize = 12, fancybox = True, framealpha = 1)
     fig.tight_layout()
