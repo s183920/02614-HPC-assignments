@@ -72,10 +72,10 @@ main(int argc, char *argv[]) {
     double	start_T;
     int		output_type = 0;
     char	*output_prefix = "poisson_res";
-    char        *output_ext    = "";
+    char    *output_ext    = "";
     char	output_filename[FILENAME_MAX];
     double 	***U = NULL;
-    double ***F = NULL;
+    double  ***F = NULL;
     int version = 0;
     // double ***U_true = NULL;
 
@@ -101,14 +101,14 @@ main(int argc, char *argv[]) {
         perror("array F: allocation failed");
         exit(-1);
     }
-     if ( (U = d_malloc_3d(N+2,N+2,N+2)) == NULL ) {
-        perror("array U: allocation failed");
-        exit(-1);
-    }
-    if ( (F = d_malloc_3d(N+2,N+2,N+2)) == NULL ) {
-        perror("array F: allocation failed");
-        exit(-1);
-    }
+    // if ( (U = d_malloc_3d(N+2,N+2,N+2)) == NULL ) {
+      //  perror("array U: allocation failed");
+        //exit(-1);
+    //}
+    //if ( (F = d_malloc_3d(N+2,N+2,N+2)) == NULL ) {
+      //  perror("array F: allocation failed");
+        //exit(-1);
+    //}
 
     // get step size
     double step_size = calc_step_size(N);

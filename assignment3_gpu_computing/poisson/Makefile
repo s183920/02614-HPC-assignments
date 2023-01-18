@@ -2,9 +2,9 @@ TARGET= poisson
 OBJS	= main.o \
         jacobi.o \
         init.o \
-        # input.o \
         print.o \
         alloc3d.o \
+        #input.o \
 
 CC	= nvc
 CXX	= nvc++
@@ -24,6 +24,13 @@ $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(LIBS)
 clean:
 	@/bin/rm -f *.o $(TARGET)
+
+test: clean all
+	@echo "Testing Jacobi with Map clause"
+	OMP_NUM_THREADS=2 ./poisson 10 100 0.01 0 0 0
+	@echo
+	@echo "Testing Jacobi with optimization from assignment 2"
+	OMP_NUM_THREADS=2 ./poisson 10 100 0.01 0 0 1
 
 main.o: main.cpp jacobi.h init.h print.h alloc3d.h
 jacobi.o: jacobi.h

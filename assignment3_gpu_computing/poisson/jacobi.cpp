@@ -4,13 +4,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <omp.h>
-
-void swap_3d(double ****X, double ****Y){
-    double ***temp = *X;
-    *X = *Y;
-    *Y = temp;
-}
+#include "init.h"
 
 void
 jacobi_map(int N, double threshold, int iter_max, double ***U_old, double ***U_new, double ***F, double delta) {
@@ -22,7 +16,7 @@ jacobi_map(int N, double threshold, int iter_max, double ***U_old, double ***U_n
     int iteration;     
     
     for (iteration = 0; iteration < iter_max; iteration++) {
-        #pragma omp target teams loop map(to: U_old) map(from: U_new)
+        //#pragma omp target teams loop map(to: U_old) map(from: U_new)
         for (i = 1; i <= N ; i++) {
             for (j = 1; j <= N; j++) {
                 for (k = 1; k <= N; k++) {                    
