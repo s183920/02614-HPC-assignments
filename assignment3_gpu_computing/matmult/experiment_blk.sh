@@ -32,7 +32,7 @@ export MFLOPS_MAX_IT=1000        # [infinity]    max. no of iterations; set if y
 
 #### Experiment Options
 BLKSIZES={1..500..10}
-SIZE="1000"
+SIZE="100"
 VERSIONS="blk blk_omp"
 export EXPNAME=blk_size_${SIZE}_$(date +%Y%m%d_%H%M%S) #Name of Experiment
 export EXPPATH=results/${EXPNAME} # Path to experiment folder
@@ -51,10 +51,13 @@ make OPT="$OPT_FLAGS"
 #### Run Experiment
 mkdir -p $OUTPUT_DIR
 for V in $VERSIONS; do
-FILENAME=$V.txt
 for BLK in $(eval echo $BLKSIZES) ; do
-echo $BLK
-./$EXECUTABLE $V $S $S $S $BLK >> $FILENAME
+FILENAME=${V}_${BLK}.txt
+echo "version: $V" >> $FILENAME
+echo "block_size: $BLK" >> $FILENAME
+echo "size: $SIZE" >> $FILENAME
+echo "./$EXECUTABLE $V $SIZE $SIZE $SIZE $BLK >> $FILENAME"
+./$EXECUTABLE $V $SIZE $SIZE $SIZE $BLK >> $OUTPUT_DIR/$FILENAME
 done
 done
 
