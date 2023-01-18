@@ -24,3 +24,10 @@ $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(LIBS)
 clean:
 	@/bin/rm -f *.o $(TARGET)
+
+main.o: main.cpp 
+jacobi.o: jacobi.h
+init.o: init.h
+input.o: input.h
+print.o: print.h
+alloc3d.o: alloc3d.h
