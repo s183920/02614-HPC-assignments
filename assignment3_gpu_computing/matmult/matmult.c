@@ -8,7 +8,7 @@
 
 
 #ifndef _BLOCK_SIZE
-#define _BLOCK_SIZE 32
+#define _BLOCK_SIZE 15
 #endif
 
 #ifndef _TEAMS
@@ -212,7 +212,41 @@ void matmult_asy_offload(int m,int n,int k,double **A,double **B, double **C){
         // #pragma omp taskwait
     } // finish async 
 }
+void matmult_blk_offload(int m, int n, int k, double **A,double **B,double **C){
+    C = init_C(C,m,n);
+    #pragma omp target teams loop \
+    map(to: A[:m][:k], B[:k][:n], m,k,n) map(tofrom: C[:m][:n]) \
+    num_teams(108) thread_limit(16)\
+    collapse(2)
+    for(int i1=0;i1<m;i1+=_BLOCK_SIZE){
+        for(int j=0;j<n;j++){
+            int i2, l;
+            double temp_sum[_BLOCK_SIZE] = {};
+                if (_BLOCK_SIZE < (m-i1)){
+                    for(l=0;l<k;l++){   
+                        for(i2=0; i2 < _BLOCK_SIZE; i2++){
+                            temp_sum[i2] += A[i1+i2][l] * B[l][j];
+                        }
+                    }
 
+                    for (int i=0; i < _BLOCK_SIZE; i++){
+                        C[i + i1][j] = temp_sum[i];
+                    }
+
+                }
+                else { 
+                    for(l=0;l<k;l++){   
+                        for(i2=0; i2 < (m-i1); i2++){
+                            C[i1+i2][j] += A[i1+i2][l]*B[l][j];
+                        }
+                    }
+                }
+
+            }
+
+
+        }
+    }   
 
 
 // define helper functions
