@@ -10,15 +10,15 @@ ISA	=
 PARA	=  -fopenmp
 INC   = -I$(CUDA_ROOT)/include -I/appl/nvhpc/2022_2211/Linux_x86_64/22.11/examples/OpenMP/SDK/include
 LIBS	=
-DEFS = -D_T50
+DEFS = -D _TEAMS
 
 CXXFLAGS= $(OPT) $(PIC) $(INC) $(ISA) $(PARA) $(XOPT)
 CFLAGS= $(OPT) $(PIC) $(INC) $(ISA) $(PARA) $(XOPT)
 
-all: $(TARGET)
+all: clean $(TARGET)
 
 $(TARGET): $(OBJS) 
-	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(LIBS) $(DEFS)
+	$(CXX) $(DEFS) $(CXXFLAGS) -o $@ $(OBJS) $(LIBS) 
 
 # $(TARGET): $(OBJS) 
 # 	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
@@ -47,46 +47,82 @@ clean:
 # 	#OMP_NUM_THREADS=2 ./matmult_c.nvc++ mnk_offload 50 60 70
 # 	# @echo
 
+# T1 = 512
+# T2 = 513
+# T3 = 514
+T1 = 2048
+T2 = 2049
+T3 = 2050
+
+test: clean all
+	@echo "Expected:"
+	@echo "98304.000 6528.841 300 # matmult_mnk_offload"
+	@echo "Testing matmult_mkn_offload"
+	./matmult_c.nvc++ mnk_offload 2048 2048 2048
+	@echo
+
 test_standard: clean all
 	@echo "Testing matmult_mkn_omp"
-	OMP_NUM_THREADS=1 ./matmult_c.nvc++ mkn_omp 512 513 514
+	OMP_NUM_THREADS=1 ./matmult_c.nvc++ mkn_omp $(T1) $(T2) $(T3)
 	@echo
 	@echo "Testing matmult_mkn_omp"
-	OMP_NUM_THREADS=8 ./matmult_c.nvc++ mkn_omp 512 513 514
+	OMP_NUM_THREADS=8 ./matmult_c.nvc++ mkn_omp $(T1) $(T2) $(T3)
 	@echo
 	# @echo "Testing matmult_blk_omp"
-	#OMP_NUM_THREADS=2 ./matmult_c.nvc++ blk_omp 512 513 514
+	#OMP_NUM_THREADS=2 ./matmult_c.nvc++ blk_omp $(T1) $(T2) $(T3)
 	# @echo
 
 
 test_speedup: clean all
 	@echo "Testing matmult_mkn_omp"
-	OMP_NUM_THREADS=2 ./matmult_c.nvc++ mkn_omp 50 60 70
+	OMP_NUM_THREADS=16 ./matmult_c.nvc++ mkn_omp $(T1) $(T2) $(T3)
 	@echo
 	@echo "Testing matmult_mkn_offload"
-	OMP_NUM_THREADS=16 ./matmult_c.nvc++ mkn_omp 50 60 70
+	./matmult_c.nvc++ mkn_offload $(T1) $(T2) $(T3)
 	@echo
 
 test_lib: clean all
 	@echo "Testing matmult_lib"
-	OMP_NUM_THREADS=2 ./matmult_c.nvc++ lib 512 512 512
+	OMP_NUM_THREADS=2 ./matmult_c.nvc++ lib $(T1) $(T2) $(T3)
 	@echo
 	@echo "Testing matmult_lib"
-	OMP_NUM_THREADS=16 ./matmult_c.nvc++ lib 512 512 512
+	OMP_NUM_THREADS=16 ./matmult_c.nvc++ lib $(T1) $(T2) $(T3)
 	@echo
 
 test_offload: clean all
 	@echo "Testing matmult_mkn_omp"
-	./matmult_c.nvc++ mkn_omp 512 512 512
+	OMP_NUM_THREADS=16 ./matmult_c.nvc++ mkn_omp $(T1) $(T2) $(T3)
 	@echo
 	@echo "Testing matmult_lib"
-	./matmult_c.nvc++ lib 512 512 512
+	OMP_NUM_THREADS=16 ./matmult_c.nvc++ lib $(T1) $(T2) $(T3)
 	@echo
 	@echo "Testing matmult_mkn_offload"
-	./matmult_c.nvc++ mkn_offload 512 512 512
+	./matmult_c.nvc++ mkn_offload $(T1) $(T2) $(T3)
 	@echo
 	@echo "Testing mnk_offload"
-	./matmult_c.nvc++ mnk_offload 512 512 512
+	./matmult_c.nvc++ mnk_offload $(T1) $(T2) $(T3)
 	@echo
+
+# test_avx: clean $(OBJS)
+# 	icc -xcore-avx51 $(CXXFLAGS) -o $(TARGET) $(OBJS) $(LIBS) $(DEFS)
+
+ASY_T = 2048 # must be divisible by number of slabs
+test_asy: clean all
+	export MFLOPS_MIN_T=0.0
+	@echo "Testing matmult_mkn_omp"
+	OMP_NUM_THREADS=16 ./matmult_c.nvc++ mkn_omp $(ASY_T) $(ASY_T) $(ASY_T)
+	@echo
+	@echo "Testing matmult_mkn_offload"
+	./matmult_c.nvc++ mkn_offload $(ASY_T) $(ASY_T) $(ASY_T)
+	@echo
+	@echo "Testing matmult_asy_offload"
+	./matmult_c.nvc++ asy_offload $(ASY_T) $(ASY_T) $(ASY_T)
+	@echo
+
+test_teams: clean all
+	@echo "Testing matmult_mkn_omp"
+	OMP_NUM_THREADS=16 ./matmult_c.nvc++ mkn_omp $(T1) $(T2) $(T3)
+	@echo
+
 # dependencies
 matmult.o: matmult.h matmult.c
