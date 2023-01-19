@@ -29,9 +29,9 @@ mkdir -p results/$EXPNAME/compile_logs
 ### BSUB -R "span[hosts=1] affinity[socket(1)]"
 
 # compile the code
-  module load nvhpc/22.11-nompi
-  module load cuda/11.8
-  module load gcc/11.3.0-binutils-2.38
+module load nvhpc/22.11-nompi
+module load cuda/11.8
+module load gcc/11.3.0-binutils-2.38
 make clean
 make OPT="$OPT_FLAGS"
 

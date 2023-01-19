@@ -13,10 +13,10 @@ jacobi_map(int N, double threshold, int iter_max, double ***U_old, double ***U_n
     double scale = 1.0/6.0;
     int iteration = 0;     
     
-    #pragma omp parallel shared(U_old, U_new, F, delta, scale) private(i, j, k, iteration)
+    #pragma omp parallel private(i, j, k)
     while (iteration < iter_max) {
         #pragma omp target map(to: U_old[0:N+1][0:N+1][0:N+1], F[0:N+1][0:N+1][0:N+1], delta, scale) map(tofrom: U_new[0:N+1][0:N+1][0:N+1])
-        #pragma omp for
+        #pragma omp for schedule(static) private(i, j, k)
         for (i = 1; i <= N ; i++) {
             for (j = 1; j <= N; j++) {
                 for (k = 1; k <= N; k++) {                    
@@ -31,8 +31,10 @@ jacobi_map(int N, double threshold, int iter_max, double ***U_old, double ***U_n
                 }
             }
         }
-        swap_3d(&U_old, &U_new);
         iteration++;
+        double ***tmp = U_old;
+        U_old = U_new;
+        U_new = tmp;
         }
     swap_3d(&U_old, &U_new);
     
@@ -46,10 +48,10 @@ jacobi_para_opt(int N, double threshold, int iter_max, double ***U_old, double *
     double scale = 1.0/6.0;
     int iteration = 0; 
 
-    #pragma omp parallel shared(U_old, U_new, F, delta, scale) private(i, j, k, iteration)
+    #pragma omp parallel private(i, j, k) firstprivate(iteration)
     {
     while(iteration < iter_max) {
-        #pragma omp for
+        #pragma omp for schedule(static) private(i, j, k)
         for (i = 1; i <= N ; i++) {
             for (j = 1; j <= N; j++) {
                 for (k = 1; k <= N; k++) {
@@ -64,7 +66,9 @@ jacobi_para_opt(int N, double threshold, int iter_max, double ***U_old, double *
                 }
             }
         }
-        swap_3d(&U_old, &U_new);
+        double ***tmp = U_old;
+        U_old = U_new;
+        U_new = tmp;
         iteration++;
     }
     }
@@ -75,21 +79,15 @@ jacobi_para_opt(int N, double threshold, int iter_max, double ***U_old, double *
 
 // GPU versin TODO: Segmentation fault fix
 void
-jacobi_GPU(int N, double threshold, int iter_max, double ***U_old, double ***U_new, 
-            double ***F, double ***U_d, double ***U_new_d, double ***F_d, double *data, double delta) {
+jacobi_GPU(int N, double threshold, int iter_max, double ***U_d, double ***U_new_d, double ***F_d, double delta) {
     
-    /* initialize U_new, U_old and F on host */
-    omp_target_memcpy(data, U_new[0], N * N * N * sizeof(double), 0, 0, omp_get_default_device(), omp_get_initial_device());
-    omp_target_memcpy(data, U_old[0], N * N * N * sizeof(double), 0, 0, omp_get_default_device(), omp_get_initial_device());
-    omp_target_memcpy(data, F[0], N * N * N * sizeof(double), 0, 0, omp_get_default_device(), omp_get_initial_device());
-
     int i, j, k;
     double scale = 1.0/6.0;
     int iteration = 0;     
 
-    //#pragma omp parallel shared(U_old, U_new, F, delta, scale) private(i, j, k, iteration)
+    //#pragma omp parallel shared(U_d, U_new, F, delta, scale) private(i, j, k, iteration)
     while (iteration < iter_max) {
-        #pragma omp target teams distribute parallel for is_device_ptr(U_d, U_new_d, F_d)
+        #pragma omp target teams distribute parallel for collapse(3) is_device_ptr(U_d, U_new_d, F_d)
         for (i = 1; i <= N ; i++) {
             for (j = 1; j <= N; j++) {
                 for (k = 1; k <= N; k++) {                    
@@ -104,16 +102,19 @@ jacobi_GPU(int N, double threshold, int iter_max, double ***U_old, double ***U_n
                 }
             }
         }
-        swap_3d(&U_d, &U_new_d);
+        //swap_3d(&U_d, &U_new_d);
+        double ***tmp = U_d;
+        U_d = U_new_d;
+        U_new_d = tmp;
         iteration++;
         }
-    swap_3d(&U_d, &U_new_d);
+    // swap_3d(&U_d, &U_new_d);
     
     printf("\tIterations: %d\n", iteration);
 }
 
-void copy(float *dst, float *src, int n) {
-    #pragma omp target teams loop is_device_ptr(dst, src)
-    for (int i = 0; i < n; i++)
-        dst[i] = src[i];
-    }
+// void copy(float *dst, float *src, int n) {
+//     #pragma omp target teams loop is_device_ptr(dst, src)
+//     for (int i = 0; i < n; i++)
+//         dst[i] = src[i];
+//     }
