@@ -13,10 +13,9 @@ jacobi_map(int N, double threshold, int iter_max, double ***U_old, double ***U_n
     double scale = 1.0/6.0;
     int iteration = 0;     
     
-    #pragma omp parallel private(i, j, k)
+    #pragma omp target data map(to: U_old[0:N+2][0:N+2][0:N+2], F[0:N+2][0:N+2][0:N+2]) map(tofrom: U_new[0:N+2][0:N+2][0:N+2], iteration)
     while (iteration < iter_max) {
-        #pragma omp target map(to: U_old[0:N+1][0:N+1][0:N+1], F[0:N+1][0:N+1][0:N+1], delta, scale) map(tofrom: U_new[0:N+1][0:N+1][0:N+1])
-        #pragma omp for schedule(static) private(i, j, k)
+        #pragma omp target teams distribute parallel for num_teams((N*N*N)/64) thread_limit(64) collapse(3)
         for (i = 1; i <= N ; i++) {
             for (j = 1; j <= N; j++) {
                 for (k = 1; k <= N; k++) {                    
