@@ -185,6 +185,11 @@ void matmult_mnk_offload(int m,int n,int k,double **A,double **B,double **C){
 // block offload versions
 void matmult_blk_offload(int m, int n, int k, double **A,double **B,double **C){
     C = init_C(C,m,n);
+    double t1, t2;
+    t1 = omp_get_wtime();
+    #pragma omp target data map(to: A[:m][:k], B[:k][:n], m,k,n) map(tofrom: C[:m][:n])
+    {
+    t1 = omp_get_wtime();
     #pragma omp target teams loop \
     map(to: A[:m][:k], B[:k][:n], m,k,n) map(tofrom: C[:m][:n]) \
     num_teams(_TEAMS) thread_limit(_THREADS)\
@@ -214,6 +219,11 @@ void matmult_blk_offload(int m, int n, int k, double **A,double **B,double **C){
             }
         }
     }
+    t2 = omp_get_wtime();
+    printf("Time without transfer: %lf\n", t2-t1);
+    }
+    t2 = omp_get_wtime();
+    printf("Time with transfer: %lf\n", t2-t1);
 }   
 
 

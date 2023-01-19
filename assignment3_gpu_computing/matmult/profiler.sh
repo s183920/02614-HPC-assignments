@@ -7,11 +7,12 @@
 #BSUB -W 10
 #BSUB -R "rusage[mem=2048]" 
 
-if [ $# -ne 2 ]; then
-    echo "Usage: $0 <m> <n> <k>"
-    exit 1
-fi
-
+# if [ $# -ne 2 ]; then
+#     echo "Usage: $0 <m> <n> <k>"
+#     exit 1
+# fi
+version=blk_offload
+size=2048
 mkdir -p profiles
 
 FILE=profiles/profile_$(date +%Y%m%d_%H%M%S)_$LSB_JOBID.txt
@@ -29,4 +30,4 @@ echo "$(nv-nsight-cu-cli \
         --section ComputeWorkloadAnalysis \
         --section Occupancy \
         --section SpeedOfLight \
-        ./matmult_c.nvc++ $1 $2 $2 $2)" > $FILE
+        ./matmult_c.nvc++ $version $size $size $size)" > $FILE
