@@ -34,6 +34,9 @@ test: clean all
 	@echo
 	@echo "Testing Jacobi with optimization on the GPU"
 	OMP_NUM_THREADS=16 ./poisson 200 100 0.01 0 0 2
+	@echo
+	@echo "Testing Jacobi with map clause and normalization calculation"
+	OMP_NUM_THREADS=16 ./poisson 200 100 0.01 0 0 4
 
 
 main.o: main.cpp jacobi.h init.h print.h alloc3d.h

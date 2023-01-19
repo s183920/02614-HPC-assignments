@@ -55,6 +55,8 @@ double solver(int version, int N, double tolerance, int iter_max, double ***U, d
         jacobi_map(N, tolerance, iter_max, U, U_new, F, step_size);
     } else if (version == 1){
         jacobi_para_opt(N, tolerance, iter_max, U, U_new, F, step_size);
+    } else if (version == 4){
+        jacobi_map_norm(N, tolerance, iter_max, U, U_new, F, step_size);
     } else if (version == 2){
         double ***U_new_d = NULL;
         double *data_un_d = NULL;
@@ -75,6 +77,7 @@ double solver(int version, int N, double tolerance, int iter_max, double ***U, d
         t1_wot = omp_get_wtime();
         jacobi_GPU(N, tolerance, iter_max, U_d, U_new_d, F_d, step_size);
         t2_wot = omp_get_wtime();
+        omp_target_memcpy(U_new[0][0], data_un_d, (N+2) * (N+2) * (N+2) * sizeof(double), 0, 0, omp_get_initial_device(), omp_get_default_device());
         printf("\tTime w/o data transfer: %lf\n", delta_t(t1_wot, t2_wot));
         d_free_3d(U_d, data_u_d);
         d_free_3d(U_new_d, data_un_d);
@@ -160,6 +163,12 @@ main(int argc, char *argv[]) {
         break;
     case 2:
         version_name = "GPU";
+        break;
+    case 3:
+        version_name = "Multiple GPU";
+        break;
+    case 4:
+        version_name = "Map with norm calc";
         break;
     }
     printf("\tMethod: Jacobi (%s)\n", version_name);
