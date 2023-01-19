@@ -35,6 +35,9 @@ test: clean all
 	@echo "Testing Jacobi with optimization on the GPU"
 	OMP_NUM_THREADS=16 ./poisson 200 100 0.01 0 0 2
 	@echo
+	@echo "Testing Jacobi with optimization on dual GPUs"
+	OMP_NUM_THREADS=16 ./poisson 200 100 0.01 0 0 3
+	@echo
 	@echo "Testing Jacobi with map clause and normalization calculation"
 	OMP_NUM_THREADS=16 ./poisson 200 100 0.01 0 0 4
 

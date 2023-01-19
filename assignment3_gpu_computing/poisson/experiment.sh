@@ -8,25 +8,21 @@ mkdir -p $OUTDIR
 mkdir -p hpc_logs
 mkdir -p results/$EXPNAME/compile_logs
 
-#!/bin/bash
-# 02614 - High-Performance Computing, January 2022
-# 
-# batch script to run matmult on a decidated server in the hpcintro
-# queue
-#
-# Author: Bernd Dammann <bd@cc.dtu.dk>
-#
-#BSUB -J mm_batch
+#BSUB -J jacobi_outputs
 #BSUB -o hpc_logs/%J.out
 #BSUB -e hpc_logs/%J.err
-#BSUB -q hpcintro
-#BSUB -n 1
-### BSUB -w "exit(15152889)" # job dependency
+#BSUB -q hpcintrogpu
+#BSUB -n 4
+#BSUB -R "span[hosts=1]"
+#BSUB -gpu "num=1:mode=exclusive_process"
+#BSUB -W 10
 #BSUB -R "rusage[mem=2048]"
-#BSUB -W 25
 # uncomment the following line, if you want to assure that your job has
 # a whole CPU for itself (shared L3 cache)
 ### BSUB -R "span[hosts=1] affinity[socket(1)]"
+
+
+
 
 # compile the code
 module load nvhpc/22.11-nompi
