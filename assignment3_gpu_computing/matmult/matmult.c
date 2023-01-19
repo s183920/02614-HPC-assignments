@@ -8,11 +8,11 @@
 
 
 #ifndef _BLOCK_SIZE
-#define _BLOCK_SIZE 15
+#define _BLOCK_SIZE 10
 #endif
 
 #ifndef _TEAMS
-#define _TEAMS 16384
+#define _TEAMS 500
 #endif
 
 #ifndef _THREADS
@@ -45,7 +45,7 @@ void matmult_mkn_omp(int m,int n,int k,double **A,double **B,double **C){
 }
 
 void matmult_blk_omp(int m,int n,int k,double **A,double **B,double **C, int bs){
-    #pragma omp parallel shared(m,n,k,A,B,C,bs)
+    #pragma omp parallel shared(m,n,k,A,B,C,bs) 
     {
     C = init_C_omp(C,m,n);
     #pragma omp for collapse(3)
@@ -188,6 +188,11 @@ void matmult_mnk_offload(int m,int n,int k,double **A,double **B,double **C){
 // block offload versions
 void matmult_blk_offload(int m, int n, int k, double **A,double **B,double **C){
     C = init_C(C,m,n);
+    double t1, t2;
+    t1 = omp_get_wtime();
+    #pragma omp target data map(to: A[:m][:k], B[:k][:n], m,k,n) map(tofrom: C[:m][:n])
+    {
+    t1 = omp_get_wtime();
     #pragma omp target teams loop \
     map(to: A[:m][:k], B[:k][:n], m,k,n) map(tofrom: C[:m][:n]) \
     num_teams(_TEAMS) thread_limit(_THREADS)\
@@ -217,6 +222,11 @@ void matmult_blk_offload(int m, int n, int k, double **A,double **B,double **C){
             }
         }
     }
+    t2 = omp_get_wtime();
+    printf("Time without transfer: %lf\n", t2-t1);
+    }
+    t2 = omp_get_wtime();
+    printf("Time with transfer: %lf\n", t2-t1);
 }   
 
 
