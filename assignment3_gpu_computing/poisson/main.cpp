@@ -55,6 +55,8 @@ double solver(int version, int N, double tolerance, int iter_max, double ***U, d
         jacobi_map(N, tolerance, iter_max, U, U_new, F, step_size);
     } else if (version == 1){
         jacobi_para_opt(N, tolerance, iter_max, U, U_new, F, step_size);
+    } else if (version == 4){
+        jacobi_map_norm(N, tolerance, iter_max, U, U_new, F, step_size);
     } else if (version == 2){
         double ***U_new_d = NULL;
         double *data_un_d = NULL;
@@ -161,6 +163,12 @@ main(int argc, char *argv[]) {
         break;
     case 2:
         version_name = "GPU";
+        break;
+    case 3:
+        version_name = "Multiple GPU";
+        break;
+    case 4:
+        version_name = "Map with norm calc";
         break;
     }
     printf("\tMethod: Jacobi (%s)\n", version_name);
