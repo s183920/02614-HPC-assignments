@@ -31,6 +31,10 @@ test: clean all
 	@echo
 	@echo "Testing Jacobi with optimization from assignment 2"
 	OMP_NUM_THREADS=16 ./poisson 200 100 0.01 0 0 1
+	@echo
+	@echo "Testing Jacobi with optimization on the GPU"
+	OMP_NUM_THREADS=16 ./poisson 200 100 0.01 0 0 2
+
 
 main.o: main.cpp jacobi.h init.h print.h alloc3d.h
 jacobi.o: jacobi.h

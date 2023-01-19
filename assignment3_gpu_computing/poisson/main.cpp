@@ -53,7 +53,37 @@ double solver(int version, int N, double tolerance, int iter_max, double ***U, d
         jacobi_map(N, tolerance, iter_max, U, U_new, F, step_size);
     } else if (version == 1){
         jacobi_para_opt(N, tolerance, iter_max, U, U_new, F, step_size);
-    } else {
+    } else if (version == 2){
+        double ***U_d = NULL;
+        double ***F_d = NULL;
+        double *data = NULL;
+        if ( (U_d = d_malloc_3d(N+2,N+2,N+2, &data)) == NULL ) {
+            perror("array U_d: allocation failed");
+            exit(-1);
+        }
+        if ( (F_d = d_malloc_3d(N+2,N+2,N+2, &data)) == NULL ) {
+            perror("array F_d: allocation failed");
+            exit(-1);
+        }
+        double ***U_new_d = NULL;
+        if ( (U_new_d = d_malloc_3d(N+2,N+2,N+2, &data)) == NULL ) {
+            perror("array U_new_d: allocation failed");
+            exit(-1);
+        }
+        
+        #pragma omp parallel for shared(U_new_d, N)
+        for (int i = 0; i <= N+1; i++){
+            for (int j = 0; j <= N+1; j++){
+                for (int k = 0; k <= N+1; k++){
+                    U_new_d[i][j][k] = U_d[i][j][k];
+                }
+            }
+        }
+        t1 = mytimer();
+        jacobi_GPU(N, tolerance, iter_max, U, U_new, F, U_d, U_new_d, F_d, data, step_size);
+    }
+    
+    else {
         perror("Error: version not supported");
         exit(-1);
     }
@@ -76,6 +106,9 @@ main(int argc, char *argv[]) {
     char	output_filename[FILENAME_MAX];
     double 	***U = NULL;
     double  ***F = NULL;
+    double 	***U_d = NULL;
+    double  ***F_d = NULL;
+    double  *data;
     int version = 0;
     // double ***U_true = NULL;
 
@@ -101,14 +134,6 @@ main(int argc, char *argv[]) {
         perror("array F: allocation failed");
         exit(-1);
     }
-    // if ( (U = d_malloc_3d(N+2,N+2,N+2)) == NULL ) {
-      //  perror("array U: allocation failed");
-        //exit(-1);
-    //}
-    //if ( (F = d_malloc_3d(N+2,N+2,N+2)) == NULL ) {
-      //  perror("array F: allocation failed");
-        //exit(-1);
-    //}
 
     // get step size
     double step_size = calc_step_size(N);
@@ -121,14 +146,14 @@ main(int argc, char *argv[]) {
     char *version_name;
     switch(version) {
     case 0:
-        version_name = "map";
+        version_name = "Map";
         break;
     case 1:
         version_name = "Optimized parallel";
         break;
-    //case 2:
-      //  version_name = "Optimized parallel";
-        //break;
+    case 2:
+        version_name = "GPU";
+        break;
     }
     printf("\tMethod: Jacobi (%s)\n", version_name);
     printf("\tN: %d\n", N);
@@ -183,6 +208,9 @@ main(int argc, char *argv[]) {
     // de-allocate memory
     free_3d(U);
     free_3d(F);
-
+    if (version > 1) {
+        d_free_3d(U_d, data);
+        d_free_3d(F_d, data);
+    }
     return(0);
 }

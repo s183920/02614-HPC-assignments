@@ -9,6 +9,14 @@
 #define _BLOCK_SIZE 15
 #endif
 
+#ifndef _TEAMS
+#define _TEAMS 108
+#endif
+
+#ifndef _THREADS
+#define _THREADS 64
+#endif
+
 // standard OpenMP versions
 void matmult_mkn_omp(int m,int n,int k,double **A,double **B,double **C){
     #pragma omp parallel shared(A,B,C)
@@ -92,10 +100,21 @@ void matmult_lib(int m,int n,int k,double **A,double **B,double **C){
 
 // offload versions
 void matmult_mkn_offload(int m,int n,int k,double **A,double **B, double **C){
+    // printf("TEAMS: %d, THREADS: %d\n", _TEAMS, _THREADS);
     C = init_C(C,m,n);
+    
+    // timings
+    double t1, t2;
+    t1 = omp_get_wtime();
+
+    // transfer data to device
+    #pragma omp target data map(to: A[0:m][0:k], B[0:k][0:n], m,k,n) map(tofrom: C[0:m][0:n])
+    {
+    t1 = omp_get_wtime();
     #pragma omp target teams loop \
+    num_teams(_TEAMS) thread_limit(_THREADS) \
     map(to: A[0:m][0:k], B[0:k][0:n], m,k,n) map(tofrom: C[0:m][0:n]) \
-    num_teams(64) thread_limit(32)
+    
     for(int i=0;i<m;i++){
         for(int l=0;l<k;l++){
             for(int j=0;j<n;j++){
@@ -104,13 +123,18 @@ void matmult_mkn_offload(int m,int n,int k,double **A,double **B, double **C){
             }
         }
     }
+    t2 = omp_get_wtime();
+    printf("Time without transfer: %f\n", 1e3*(t2-t1));
+    } // exit data
+    t2 = omp_get_wtime();
+    printf("Time with transfer: %f\n", 1e3*(t2-t1));
 }
 
 void matmult_mnk_offload(int m,int n,int k,double **A,double **B,double **C){
     C = init_C(C,m,n);
     #pragma omp target teams loop \
     map(to: A[0:m][0:k], B[0:k][0:n], m,k,n) map(tofrom: C[0:m][0:n]) \
-    num_teams(108) thread_limit(16)
+    num_teams(_TEAMS) thread_limit(_THREADS)
     for(int i=0;i<m;i++){
         for(int j=0;j<n;j++){
             for(int l=0;l<k;l++){
