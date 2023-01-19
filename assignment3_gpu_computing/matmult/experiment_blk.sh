@@ -1,11 +1,6 @@
 #!/bin/sh
 
-#!/bin/bash
-#!/bin/sh
-
-
-############ BSUB Tags ##############
-#BSUB -J Block Sizes
+#BSUB -J block_size
 #BSUB -o hpc_logs/%J.out
 #BSUB -e hpc_logs/%J.err
 #BSUB -q hpcintrogpu
@@ -28,8 +23,8 @@ export MFLOPS_MIN_T=3.0        # [3.0]         the minimum run-time (def: 3.0 s)
 export MFLOPS_MAX_IT=100       # [infinity]    max. no of iterations; set if you want to do profiling.
 
 #### Experiment Options
-BLKSIZES={1..500..10}
-SIZE="500"
+BLKSIZES={1..700..10}
+SIZE="1000"
 VERSIONS="blk blk_omp"
 export EXPNAME=blk_size_${SIZE}_$(date +%Y%m%d_%H%M%S) #Name of Experiment
 export EXPPATH=results/${EXPNAME} # Path to experiment folder
