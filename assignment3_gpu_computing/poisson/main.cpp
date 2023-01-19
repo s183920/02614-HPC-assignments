@@ -7,6 +7,7 @@
 #include "print.h"
 #include "init.h"
 #include <math.h>
+#include <omp.h>
 
 // timer function
 #ifdef _OPENMP
@@ -23,7 +24,8 @@
 // get solver function
 #include "jacobi.h"
 // function for solving the Poisson problem
-double solver(int version, int N, double tolerance, int iter_max, double ***U, double ***F, double step_size){
+double solver(int version, int N, double tolerance, int iter_max, double ***U, double ***F,double ***U_d, 
+              double ***F_d, double *data_u_d, double *data_f_d, double step_size){
     double ***U_new = NULL;
     if ( (U_new = malloc_3d(N+2,N+2,N+2)) == NULL ) {
         perror("array U_new: allocation failed");
@@ -54,33 +56,29 @@ double solver(int version, int N, double tolerance, int iter_max, double ***U, d
     } else if (version == 1){
         jacobi_para_opt(N, tolerance, iter_max, U, U_new, F, step_size);
     } else if (version == 2){
-        double ***U_d = NULL;
-        double ***F_d = NULL;
-        double *data = NULL;
-        if ( (U_d = d_malloc_3d(N+2,N+2,N+2, &data)) == NULL ) {
-            perror("array U_d: allocation failed");
-            exit(-1);
-        }
-        if ( (F_d = d_malloc_3d(N+2,N+2,N+2, &data)) == NULL ) {
-            perror("array F_d: allocation failed");
-            exit(-1);
-        }
         double ***U_new_d = NULL;
-        if ( (U_new_d = d_malloc_3d(N+2,N+2,N+2, &data)) == NULL ) {
+        double *data_un_d = NULL;
+        if ( (U_new_d = d_malloc_3d(N+2,N+2,N+2, &data_un_d)) == NULL ) {
             perror("array U_new_d: allocation failed");
             exit(-1);
         }
-        
-        #pragma omp parallel for shared(U_new_d, N)
-        for (int i = 0; i <= N+1; i++){
-            for (int j = 0; j <= N+1; j++){
-                for (int k = 0; k <= N+1; k++){
-                    U_new_d[i][j][k] = U_d[i][j][k];
-                }
-            }
-        }
-        t1 = mytimer();
-        jacobi_GPU(N, tolerance, iter_max, U, U_new, F, U_d, U_new_d, F_d, data, step_size);
+
+        //#pragma omp target data map(to: U_d[0:N+1][0:N+1][0:N+1]) map(tofrom: U_new_d[0:N+1][0:N+1][0:N+1])
+        //{
+        //#pragma omp target teams distribute parallel for collapse(3) 
+    
+        /* initialize U_new, U_old and F on host */
+        omp_target_memcpy(data_un_d, U_new[0][0], (N+2) * (N+2) * (N+2) * sizeof(double), 0, 0, omp_get_default_device(), omp_get_initial_device());
+        omp_target_memcpy(data_u_d, U[0][0], (N+2) * (N+2) * (N+2) * sizeof(double), 0, 0, omp_get_default_device(), omp_get_initial_device());
+        omp_target_memcpy(data_f_d, F[0][0], (N+2) * (N+2) * (N+2) * sizeof(double), 0, 0, omp_get_default_device(), omp_get_initial_device());
+        double t1_wot, t2_wot; 
+        t1_wot = omp_get_wtime();
+        jacobi_GPU(N, tolerance, iter_max, U_d, U_new_d, F_d, step_size);
+        t2_wot = omp_get_wtime();
+        printf("\tTime w/o data transfer: %lf\n", delta_t(t1_wot, t2_wot));
+        d_free_3d(U_d, data_u_d);
+        d_free_3d(U_new_d, data_un_d);
+        d_free_3d(F_d, data_f_d);
     }
     
     else {
@@ -106,9 +104,10 @@ main(int argc, char *argv[]) {
     char	output_filename[FILENAME_MAX];
     double 	***U = NULL;
     double  ***F = NULL;
-    double 	***U_d = NULL;
+    double  ***U_d = NULL;
     double  ***F_d = NULL;
-    double  *data;
+    double  *data_u_d = NULL;
+    double  *data_f_d = NULL;
     int version = 0;
     // double ***U_true = NULL;
 
@@ -132,6 +131,14 @@ main(int argc, char *argv[]) {
     }
     if ( (F = malloc_3d(N+2,N+2,N+2)) == NULL ) {
         perror("array F: allocation failed");
+        exit(-1);
+    }
+    if ( (U_d = d_malloc_3d(N+2,N+2,N+2, &data_u_d)) == NULL ) {
+            perror("array U_d: allocation failed");
+            exit(-1);
+    }
+    if ( (F_d = d_malloc_3d(N+2,N+2,N+2, &data_f_d)) == NULL ) {
+        perror("array F_d: allocation failed");
         exit(-1);
     }
 
@@ -168,7 +175,7 @@ main(int argc, char *argv[]) {
     // solve 
     // t1 = mytimer();
     // solve
-    double time = solver(version, N, tolerance, iter_max, U, F, step_size);
+    double time = solver(version, N, tolerance, iter_max, U, F, U_d, F_d, data_u_d, data_f_d, step_size);
     // t2 = mytimer();
 
     // print time results
@@ -208,9 +215,9 @@ main(int argc, char *argv[]) {
     // de-allocate memory
     free_3d(U);
     free_3d(F);
-    if (version > 1) {
-        d_free_3d(U_d, data);
-        d_free_3d(F_d, data);
-    }
+    // if (version > 1) {
+    //     d_free_3d(U_d, data);
+    //     d_free_3d(F_d, data);
+    // }
     return(0);
 }
