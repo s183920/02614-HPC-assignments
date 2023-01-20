@@ -14,6 +14,7 @@
 #### Compiler Options
 OPT_FLAGS="-g -fast -Msafeptr -Minfo -mp=gpu -gpu=pinned -gpu=cc80 -gpu=lineinfo -cuda -mp=noautopar"
 THREADS=16
+export OMP_NUM_THREADS=$THREADS
 TEAMS=108
 
 #### Driver Options
@@ -53,7 +54,7 @@ echo "version: $V" >> $OUTPUT_PATH/$FILENAME
 echo "block_size: $BLK" >> $OUTPUT_PATH/$FILENAME
 echo "size: $SIZE" >> $OUTPUT_PATH/$FILENAME
 echo "OMP_NUM_THREADS=$THREADS ./$EXECUTABLE $V $SIZE $SIZE $SIZE $BLK >> $FILENAME"
-echo "$(OMP_NUM_THREADS=$THREADS ./$EXECUTABLE $V $SIZE $SIZE $SIZE $BLK)" >> $OUTPUT_PATH/$FILENAME
+OMP_NUM_THREADS=16 ./$EXECUTABLE $V $SIZE $SIZE $SIZE $BLK >> $OUTPUT_PATH/$FILENAME
 done
 done
 
