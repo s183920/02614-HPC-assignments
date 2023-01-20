@@ -30,17 +30,16 @@ def read_file(file: Path) -> pd.DataFrame:
             
 def result_loader(value, df_dict: dict):
     remove = ["", " ", "#"]
-    value = value.split(" ")
-    values = [l.strip() for l in value if l not in remove]
-    if values[-2] == "matmult_blk":
-        del values[-1]
+    value = [l.strip() for l in value.split(" ") if l not in remove]
+    measures, info = value[0:3], " ".join(value[3:])
+    data = measures + [info]
     columns = ["memory", "performance", "result", "info"]
-    df_dict.update(dict(zip(columns, values)))
+    df_dict.update(dict(zip(columns, data)))
 
 
 def time_loader(key: str, value: str, df_dict: dict):
-    df_dict[key + '_count'] = df.get('time_count', 0) + 1
-    df_dict[key] = value.strip()
+    df_dict[key + '_count'] = df.get(key + '_count', 0) + 1
+    df_dict[key] += value.strip()
 
 
 
