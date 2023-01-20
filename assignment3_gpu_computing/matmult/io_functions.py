@@ -30,11 +30,11 @@ def read_file(file: Path) -> pd.DataFrame:
             
 def result_loader(value, df_dict: dict):
     remove = ["", " ", "#"]
-    # print(value)
     value = value.split(" ")
     value = [l.strip() for l in value if l not in remove]
-    measures, info = value[0:3], " ".join(value[3:])
+    measures, info = value[0:2], " ".join(value[2:])
     data = measures + [info]
+    print(data)
     columns = ["memory", "performance", "info"]
     df_dict.update(dict(zip(columns, data)))
 
