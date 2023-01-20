@@ -8,13 +8,12 @@ sns.set_style("whitegrid")
 
 def plot_block_experiment(experiment: str):
     df = io_functions.read_experiment(experiment)
-    df.iloc[:, 1:-1] = df.iloc[:, 1:-1].astype(float)
-    print(df.dtypes)
-    fig = sns.lineplot(data=df, x='block_size', y='performance', hue='version')
-    plt.savefig('test_img.png')
+    print(df)
+    # fig = sns.lineplot(data=df, x='block_size', y='performance', hue='version')
+    # plt.savefig('test_img.png')
 
 # def 
 
 if __name__ == '__main__':
 
-    plot_block_experiment("blk_size_500_20230118_134540")
+    plot_block_experiment("blk_size_2048_20230120_110815")
