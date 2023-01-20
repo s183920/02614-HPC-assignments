@@ -106,5 +106,6 @@ if [ "$LSB_JOBID" != "" ]; then
 fi
 
 # plot
+echo "Plotting results for $EXPNAME"
 source ../../../hpc_env/bin/activate
 python3 plot_functions.py -q 4 --exp $EXPNAME

@@ -21,14 +21,14 @@ mkdir -p $PROFILE_DIR
 #BSUB -o hpc_logs/%J.out
 #BSUB -e hpc_logs/%J.err
 #BSUB -q hpcintrogpu
-#BSUB -n 4
+#BSUB -n 16
 #BSUB -R "span[hosts=1]"
 #BSUB -gpu "num=1:mode=exclusive_process"
 #BSUB -W 10
 #BSUB -R "rusage[mem=2048]" 
 
 # SETTINGS
-SIZES="512 1024 2048 4096"
+SIZES="512 1024 2048 4096 8192"
 TEAMS=16384
 THREADS=16
 SLABS=4
@@ -80,7 +80,7 @@ for S in $SIZES; do
         echo "slabs: $SLABS" >> $OUTDIR/run_$fnum.txt
         echo "teams: $TEAMS" >> $OUTDIR/run_$fnum.txt
         echo "threads: $THREADS" >> $OUTDIR/run_$fnum.txt
-        echo "$(./$EXECUTABLE $VERSION $S $S $S)"  >> $OUTDIR/run_$fnum.txt
+        echo "$(OMP_NUM_THREADS=$THREADS ./$EXECUTABLE $VERSION $S $S $S 32)"  >> $OUTDIR/run_$fnum.txt
         fnum=$((fnum+1))
     done
 done
@@ -99,5 +99,6 @@ if [ "$LSB_JOBID" != "" ]; then
 fi
 
 # plot
-# source ../../../hpc_env/bin/activate
-# python3 plot_functions.py -q 4 --exp $EXPNAME
+echo "Plotting results for $EXPNAME"
+source ../../../hpc_env/bin/activate
+python3 plot_functions.py -q 11 --exp $EXPNAME

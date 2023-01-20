@@ -9,7 +9,7 @@
 
 // define variables if they dont exist - this should not be the case when compiling with make
 
-// #define _TIMING
+#define _TIMING
 
 
 #ifndef _BLOCK_SIZE
