@@ -22,10 +22,10 @@ markers = {
 
 def plot_block_experiment(experiment: str):
     df = io_functions.read_experiment(experiment)
-    version = "blk_omp"
+    version = "blk_offload"
     omp_df = df.query('version==@version')
     print(df)
-    omp_df.iloc[:, 1:-3] = omp_df.iloc[:, 1:-3].astype(float)
+    omp_df.iloc[:, 1:-1] = omp_df.iloc[:, 1:-1].astype(float)
     fig = sns.lineplot(data=omp_df, x='block_size', y='performance')
 
     df_max = omp_df.query("(performance == performance.max())")[["block_size", "performance"]].reset_index(drop=True)

@@ -28,7 +28,7 @@ export MFLOPS_MIN_T=3.0        # [3.0]         the minimum run-time (def: 3.0 s)
 #### Experiment Options
 BLKSIZES=1
 SIZE="2048"
-VERSIONS="mkn_omp"
+VERSIONS="mkn_offload"
 export EXPNAME=blk_size_${SIZE}_$(date +%Y%m%d_%H%M%S) #Name of Experiment
 export EXPPATH=results/${EXPNAME} # Path to experiment folder
 # Sub-Folders

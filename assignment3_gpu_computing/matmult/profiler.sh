@@ -1,7 +1,7 @@
 #!/bin/sh
 #BSUB -J proftest
 #BSUB -q hpcintrogpu
-#BSUB -n 4
+#BSUB -n 16
 #BSUB -R "span[hosts=1]"
 #BSUB -gpu "num=1:mode=exclusive_process"
 #BSUB -W 10
@@ -39,7 +39,7 @@ module load gcc/11.3.0-binutils-2.38
 module load nvhpc/22.11-nompi
 export MFLOPS_MAX_IT=1
 
-export OMP_NUM_THREADS=16
+export OMP_NUM_THREADS=16   
 # command line output
 echo "$(nv-nsight-cu-cli \
         --section MemoryWorkloadAnalysis \
