@@ -7,12 +7,20 @@
 #include "init.h"
 #include <omp.h>
 
+#ifndef _THREADS
+#define _THREADS 16
+#endif
+
+#ifndef _TEAMS
+#define _TEAMS 500
+#endif
+
 void
 jacobi_map(int N, double threshold, int iter_max, double ***U_old, double ***U_new, double ***F, double delta) {
     int i, j, k;
     double scale = 1.0/6.0;
     int iteration = 0;     
-    
+
     #pragma omp target data map(to: U_old[0:N+2][0:N+2][0:N+2], F[0:N+2][0:N+2][0:N+2]) map(tofrom: U_new[0:N+2][0:N+2][0:N+2])
     while (iteration < iter_max) {
         #pragma omp target teams distribute parallel for num_teams((N*N*N)/64) thread_limit(64) collapse(3)
@@ -46,10 +54,15 @@ jacobi_para_opt(int N, double threshold, int iter_max, double ***U_old, double *
     int i, j, k;
     double scale = 1.0/6.0;
     int iteration = 0; 
+    double ***tmp;
+
+    //double diff = INFINITY; //outcomment for 6 and 7
+    //double diff_scale = 1./(N*N*N); //outcomment for 6 and 7
 
     #pragma omp parallel private(i, j, k) firstprivate(iteration)
     {
-    while(iteration < iter_max) {
+    while(iteration < iter_max) { //change for 6 and 7
+        //diff = 0.0; //outcomment for 6 and 7
         #pragma omp for schedule(static) private(i, j, k)
         for (i = 1; i <= N ; i++) {
             for (j = 1; j <= N; j++) {
@@ -62,13 +75,12 @@ jacobi_para_opt(int N, double threshold, int iter_max, double ***U_old, double *
                         U_old[i][j][k-1] + 
                         U_old[i][j][k+1] + 
                         delta * delta * F[i][j][k]);
+                        //diff += (U_old[i][j][k] - U_new[i][j][k])*(U_old[i][j][k] - U_new[i][j][k]);
                 }
             }
         }
-        double ***tmp = U_old;
-        U_old = U_new;
-        U_new = tmp;
-        iteration++;
+        swap_3d(&U_old, &U_new);
+        iteration++;  
     }
     }
     swap_3d(&U_old, &U_new);
@@ -86,7 +98,7 @@ jacobi_GPU(int N, double threshold, int iter_max, double ***U_d, double ***U_new
 
     //#pragma omp parallel shared(U_d, U_new, F, delta, scale) private(i, j, k, iteration)
     while (iteration < iter_max) {
-        #pragma omp target teams distribute parallel for collapse(3) is_device_ptr(U_d, U_new_d, F_d)
+        #pragma omp target teams distribute parallel for collapse(3) is_device_ptr(U_d, U_new_d, F_d) thread_limit(_THREADS) num_teams(_TEAMS)
         for (i = 1; i <= N ; i++) {
             for (j = 1; j <= N; j++) {
                 for (k = 1; k <= N; k++) {                    
@@ -102,9 +114,6 @@ jacobi_GPU(int N, double threshold, int iter_max, double ***U_d, double ***U_new
             }
         }
         //swap_3d(&U_d, &U_new_d);
-        double ***tmp = U_d;
-        U_d = U_new_d;
-        U_new_d = tmp;
         iteration++;
         }
     swap_3d(&U_d, &U_new_d);
@@ -121,7 +130,6 @@ jacobi_GPU(int N, double threshold, int iter_max, double ***U_d, double ***U_new
 void
 jacobi_dual_GPU(int N, double threshold, int iter_max, double ***U_d, double ***U_new_d, double ***F_d, double ***U_d1, double ***U_new_d1, double ***F_d1, double delta) {
     
-    int i, j, k;
     double scale = 1.0/6.0;
     int iteration = 0;     
 
@@ -131,10 +139,12 @@ jacobi_dual_GPU(int N, double threshold, int iter_max, double ***U_d, double ***
     cudaDeviceEnablePeerAccess(0, 0); // (dev 0, future flag)
     //#pragma omp parallel shared(U_d, U_new, F, delta, scale) private(i, j, k, iteration)
     while (iteration < iter_max) {
-        #pragma omp target teams distribute parallel for collapse(3) is_device_ptr(U_d, U_d1, U_new_d, U_new_d1, F_d, F_d1) device(0)
-        for (i = 1; i <= N/2 ; i++) {
-            for (j = 1; j <= N; j++) {
-                for (k = 1; k <= N; k++) {                    
+        cudaSetDevice(0);
+        #pragma omp target teams distribute parallel for collapse(3) is_device_ptr(U_d, U_d1, U_new_d, U_new_d1, F_d, F_d1) nowait \
+        thread_limit(_THREADS) num_teams(_TEAMS) device(0)
+        for (int i = 1; i <= N/2 ; i++) {
+            for (int j = 1; j <= N; j++) {
+                for (int k = 1; k <= N; k++) {                    
                     U_new_d[i][j][k] = scale * ( 
                         U_d[i-1][j][k] + 
                         U_d[i+1][j][k] + 
@@ -143,13 +153,16 @@ jacobi_dual_GPU(int N, double threshold, int iter_max, double ***U_d, double ***
                         U_d[i][j][k-1] + 
                         U_d[i][j][k+1] + 
                         delta * delta * F_d[i][j][k]);
+                    //U_new_d1[i][j][k] = U_new_d[i][j][k];
                 }
             }
         }
-        #pragma omp target teams distribute parallel for collapse(3) is_device_ptr(U_d, U_d1, U_new_d, U_new_d1, F_d, F_d1) device(1)
-        for (i = N; i <= N/2 ; i--) {
-            for (j = N; j <= 1; j--) {
-                for (k = N; k <= 1; k--) {                    
+        cudaSetDevice(1);
+        #pragma omp target teams distribute parallel for collapse(3) is_device_ptr(U_d, U_d1, U_new_d, U_new_d1, F_d, F_d1) nowait \
+        thread_limit(_THREADS) num_teams(_TEAMS) device(1)
+        for (int i = N; i > N/2 ; i--) {
+            for (int j = 1; j <= N; j++) {
+                for (int k = 1; k <= N; k++) {                    
                     U_new_d1[i][j][k] = scale * ( 
                         U_d1[i-1][j][k] + 
                         U_d1[i+1][j][k] + 
@@ -158,17 +171,18 @@ jacobi_dual_GPU(int N, double threshold, int iter_max, double ***U_d, double ***
                         U_d1[i][j][k-1] + 
                         U_d1[i][j][k+1] + 
                         delta * delta * F_d1[i][j][k]);
+                    //U_new_d[i][j][k] = U_new_d1[i][j][k];
                 }
             }
         }
-        #pragma omp taskwait
-        //swap_3d(&U_d, &U_new_d);
-        double ***tmp = U_d;
-        U_d = U_new_d;
-        U_new_d = tmp;
+        
+        //#pragma omp taskwait
+        swap_3d(&U_d, &U_new_d);
+        swap_3d(&U_d1, &U_new_d1);
         iteration++;
         }
-    swap_3d(&U_d, &U_new_d);
+    //swap_3d(&U_d, &U_new_d);
+    //swap_3d(&U_d1, &U_new_d1);
     
     printf("\tIterations: %d\n", iteration);
 }
@@ -186,7 +200,7 @@ jacobi_map_norm(int N, double threshold, int iter_max, double ***U_old, double *
     #pragma omp target data map(to: U_old[0:N+2][0:N+2][0:N+2], F[0:N+2][0:N+2][0:N+2]) map(tofrom: U_new[0:N+2][0:N+2][0:N+2])
     while (diff > threshold && iteration < iter_max) {
         diff = 0.0;
-        #pragma omp target teams distribute parallel for reduction(+:diff) num_teams((N*N*N)/64) thread_limit(64) collapse(3)
+        #pragma omp target teams distribute parallel for reduction(+:diff) num_teams(_TEAMS) thread_limit(_THREADS) collapse(3)
         for (i = 1; i <= N ; i++) {
             for (j = 1; j <= N; j++) {
                 for (k = 1; k <= N; k++) {                    

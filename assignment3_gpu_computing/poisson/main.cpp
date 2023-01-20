@@ -74,6 +74,7 @@ double solver(int version, int N, double tolerance, int iter_max, double ***U, d
         t2_wot = omp_get_wtime();
         omp_target_memcpy(U_new[0][0], data_un_d, (N+2) * (N+2) * (N+2) * sizeof(double), 0, 0, omp_get_initial_device(), omp_get_default_device());
         printf("\tTime w/o data transfer: %lf\n", delta_t(t1_wot, t2_wot));
+        printf("\tPerformance: %f MFLOPS w/o data transfer\n", (double)N*N*N/(delta_t(t1_wot, t2_wot)/100*1000));
         d_free_3d(U_d, data_u_d);
         d_free_3d(U_new_d, data_un_d);
         d_free_3d(F_d, data_f_d);
@@ -97,6 +98,7 @@ double solver(int version, int N, double tolerance, int iter_max, double ***U, d
         omp_target_memcpy(data_un_d1, U_new[0][0], (N+2) * (N+2) * (N+2) * sizeof(double), 0, 0, omp_get_default_device(), omp_get_initial_device());
         omp_target_memcpy(data_u_d1, U[0][0], (N+2) * (N+2) * (N+2) * sizeof(double), 0, 0, omp_get_default_device(), omp_get_initial_device());
         omp_target_memcpy(data_f_d1, F[0][0], (N+2) * (N+2) * (N+2) * sizeof(double), 0, 0, omp_get_default_device(), omp_get_initial_device());
+        omp_set_default_device(0);
         double t1_wot, t2_wot; 
         t1_wot = omp_get_wtime();
         jacobi_dual_GPU(N, tolerance, iter_max, U_d, U_new_d, F_d, U_d1, U_new_d1, F_d1, step_size);
@@ -154,7 +156,6 @@ srand(0);
     if (argc == 7) {
         version = atoi(argv[6]);
     }
-    printf("Version: %d", version);
     // allocate memory
     if ( (U = malloc_3d(N+2,N+2,N+2)) == NULL ) {
         perror("array U: allocation failed");
@@ -205,7 +206,7 @@ srand(0);
     printf("\tTolerance: %lf\n", tolerance);
     printf("\tStart_T: %lf\n", start_T);
     printf("\tStep_size: %lf\n", step_size);
-
+    //printf("Version: %d\n", version);
     // print results
     printf("Results\n");
 

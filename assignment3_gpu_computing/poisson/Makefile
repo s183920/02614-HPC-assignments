@@ -6,6 +6,9 @@ OBJS	= main.o \
         alloc3d.o \
         #input.o \
 
+TEAMS=16384
+THREADS=16
+
 CC	= nvc
 CXX	= nvc++
 
@@ -14,9 +17,10 @@ ISA	=
 PARA	= 
 INC   = -I$(CUDA_ROOT)/include -I/appl/nvhpc/2022_2211/Linux_x86_64/22.11/examples/OpenMP/SDK/include
 LIBS	= -lcuda
+DEFS = -D_TEAMS=$(TEAMS) -D_THREADS=$(THREADS)
 
-CFLAGS = $(OPT) $(INC) $(ISA) $(PARA) $(XOPT)
-CXXFLAGS = $(OPT) $(INC) $(ISA) $(PARA) $(XOPT)
+CFLAGS = $(OPT) $(INC) $(ISA) $(PARA) $(XOPT) $(DEFS)
+CXXFLAGS = $(OPT) $(INC) $(ISA) $(PARA) $(XOPT) $(DEFS)
 
 all: $(TARGET)
 
@@ -27,19 +31,20 @@ clean:
 
 test: clean all
 	@echo "Testing Jacobi with Map clause"
-	OMP_NUM_THREADS=16 ./poisson 200 100 0.01 0 0 0
+	./poisson 200 100 0.01 0 0 0
 	@echo
 	@echo "Testing Jacobi with optimization from assignment 2"
-	OMP_NUM_THREADS=16 ./poisson 200 100 0.01 0 0 1
+	./poisson 200 100 0.01 0 0 1
 	@echo
 	@echo "Testing Jacobi with optimization on the GPU"
-	OMP_NUM_THREADS=16 ./poisson 200 100 0.01 0 0 2
+	./poisson 200 100 0.01 0 0 2
 	@echo
 	@echo "Testing Jacobi with optimization on dual GPUs"
-	OMP_NUM_THREADS=16 ./poisson 200 100 0.01 0 0 3
+	export CUDA_VISIBLE_DEVICES=0,1
+	./poisson 200 100 0.01 0 0 3
 	@echo
 	@echo "Testing Jacobi with map clause and normalization calculation"
-	OMP_NUM_THREADS=16 ./poisson 200 100 0.01 0 0 4
+	./poisson 200 100 0.01 0 0 4
 
 
 main.o: main.cpp jacobi.h init.h print.h alloc3d.h
