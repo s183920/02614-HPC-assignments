@@ -114,7 +114,7 @@ jacobi_para_opt(int N, double threshold, int iter_max, double ***U_old, double *
         for (i = 1; i <= N ; i++) {
             for (j = 1; j <= N; j++) {
                 for (k = 1; k <= N; k++) {
-                    U_new[i][j][k] = scale * ( // should this be initialised here when parallelising
+                    U_new[i][j][k] = scale * (
                         U_old[i-1][j][k] + 
                         U_old[i+1][j][k] + 
                         U_old[i][j-1][k] + 
