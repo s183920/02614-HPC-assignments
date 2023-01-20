@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # experiments name
-EXPNAME=q5_$(date +%Y%m%d_%H%M%S)
+EXPNAME=all_$(date +%Y%m%d_%H%M%S)
 OUTDIR=results/$EXPNAME/output_files
 PROFILE_DIR=results/$EXPNAME/profiles
 mkdir -p results/$EXPNAME
@@ -17,7 +17,7 @@ mkdir -p $PROFILE_DIR
 #
 # Author: Bernd Dammann <bd@cc.dtu.dk>
 #
-#BSUB -J Q5
+#BSUB -J ALL
 #BSUB -o hpc_logs/%J.out
 #BSUB -e hpc_logs/%J.err
 #BSUB -q hpcintrogpu
@@ -28,14 +28,17 @@ mkdir -p $PROFILE_DIR
 #BSUB -R "rusage[mem=2048]" 
 
 # SETTINGS
-SIZES="128 256 512 1024 2048 3000 4096 8192"
+SIZES="512 1024 2048 4096"
+TEAMS=16384
 THREADS=16
+SLABS=4
+BLKSIZE=14
 
-VERSIONS="lib_offload lib"
+VERSIONS="mkn_omp blk_omp lib mkn_offload mnk_offload blk_offload asy_offload lib_offload"
 
 # driver options
 # export MATMULT_RESULTS=      # {[0]|1}       print result matrices (in Matlab format, def: 0)
-export MATMULT_COMPARE=0   # {0|[1]}       control result comparison (def: 1); enable(1)/disable(0) result checking
+export MATMULT_COMPARE=1   # {0|[1]}       control result comparison (def: 1); enable(1)/disable(0) result checking
 export MFLOPS_MIN_T=3         # [3.0]         the minimum run-time (def: 3.0 s)
 # export MFLOPS_MAX_IT=1000        # [infinity]    max. no of iterations; set if you want to do profiling.
 
@@ -45,8 +48,6 @@ export MFLOPS_MIN_T=3         # [3.0]         the minimum run-time (def: 3.0 s)
 module load cuda/11.8
 module load gcc/11.3.0-binutils-2.38
 module load nvhpc/22.11-nompi
-make clean
-make
 
 
 
@@ -68,12 +69,16 @@ echo "Jobid: ${LSB_JOBID}" >> results/$EXPNAME/setup.txt # write setup to file
 # run the driver
 fnum=0
 
+make clean
+make TEAMS=$TEAMS THREADS=$THREADS BLKSIZE=$BLKSIZE SLABS=$SLABS
 
-for VERSION in $VERSIONS; do
-    for S in $SIZES; do
-        echo "Starting run $fnum using $VERSION with size $S, threads $THREADS"
+for S in $SIZES; do
+    for VERSION in $VERSIONS; do
+        echo "Starting run $fnum using $VERSION with size $S, teams $TEAMS, threads $THREADS, slabs $SLAB"
         echo "version: $VERSION" > $OUTDIR/run_$fnum.txt
         echo "size: $S" >> $OUTDIR/run_$fnum.txt
+        echo "slabs: $SLABS" >> $OUTDIR/run_$fnum.txt
+        echo "teams: $TEAMS" >> $OUTDIR/run_$fnum.txt
         echo "threads: $THREADS" >> $OUTDIR/run_$fnum.txt
         echo "$(./$EXECUTABLE $VERSION $S $S $S)"  >> $OUTDIR/run_$fnum.txt
         fnum=$((fnum+1))
@@ -81,8 +86,8 @@ for VERSION in $VERSIONS; do
 done
 
 # profile the code
-# sh profiler.sh lib_offload 2048 $PROFILE_DIR/lib_offload
-# sh profiler.sh lib 2048 $PROFILE_DIR/lib
+sh profiler.sh asy_offload 2048 $PROFILE_DIR/asy_offload
+sh profiler.sh blk_offload 2048 $PROFILE_DIR/blk_offload
 
 
 
@@ -94,5 +99,5 @@ if [ "$LSB_JOBID" != "" ]; then
 fi
 
 # plot
-source ../../../hpc_env/bin/activate
-python3 plot_functions.py -q 5 --exp $EXPNAME
+# source ../../../hpc_env/bin/activate
+# python3 plot_functions.py -q 4 --exp $EXPNAME

@@ -16,6 +16,8 @@ markers = {
     "blk_offload": "v", 
     "mnk_offload": "p",
     "asy_offload": "P",
+    "lib_offload": "*",
+    "speedup": "o",
 }
 
 def plot_block_experiment(experiment: str):
@@ -112,6 +114,67 @@ def plot_ex4(exp_name: str):
 
     plt.show()
 
+def plot_ex5(exp_name: str):
+    df = io_functions.read_experiment(exp_name)
+    df = df.astype({'performance': float, "size": int})
+
+    df = df.sort_values(by=['size'])
+    df["performance"] = df["performance"] / 1000
+    df["time_avg"] = df["Time"] / df["Time_count"]
+    speedup = []
+    # speedup2 = []
+    for size in df["size"].unique():
+        d1 = df[(df["size"] == size) & (df["version"] == "lib_offload")]
+        d2 = df[(df["size"] == size) & (df["version"] == "lib")]
+        speedup += [d2.time_avg.item()/d1.time_avg.item()]
+        # speedup2 += [d2.performance.item()/d1.performance.item()]
+
+    fig, axes = plt.subplots(1,2, figsize=(10,5))
+
+    ax = axes[0]
+    for version in df.version.unique():
+        df_version = df[df.version == version]
+        # print(df_version["size"], df_version["performance"])
+        ax.plot(df_version["size"], df_version["performance"], label=version, marker = markers[version])
+    ax.legend()
+    ax.set_xlabel("Matrix size")
+    ax.set_ylabel("Performance (GFlops/s)")
+
+    ax = axes[1]
+    ax.plot(df["size"].unique(), speedup, label="Speedup", marker = markers["speedup"], color = "C4")
+    # ax.plot(df["size"].unique(), speedup2, label="Speedup2")
+    ax.legend()
+    ax.set_xlabel("Matrix size")
+    ax.set_ylabel("Speedup")
+
+    fig.tight_layout()
+    plt.savefig(f'results/{exp_name}/plots/ex5_results.pdf')
+
+def plot_all(exp_name: str):
+    df = io_functions.read_experiment(exp_name)
+    df = df.astype({'size': int, 'performance': float, 'teams': int, 'threads': int, 'slabs': float})
+    # print(df)
+
+    df["performance"] = df["performance"] / 1000
+    df = df.sort_values(by=['size'])
+
+    # df["time_avg"] = df["Time"] / df["Time_count"]
+
+    fig, axes = plt.subplots(1,2, figsize=(10,5))
+
+    
+    for version in df.version.unique():
+        df_version = df[df.version == version]
+        ax = axes[0] if df_version["performance"].max() < 500 else axes[1]
+        ax.plot(df_version["size"], df_version["performance"], label=version, marker = markers[version])
+
+    for ax in axes:
+        ax.legend()
+        ax.set_xlabel("Matrix size")
+        ax.set_ylabel("Performance (GFlops/s)")
+    
+    fig.tight_layout()
+    plt.savefig(f'results/{exp_name}/plots/all_results.pdf')
 
 if __name__ == '__main__':
     import argparse
@@ -136,5 +199,11 @@ if __name__ == '__main__':
 
     if args.q == 4:
         plot_ex4(args.expname)
+
+    if args.q == 5:
+        plot_ex5(args.expname)
+    
+    if args.q == 11:
+        plot_all(args.expname)
 
     
