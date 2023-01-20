@@ -9,15 +9,15 @@
 
 // define variables if they dont exist - this should not be the case when compiling with make
 
-// #define _TIMING
+#define _TIMING
 
 
 #ifndef _BLOCK_SIZE
-#define _BLOCK_SIZE 10
+#define _BLOCK_SIZE 14
 #endif
 
 #ifndef _TEAMS
-#define _TEAMS 500
+#define _TEAMS 16384
 #endif
 
 #ifndef _THREADS
@@ -25,7 +25,7 @@
 #endif
 
 #ifndef _SLABS
-#define _SLABS 4
+#define _SLABS 2
 #endif
 
 // standard OpenMP versions for question 1
@@ -43,7 +43,7 @@ void matmult_mkn_omp(int m,int n,int k,double **A,double **B,double **C){
     for(int i=0;i<m;i++){
         for(int l=0;l<k;l++){
             for(int j=0;j<n;j++){
-                #pragma omp atomic
+                // #pragma omp atomic
                 C[i][j] += A[i][l]*B[l][j];
             }
         }
@@ -67,14 +67,14 @@ void matmult_blk_omp(int m,int n,int k,double **A,double **B,double **C, int bs)
 
     #pragma omp parallel shared(m,n,k,A,B,C,bs) 
     {
-    #pragma omp for collapse(3)
+    #pragma omp for collapse(2)
     for(int i1=0;i1<m;i1+=bs){
-        for(int l1=0;l1<k;l1+=bs){
-            for(int j1=0; j1 < n; j1+=bs){
+        for(int j1=0; j1 < n; j1+=bs){
+            for(int l1=0;l1<k;l1+=bs){  
                 for(int i2=0; i2 < min(m-i1, bs); i2++){
                     for(int l2=0; l2 < min(k-l1, bs); l2++){
                         for(int j2=0; j2 < min(n-j1, bs); j2++){
-                            #pragma omp atomic
+                            // #pragma omp atomic
                             C[i1+i2][j1+j2] += A[i1+i2][l1+l2]*B[l1+l2][j1+j2];
                         }
                     }
@@ -123,7 +123,7 @@ void matmult_lib(int m,int n,int k,double **A,double **B,double **C){
 
 // OpenMP offload versions for question 2
 void matmult_mkn_offload(int m,int n,int k,double **A,double **B, double **C){
-    printf("teams: %d, threads: %d, slabs: %d\n", _TEAMS, _THREADS, _SLABS);
+    // printf("teams: %d, threads: %d, slabs: %d\n", _TEAMS, _THREADS, _SLABS);
     C = init_C_omp(C,m,n);
     
     // timings
@@ -145,14 +145,14 @@ void matmult_mkn_offload(int m,int n,int k,double **A,double **B, double **C){
     for(int i=0;i<m;i++){
         for(int l=0;l<k;l++){
             for(int j=0;j<n;j++){
-                #pragma omp atomic
+                // #pragma omp atomic
                 C[i][j] += A[i][l]*B[l][j];
             }
         }
     }
     #ifdef _TIMING // TRANSER_TIMING start
     t2 = omp_get_wtime();
-    printf("Time without transfer (ms): %f\n", 1e3*(t2-t1));
+    printf("Time without transfer: %f\n", 1e3*(t2-t1));
     } // exit data
     t2 = omp_get_wtime();
     printf("Time with transfer: %f\n", 1e3*(t2-t1));
@@ -179,11 +179,11 @@ void matmult_mnk_offload(int m,int n,int k,double **A,double **B,double **C){
 
     #pragma omp target teams distribute parallel for \
     map(to: A[0:m][0:k], B[0:k][0:n], m,k,n) map(tofrom: C[0:m][0:n]) \
-    num_teams(_TEAMS) thread_limit(_THREADS)
+    num_teams(_TEAMS) thread_limit(_THREADS) collapse(2)
     for(int i=0;i<m;i++){
         for(int j=0;j<n;j++){
             for(int l=0;l<k;l++){
-                #pragma omp atomic
+                // #pragma omp atomic
                 C[i][j] += A[i][l]*B[l][j];
             }
         }
@@ -215,7 +215,7 @@ void matmult_blk_offload(int m, int n, int k, double **A,double **B,double **C){
     #endif // TRANSER_TIMING end
     #pragma omp target teams loop \
     map(to: A[:m][:k], B[:k][:n], m,k,n) map(tofrom: C[:m][:n]) \
-    num_teams(_TEAMS) thread_limit(_THREADS)\
+    num_teams(m) thread_limit(_THREADS)\
     collapse(2)
     for(int i1=0;i1<m;i1+=_BLOCK_SIZE){
         for(int j=0;j<n;j++){
@@ -277,7 +277,7 @@ void matmult_asy_offload(int m, int n, int k, double **A,double **B,double **C){
 
         #pragma omp target teams distribute parallel for \
         map(to: A[start:length][:k]) \
-        num_teams(length) thread_limit(16)\
+        num_teams(_TEAMS) thread_limit(_THREADS)\
         depend(in:A) depend(out:C) nowait \
         collapse(2)
         for(int i1=start; i1<start+length;i1+=_BLOCK_SIZE){
@@ -312,7 +312,7 @@ void matmult_asy_offload(int m, int n, int k, double **A,double **B,double **C){
 
     #ifdef _TIMING // TRANSER_TIMING start
     t2 = omp_get_wtime();
-    printf("Time with transfer: %f\n", 1e3*(t2-t1));
+    printf("Time: %f\n", 1e3*(t2-t1));
     #endif // TRANSER_TIMING end
 }   
 

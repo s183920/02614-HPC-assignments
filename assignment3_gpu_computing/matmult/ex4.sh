@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # experiments name
-EXPNAME=q1_$(date +%Y%m%d_%H%M%S)
+EXPNAME=q4_$(date +%Y%m%d_%H%M%S)
 OUTDIR=results/$EXPNAME/output_files
 PROFILE_DIR=results/$EXPNAME/profiles
 mkdir -p results/$EXPNAME
@@ -17,11 +17,11 @@ mkdir -p $PROFILE_DIR
 #
 # Author: Bernd Dammann <bd@cc.dtu.dk>
 #
-#BSUB -J Q1
+#BSUB -J Q4
 #BSUB -o hpc_logs/%J.out
 #BSUB -e hpc_logs/%J.err
 #BSUB -q hpcintrogpu
-#BSUB -n 16
+#BSUB -n 4
 #BSUB -R "span[hosts=1]"
 #BSUB -gpu "num=1:mode=exclusive_process"
 #BSUB -W 10
@@ -29,26 +29,27 @@ mkdir -p $PROFILE_DIR
 
 # SETTINGS
 SIZES="2048"
-BLKSIZE=130
-# TEAMS="2048 8192 16384 32768"
-# THREADS="1 2 4 8 16 32"
-THREADS="1 2 4 6 8 10 12 14 16"
+TEAMS=16384
+THREADS=16
+SLABS="1 2 3 4 5 6 7 8 16 32"
+BLKSIZE=8
 
-VERSIONS="mkn_omp blk_omp lib"
+# VERSIONS="asy_offload blk_offload"
 
 # driver options
 # export MATMULT_RESULTS=      # {[0]|1}       print result matrices (in Matlab format, def: 0)
-export MATMULT_COMPARE=0   # {0|[1]}       control result comparison (def: 1); enable(1)/disable(0) result checking
+export MATMULT_COMPARE=1   # {0|[1]}       control result comparison (def: 1); enable(1)/disable(0) result checking
 export MFLOPS_MIN_T=3         # [3.0]         the minimum run-time (def: 3.0 s)
 # export MFLOPS_MAX_IT=1000        # [infinity]    max. no of iterations; set if you want to do profiling.
+
+
 
 # compile the code
 module load cuda/11.8
 module load gcc/11.3.0-binutils-2.38
 module load nvhpc/22.11-nompi
 
-make clean
-make
+
 
 
 # define the driver name to use
@@ -67,19 +68,33 @@ echo "Jobid: ${LSB_JOBID}" >> results/$EXPNAME/setup.txt # write setup to file
 
 # run the driver
 fnum=0
-for TH in $THREADS; do
-    for VERSION in $VERSIONS; do
-        for S in $SIZES; do
-            echo "Starting run $fnum using $VERSION with size $S, threads $TH"
-            echo "version: $VERSION" > $OUTDIR/run_$fnum.txt
-            echo "size: $S" >> $OUTDIR/run_$fnum.txt
-            echo "block_size: $BLKSIZE" >> $OUTDIR/run_$fnum.txt
-            echo "threads: $TH" >> $OUTDIR/run_$fnum.txt
-            echo "$(OMP_NUM_THREADS=$TH ./$EXECUTABLE $VERSION $S $S $S $BLKSIZE)"  >> $OUTDIR/run_$fnum.txt
-            fnum=$((fnum+1))
-        done
+
+
+for S in $SIZES; do
+    for SLAB in $SLABS; do
+        make clean
+        make TEAMS=$TEAMS THREADS=$THREADS BLKSIZE=$BLKSIZE SLABS=$SLAB
+        echo "Starting run $fnum using asy_offload with size $S, teams $TEAMS, threads $THREADS, slabs $SLAB"
+        echo "version: asy_offload" > $OUTDIR/run_$fnum.txt
+        echo "size: $S" >> $OUTDIR/run_$fnum.txt
+        echo "slabs: $SLAB" >> $OUTDIR/run_$fnum.txt
+        echo "teams: $TEAMS" >> $OUTDIR/run_$fnum.txt
+        echo "threads: $THREADS" >> $OUTDIR/run_$fnum.txt
+        echo "$(./$EXECUTABLE asy_offload $S $S $S)"  >> $OUTDIR/run_$fnum.txt
+        fnum=$((fnum+1))
     done
+    echo "Starting run $fnum using blk_offload with size $S, teams $TEAMS, threads $THREADS"
+    echo "version: blk_offload" > $OUTDIR/run_$fnum.txt
+    echo "size: $S" >> $OUTDIR/run_$fnum.txt
+    echo "teams: $TEAMS" >> $OUTDIR/run_$fnum.txt
+    echo "threads: $THREADS" >> $OUTDIR/run_$fnum.txt
+    echo "$(./$EXECUTABLE blk_offload $S $S $S)"  >> $OUTDIR/run_$fnum.txt
+    fnum=$((fnum+1))
 done
+
+# profile the code
+sh profiler.sh asy_offload 2048 $PROFILE_DIR/asy_offload
+sh profiler.sh blk_offload 2048 $PROFILE_DIR/blk_offload
 
 
 
@@ -93,4 +108,4 @@ fi
 # plot
 echo "Plotting results for $EXPNAME"
 source ../../../hpc_env/bin/activate
-python3 plot_functions.py -q 1 --expname $EXPNAME
+python3 plot_functions.py -q 4 --exp $EXPNAME

@@ -33,6 +33,9 @@ clean:
 T1_TEST = 50
 T2_TEST = 60
 T3_TEST = 70
+T1_TEST=512
+T2_TEST=512
+T3_TEST=512
 THREADS_TEST = 16
 test: THREADS=$(THREADS_TEST) 
 test: clean all
@@ -111,26 +114,26 @@ test_blk: clean all
 	./matmult_c.nvc++ blk_offload $(T1) $(T2) $(T3)
 	@echo
 
-ASY_T = 512 # must be divisible by number of slabs
-test_asy: DEFS += -D_BLK_SIZE=16
+ASY_T = 4096 # must be divisible by number of slabs
+test_asy: DEFS += -D_BLK_SIZE=14
 test_asy: clean all
-	export MFLOPS_MIN_T=0.0
-	@echo "Testing matmult_blk_omp"
-	OMP_NUM_THREADS=16 ./matmult_c.nvc++ blk_omp $(ASY_T) $(ASY_T) $(ASY_T) 16
-	@echo
+	# @echo "Testing matmult_blk_omp"
+	# MFLOPS_MIN_T=0.0 OMP_NUM_THREADS=16 ./matmult_c.nvc++ blk_omp $(ASY_T) $(ASY_T) $(ASY_T) 16
+	# @echo
 	@echo "Testing matmult_blk_offload"
-	./matmult_c.nvc++ blk_offload $(ASY_T) $(ASY_T) $(ASY_T)
+	MFLOPS_MIN_T=0.0 ./matmult_c.nvc++ blk_offload $(ASY_T) $(ASY_T) $(ASY_T)
 	@echo
 	@echo "Testing matmult_asy_offload"
-	./matmult_c.nvc++ asy_offload $(ASY_T) $(ASY_T) $(ASY_T)
+	MFLOPS_MIN_T=0.0 ./matmult_c.nvc++ asy_offload $(ASY_T) $(ASY_T) $(ASY_T)
 	@echo
 
+LIB_T = 1024
 test_lib: clean all
 	@echo "Testing matmult_lib"
-	OMP_NUM_THREADS=16 ./matmult_c.nvc++ lib $(T1) $(T2) $(T3)
+	OMP_NUM_THREADS=16 ./matmult_c.nvc++ lib $(LIB_T) $(LIB_T) $(LIB_T)
 	@echo
 	@echo "Testing matmult_lib_offload"
-	./matmult_c.nvc++ lib_offload $(T1_TEST) $(T2_TEST) $(T3_TEST)
+	./matmult_c.nvc++ lib_offload $(LIB_T) $(LIB_T) $(LIB_T)
 	@echo
 
 test_teams: TEAMS=10

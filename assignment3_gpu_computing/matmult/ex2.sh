@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # experiments name
-EXPNAME=question2_$(date +%Y%m%d_%H%M%S)
+EXPNAME=q2_$(date +%Y%m%d_%H%M%S)
 OUTDIR=results/$EXPNAME/output_files
 PROFILE_DIR=results/$EXPNAME/profiles
 mkdir -p results/$EXPNAME
@@ -24,22 +24,19 @@ mkdir -p $PROFILE_DIR
 #BSUB -n 4
 #BSUB -R "span[hosts=1]"
 #BSUB -gpu "num=1:mode=exclusive_process"
-#BSUB -W 10
+#BSUB -W 15
 #BSUB -R "rusage[mem=2048]" 
 
 # SETTINGS
 SIZES="2048"
-BLKSIZE=1
-# TEAMS="2048 8192 16384 32768"
-# THREADS="1 2 4 8 16 32"
-TEAMS="8192 16384"
-THREADS="8 16"
+TEAMS="1 10 64 108 256 512 700 1024 2024 4096 8192 16384 32768"
+THREADS="16"
 
 VERSIONS="mkn_offload mnk_offload"
 
 # driver options
 # export MATMULT_RESULTS=      # {[0]|1}       print result matrices (in Matlab format, def: 0)
-export MATMULT_COMPARE=1   # {0|[1]}       control result comparison (def: 1); enable(1)/disable(0) result checking
+export MATMULT_COMPARE=0   # {0|[1]}       control result comparison (def: 1); enable(1)/disable(0) result checking
 export MFLOPS_MIN_T=3         # [3.0]         the minimum run-time (def: 3.0 s)
 # export MFLOPS_MAX_IT=1000        # [infinity]    max. no of iterations; set if you want to do profiling.
 
@@ -74,15 +71,12 @@ fnum=0
 for T in $TEAMS; do
     for TH in $THREADS; do
         make clean
-        make TEAMS=$T THREADS=$TH BLKSIZE=$BLKSIZE
+        make TEAMS=$T THREADS=$TH
         for VERSION in $VERSIONS; do
             for S in $SIZES; do
                 echo "Starting run $fnum using $VERSION with size $S, teams $T, threads $TH"
                 echo "version: $VERSION" > $OUTDIR/run_$fnum.txt
                 echo "size: $S" >> $OUTDIR/run_$fnum.txt
-                echo "block_size: $BLKSIZE" >> $OUTDIR/run_$fnum.txt
-                echo "num_cpu_cores: $LSB_DJOB_NUMPROC" >> $OUTDIR/run_$fnum.txt
-                echo "num_gpu_cores: $LSB_DJOB_GPUS" >> $OUTDIR/run_$fnum.txt
                 echo "teams: $T" >> $OUTDIR/run_$fnum.txt
                 echo "threads: $TH" >> $OUTDIR/run_$fnum.txt
                 echo "$(./$EXECUTABLE $VERSION $S $S $S)"  >> $OUTDIR/run_$fnum.txt
@@ -104,3 +98,8 @@ if [ "$LSB_JOBID" != "" ]; then
     cp hpc_logs/${LSB_JOBID}.out results/$EXPNAME/hpc_logs/log.out
     cp hpc_logs/${LSB_JOBID}.err results/$EXPNAME/hpc_logs/log.err
 fi
+
+# plot
+echo "Plotting results for $EXPNAME"
+source ../../../hpc_env/bin/activate
+python3 plot_functions.py -q 2 --exp $EXPNAME
