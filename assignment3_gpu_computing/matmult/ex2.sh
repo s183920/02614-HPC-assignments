@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # experiments name
-EXPNAME=question2_$(date +%Y%m%d_%H%M%S)
+EXPNAME=q2_$(date +%Y%m%d_%H%M%S)
 OUTDIR=results/$EXPNAME/output_files
 PROFILE_DIR=results/$EXPNAME/profiles
 mkdir -p results/$EXPNAME
@@ -33,9 +33,9 @@ BLKSIZE=1
 # TEAMS="2048 8192 16384 32768"
 # THREADS="1 2 4 8 16 32"
 TEAMS="8192 16384"
-THREADS="8 16"
+THREADS="8" # 16"
 
-VERSIONS="mkn_offload mnk_offload"
+VERSIONS="mkn_offload" # mnk_offload"
 
 # driver options
 # export MATMULT_RESULTS=      # {[0]|1}       print result matrices (in Matlab format, def: 0)
@@ -82,7 +82,6 @@ for T in $TEAMS; do
                 echo "size: $S" >> $OUTDIR/run_$fnum.txt
                 echo "block_size: $BLKSIZE" >> $OUTDIR/run_$fnum.txt
                 echo "num_cpu_cores: $LSB_DJOB_NUMPROC" >> $OUTDIR/run_$fnum.txt
-                echo "num_gpu_cores: $LSB_DJOB_GPUS" >> $OUTDIR/run_$fnum.txt
                 echo "teams: $T" >> $OUTDIR/run_$fnum.txt
                 echo "threads: $TH" >> $OUTDIR/run_$fnum.txt
                 echo "$(./$EXECUTABLE $VERSION $S $S $S)"  >> $OUTDIR/run_$fnum.txt
@@ -104,3 +103,7 @@ if [ "$LSB_JOBID" != "" ]; then
     cp hpc_logs/${LSB_JOBID}.out results/$EXPNAME/hpc_logs/log.out
     cp hpc_logs/${LSB_JOBID}.err results/$EXPNAME/hpc_logs/log.err
 fi
+
+# plot
+source ../../../hpc_env/bin/activate
+python3 plot_functions.py -q 2 --exp $EXPNAME

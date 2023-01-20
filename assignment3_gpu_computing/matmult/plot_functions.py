@@ -21,8 +21,23 @@ def plot_block_experiment(experiment: str):
     print(df_max.at[0, 'block_size'])
     plt.savefig('test_img.png')
 
-# def 
+def plot_ex2(exp_name: str):
+    df = io_functions.read_experiment(exp_name)
+    # df.iloc[:, 1:-1] = df.iloc[:, 1:-1].astype(float)
+    print(df)
+    df.to_csv('test_ex2.csv')
+    # print(df.dtypes)
+    # fig = sns.lineplot(data=df, x='block_size', y='performance', hue='version')
+    # plt.savefig('test_ex2.pdf')
 
 if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-q', type=int, help='Question to plot')
+    parser.add_argument('--expname', type=str, help='Name of the experiment to plot')
+    # plot_block_experiment("blk_size_500_20230118_134540")
 
-    plot_block_experiment("blk_size_2048_20230120_130440")
+    args = parser.parse_args()
+
+    if args.q == 2:
+        plot_ex2(args.expname)
