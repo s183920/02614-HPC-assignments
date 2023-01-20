@@ -9,7 +9,7 @@
 
 // define variables if they dont exist - this should not be the case when compiling with make
 
-#define _TIMING
+// #define _TIMING
 
 
 #ifndef _BLOCK_SIZE
@@ -123,6 +123,7 @@ void matmult_lib(int m,int n,int k,double **A,double **B,double **C){
 
 // OpenMP offload versions for question 2
 void matmult_mkn_offload(int m,int n,int k,double **A,double **B, double **C){
+    printf("teams: %d, threads: %d, slabs: %d\n", _TEAMS, _THREADS, _SLABS);
     C = init_C_omp(C,m,n);
     
     // timings
@@ -315,108 +316,7 @@ void matmult_asy_offload(int m, int n, int k, double **A,double **B,double **C){
     #endif // TRANSER_TIMING end
 }   
 
-
-
-// void matmult_lib_offload(int m, int n, int k, double **A, double **B, double **C) {
-//     cublasHandle_t handle;
-//     cublasCreate(&handle);
-
-//     double *d_A, *d_B, *d_C;
-//     cudaMalloc((void **)&d_A, m * k * sizeof(double));
-//     cudaMalloc((void **)&d_B, k * n * sizeof(double));
-//     cudaMalloc((void **)&d_C, m * n * sizeof(double));
-
-//     cudaMemcpy(d_A, *A, m * k * sizeof(double), cudaMemcpyHostToDevice);
-//     cudaMemcpy(d_B, *B, k * n * sizeof(double), cudaMemcpyHostToDevice);
-
-//     double alpha = 1.0;
-//     double beta = 0.0;
-
-//     cublasDgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, m, n, k, &alpha, d_A, m, d_B, k, &beta, d_C, m);
-
-//     cudaMemcpy(*C, d_C, m * n * sizeof(double), cudaMemcpyDeviceToHost);
-
-//     cudaFree(d_A);
-//     cudaFree(d_B);
-//     cudaFree(d_C);
-//     cublasDestroy(handle);
-//     double **Ct = malloc_2d(m, n);
-//     for (int i = 0; i < m; i++) {
-//         for (int j = 0; j < n; j++) {
-//             Ct[i][j] = C[i][j];
-//         }
-//     }
-
-//     for (int i = 0; i < m; i++) {
-//         for (int j = 0; j < n; j++) {
-//             C[i][j] = C[j][i];
-//         }
-//     }
-// }
-
-
-// void matmult_lib_offload(int m,int n,int k,double **A,double **B,double **C){
-//     C = init_C_omp(C,m,n);
-// }
-
 // OpenMP library version with offload for question 5
-// https://github.com/colleeneb/openmp_offload_and_blas/blob/master/cublas/c/Makefile
-// void matmult_lib_offload(int m,int n,int k,double **A,double **B,double **C){
-//     C = init_C_omp(C,m,n);
-
-//     int teams = 0;
-//     int threads = 0;
-
-//     double *A_ptr = A[0];
-//     double *B_ptr = B[0];
-//     double *C_ptr = C[0];
-
-
-//     // Initialize CUBLAS
-//     cublasHandle_t handle;
-//     cublasCreate(&handle);
-
-//     // 
-    
-    
-
-//     // parameters
-//     double alpha = 1.0;
-//     double beta = 0.0;
-
-//     #pragma omp target enter data map(to: A_ptr[0:m*k], B_ptr[0:k*n], C_ptr[0:m*n])
-
-//     #pragma target data use_device_ptr(A_ptr, B_ptr, C_ptr)
-//     {
-//     int cublas_error = cublasDgemm(
-//         handle, // handle to the CUBLAS library context
-//         CUBLAS_OP_N, CUBLAS_OP_N,  // _N means no transpose, _T means transpose and _C means conjugate transpose for the input matrices A and B
-//         m, n, k, // size of matrices
-//         &alpha, // pointer to a scalar that is multiplied by the result of the matrix multiplication.
-//         A_ptr, m, // matrix A (pointer to the memory location of the first matrix A. It should be of size m*k) and the leading dimension (nrows) of A
-//         B_ptr, k, // matrix B (pointer to the memory location of the first matrix B. It should be of size k*n) and the leading dimension (nrows) of B
-//         &beta, // pointer to a scalar that is multiplied by the matrix C
-//         C_ptr, m // matrix C (pointer to the memory location of the first matrix C. It should be of size m*k) and the leading dimension (nrows) of C
-//     ); 
-
-//     if( cublas_error != CUBLAS_STATUS_SUCCESS ){
-//        printf( "failed %d %f.\n", cublas_error, C_ptr[0] );
-//        exit(1);
-//     }
-//     }
-
-//     cudaDeviceSynchronize(); 
-
-//     // Destroy the handle
-//     cublasDestroy(handle);
-
-//     #pragma omp target exit data map(from: C_ptr[0:m*n])
-// }
-
-
-
-
-
 void matmult_lib_offload(int m, int n, int k, double **A, double **B, double **C) {
 
     #ifdef _TIMING // start timing
@@ -463,85 +363,6 @@ void matmult_lib_offload(int m, int n, int k, double **A, double **B, double **C
 
 
 
-// #define cublas_assert(expr, fmt, ...)					\
-//     do {								\
-// 	if (!(expr)) {							\
-// 	    fprintf(stderr, "%s: line %d: in %s(): " fmt, __FILE__, __LINE__, __func__, ## __VA_ARGS__); \
-// 	    fprintf(stderr, "\n");					\
-// 	    exit(EXIT_FAILURE);						\
-// 	}								\
-//     } while(0)
-
-// OpenMP library version with offload for question 5
-// void matmult_lib_offload(int m,int n,int k,double **A,double **B,double **C){
-    // double *dA, *dB, *dC, *dCt;
-    // int lda, ldb, ldc;
-    // double alpha = 1.0, beta = 0.0;
-    // cublasHandle_t handle;
-    // cudaError_t err;
-    // cublasStatus_t stat;
-    // // int i, j, k;
-
-    // // turn A, B and C into 1D arrays
-    // double *hA = malloc(m*k*sizeof(double));
-    // double *hB = malloc(k*n*sizeof(double));
-    // double *hC = malloc(m*n*sizeof(double));
-    // for (int i = 0; i < m; i++) {
-    //     for (int j = 0; j < k; j++) {
-    //         hA[i*k + j] = A[i][j];
-    //     }
-    // }
-    // for (int i = 0; i < k; i++) {
-    //     for (int j = 0; j < n; j++) {
-    //         hB[i*n + j] = B[i][j];
-    //     }
-    // }
-    // for (int i = 0; i < m; i++) {
-    //     for (int j = 0; j < n; j++) {
-    //         hC[i*n + j] = C[i][j];
-    //     }
-    // }
-
-
-    // // lda = ldb = ldc = size;
-    // lda = m;
-    // ldb = k;
-    // ldc = m;
-    
-    // stat = cublasCreate(&handle);
-    // cublas_assert(stat == CUBLAS_STATUS_SUCCESS, "cublasCreate");
-    
-    // cudaMalloc((void**)&dA,  m*k*sizeof(*dA));
-    // cudaMalloc((void**)&dB,  k*n*sizeof(*dB));
-    // cudaMalloc((void**)&dC,  m*n*sizeof(*dC));
-    // cudaMalloc((void**)&dCt, n*m*sizeof(*dCt));
-    
-    // stat = cublasSetMatrix(m, k, sizeof(*hA), hA, lda, dA, m);
-    // cublas_assert(stat == CUBLAS_STATUS_SUCCESS, "cublasSetMatrix hA");
-    // stat = cublasSetMatrix(k, n, sizeof(*hB), hB, ldb, dB, k);
-    // cublas_assert(stat == CUBLAS_STATUS_SUCCESS, "cublasSetMatrix hB");
-    // stat = cublasSetMatrix(m, n, sizeof(*hC), hC, ldc, dC, m);
-    // cublas_assert(stat == CUBLAS_STATUS_SUCCESS, "cublasSetMatrix hC");
-
-    // // note: cublas uses column major(fortran order) matrices
-    // // http://docs.nvidia.com/cuda/cublas/index.html
-    // // so trancepose row major matrices
-    // stat = cublasDgemm(handle, CUBLAS_OP_T, CUBLAS_OP_T, m, n, k, &alpha, dA, lda, dB, ldb, &beta, dC, ldc);
-    // cublas_assert(stat == CUBLAS_STATUS_SUCCESS, "cublasDgemm");
-    // // tracepose C since the matrix is column major
-    // stat = cublasDgeam(handle, CUBLAS_OP_T, CUBLAS_OP_N, m, n, &alpha, dC, ldc, &beta, dB, ldb, dCt, ldc);
-    // cublas_assert(stat == CUBLAS_STATUS_SUCCESS, "cublasDgeam");
-    
-    // stat = cublasGetMatrix(m, n, sizeof(*hC), dCt, m, hC, ldc);
-    // cublas_assert(stat == CUBLAS_STATUS_SUCCESS, "cublasGetMatrix");
-    // cudaFree(dA);
-    // cudaFree(dB);
-    // cudaFree(dC);
-    // cudaFree(dCt);
-    
-    // stat = cublasDestroy(handle);
-    // cublas_assert(stat == CUBLAS_STATUS_SUCCESS, "cublasDestroy");
-// }
 
 
 // define helper functions

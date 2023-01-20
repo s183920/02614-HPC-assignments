@@ -133,6 +133,7 @@ test_lib: clean all
 	./matmult_c.nvc++ lib_offload $(T1_TEST) $(T2_TEST) $(T3_TEST)
 	@echo
 
+test_teams: TEAMS=10
 test_teams: clean all
 	@echo "Testing matmult_teams"
 	OMP_NUM_THREADS=16 ./matmult_c.nvc++ mkn_offload $(T1) $(T2) $(T3)
