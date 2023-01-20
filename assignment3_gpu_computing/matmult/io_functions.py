@@ -34,7 +34,7 @@ def result_loader(value, df_dict: dict):
     value = [l.strip() for l in value if l not in remove]
     measures, info = value[0:2], " ".join(value[2:])
     data = measures + [info]
-    print(data)
+    # print(data)
     columns = ["memory", "performance", "info"]
     df_dict.update(dict(zip(columns, data)))
 

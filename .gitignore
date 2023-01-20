@@ -80,3 +80,4 @@ assignment3_gpu_computing/matmult/hpc_logs/*
 assignment3_gpu_computing/poisson/hpc_logs/*
 results
 assignment3_gpu_computing/matmult/profiles/*
+assignment3_gpu_computing/matmult/__pycache__/io_functions.cpython-39.pyc
