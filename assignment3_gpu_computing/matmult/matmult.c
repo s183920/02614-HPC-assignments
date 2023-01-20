@@ -13,7 +13,7 @@
 
 
 #ifndef _BLOCK_SIZE
-#define _BLOCK_SIZE 10
+#define _BLOCK_SIZE 14
 #endif
 
 #ifndef _TEAMS
@@ -152,7 +152,7 @@ void matmult_mkn_offload(int m,int n,int k,double **A,double **B, double **C){
     }
     #ifdef _TIMING // TRANSER_TIMING start
     t2 = omp_get_wtime();
-    printf("Time without transfer (ms): %f\n", 1e3*(t2-t1));
+    printf("Time without transfer: %f\n", 1e3*(t2-t1));
     } // exit data
     t2 = omp_get_wtime();
     printf("Time with transfer: %f\n", 1e3*(t2-t1));
@@ -215,7 +215,7 @@ void matmult_blk_offload(int m, int n, int k, double **A,double **B,double **C){
     #endif // TRANSER_TIMING end
     #pragma omp target teams loop \
     map(to: A[:m][:k], B[:k][:n], m,k,n) map(tofrom: C[:m][:n]) \
-    num_teams(_TEAMS) thread_limit(_THREADS)\
+    num_teams(m) thread_limit(_THREADS)\
     collapse(2)
     for(int i1=0;i1<m;i1+=_BLOCK_SIZE){
         for(int j=0;j<n;j++){
@@ -277,7 +277,7 @@ void matmult_asy_offload(int m, int n, int k, double **A,double **B,double **C){
 
         #pragma omp target teams distribute parallel for \
         map(to: A[start:length][:k]) \
-        num_teams(length) thread_limit(16)\
+        num_teams(_TEAMS) thread_limit(_THREADS)\
         depend(in:A) depend(out:C) nowait \
         collapse(2)
         for(int i1=start; i1<start+length;i1+=_BLOCK_SIZE){
@@ -312,7 +312,7 @@ void matmult_asy_offload(int m, int n, int k, double **A,double **B,double **C){
 
     #ifdef _TIMING // TRANSER_TIMING start
     t2 = omp_get_wtime();
-    printf("Time with transfer: %f\n", 1e3*(t2-t1));
+    printf("Time: %f\n", 1e3*(t2-t1));
     #endif // TRANSER_TIMING end
 }   
 

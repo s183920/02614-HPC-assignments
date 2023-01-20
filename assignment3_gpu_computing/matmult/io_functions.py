@@ -30,7 +30,7 @@ def read_file(file: Path) -> pd.DataFrame:
             
 def result_loader(value, df_dict: dict):
     remove = ["", " ", "#"]
-    print(value)
+    # print(value)
     value = value.split(" ")
     value = [l.strip() for l in value if l not in remove]
     measures, info = value[0:3], " ".join(value[3:])
