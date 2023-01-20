@@ -9,17 +9,17 @@ sns.set_style("whitegrid")
 
 def plot_block_experiment(experiment: str):
     df = io_functions.read_experiment(experiment)
-    version = "blk_offload"
+    version = "blk_omp"
     omp_df = df.query('version==@version')
-
-    omp_df.iloc[:, 1:-1] = omp_df.iloc[:, 1:-1].astype(float)
+    print(df)
+    omp_df.iloc[:, 1:-3] = omp_df.iloc[:, 1:-3].astype(float)
     fig = sns.lineplot(data=omp_df, x='block_size', y='performance')
 
     df_max = omp_df.query("(performance == performance.max())")[["block_size", "performance"]].reset_index(drop=True)
     fig = sns.scatterplot(ax=fig, data=df_max, x='block_size', y='performance', color='red')
     fig.text(x=df_max['block_size'] + 0.2, y=df_max['performance'], s=f"Optimal Blocksize: {df_max.at[0, 'block_size']}")
     
-    fig.set_title("blk_omp, 2048x2048 matrices")
+    fig.set_title(f"{version}, 2048x2048 matrices")
     fig.set_xlabel("Block Size")
     fig.set_ylabel("Performance (MFlops/s)")
     print(df_max.at[0, 'block_size'])
