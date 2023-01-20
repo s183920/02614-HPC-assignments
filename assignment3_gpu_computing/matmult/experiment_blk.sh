@@ -20,11 +20,11 @@ export EXECUTABLE=matmult_c.nvc++ # Driver Name
 # export MATMULT_RESULTS=      # {[0]|1}       print result matrices (in Matlab format, def: 0)
 export MATMULT_COMPARE=1   # {0|[1]}       control result comparison (def: 1); enable(1)/disable(0) result checking
 export MFLOPS_MIN_T=3.0        # [3.0]         the minimum run-time (def: 3.0 s)
-export MFLOPS_MAX_IT=100       # [infinity]    max. no of iterations; set if you want to do profiling.
+export MFLOPS_MAX_IT=100       #     remove = ["", " ", "#"][infinity]    max. no of iterations; set if you want to do profiling.
 
 #### Experiment Options
-BLKSIZES={1..700..10}
-SIZE="1000"
+BLKSIZES={1..1000..10}
+SIZE="2048"
 VERSIONS="blk blk_omp"
 export EXPNAME=blk_size_${SIZE}_$(date +%Y%m%d_%H%M%S) #Name of Experiment
 export EXPPATH=results/${EXPNAME} # Path to experiment folder
