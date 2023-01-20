@@ -17,7 +17,7 @@ def plot_block_experiment(experiment: str):
 
     df_max = omp_df.query("(performance == performance.max())")[["block_size", "performance"]].reset_index(drop=True)
     fig = sns.scatterplot(ax=fig, data=df_max, x='block_size', y='performance', color='red')
-    fig.text(x=df_max['block_size'] + 0.2, y=df_max['performance'], s=f"Optimal Blocksize: {df_max.at[0, 'block_size']}")
+    fig.text(x=df_max['block_size'] - 5, y=df_max['performance']+5, s=f"Optimal Blocksize: {df_max.at[0, 'block_size']}")
     
     fig.set_title(f"{version}, 2048x2048 matrices")
     fig.set_xlabel("Block Size")

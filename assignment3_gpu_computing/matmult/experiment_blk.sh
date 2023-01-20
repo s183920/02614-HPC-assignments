@@ -26,9 +26,9 @@ export MFLOPS_MIN_T=3.0        # [3.0]         the minimum run-time (def: 3.0 s)
 # export MFLOPS_MAX_IT=100       #     remove = ["", " ", "#"][infinity]    max. no of iterations; set if you want to do profiling.
 
 #### Experiment Options
-BLKSIZES={1..50}
+BLKSIZES=1
 SIZE="2048"
-VERSIONS="blk_omp blk_offload"
+VERSIONS="mkn_omp"
 export EXPNAME=blk_size_${SIZE}_$(date +%Y%m%d_%H%M%S) #Name of Experiment
 export EXPPATH=results/${EXPNAME} # Path to experiment folder
 # Sub-Folders
