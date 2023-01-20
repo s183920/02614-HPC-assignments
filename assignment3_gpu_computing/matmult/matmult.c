@@ -219,11 +219,15 @@ void matmult_blk_offload(int m, int n, int k, double **A,double **B,double **C){
             }
         }
     }
+    #ifdef TRANSFER_TIMING // TRANSER_TIMING start
     t2 = omp_get_wtime();
-    printf("Time without transfer: %lf\n", t2-t1);
-    }
+    printf("Time without transfer: %f\n", 1e3*(t2-t1));
+    } // exit data
     t2 = omp_get_wtime();
-    printf("Time with transfer: %lf\n", t2-t1);
+    printf("Time with transfer: %f\n", 1e3*(t2-t1));
+    #else
+    } // exit data
+    #endif // TRANSER_TIMING end
 }   
 
 
