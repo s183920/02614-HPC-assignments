@@ -102,16 +102,25 @@ def plot_ex4(exp_name: str):
 
     # df["transfer_time_avg"] = df["Time without transfer"] / df["Time without transfer_count"] # without 
     # print(df)
-    fig, axes = plt.subplots()
+    fig, axes = plt.subplots(1,2, figsize=(10,5))
 
+    ax = axes[0]
     df_version = df[df.version == "asy_offload"]
-    axes.plot(df_version.slabs, df_version.time_avg, label="asy_offload", marker = markers["asy_offload"])
+    ax.plot(df_version.slabs, df_version.time_avg, label="asy_offload", marker = markers["asy_offload"])
     d = df[df.version == "blk_offload"]
     d = d["Time with transfer"] / d["Time with transfer_count"]
-    axes.axhline(y = d.item(), linestyle = "--", color = "C3", label="blk_offload")
-    axes.legend()
-    axes.set_xlabel("Slabs")
-    axes.set_ylabel("Time (ms)")
+    ax.axhline(y = d.item(), linestyle = "--", color = "C3", label="blk_offload")
+    ax.legend()
+    ax.set_xlabel("Slabs")
+    ax.set_ylabel("Time (ms)")
+
+    ax = axes[1]
+    df_version = df[df.version == "asy_offload"]
+    ax.plot(df_version.slabs, df_version.performance, label="asy_offload", marker = markers["asy_offload"])
+    ax.axhline(y = df[df.version == "blk_offload"].performance.item(), linestyle = "--", color = "C3", label="blk_offload")
+    ax.legend()
+    ax.set_xlabel("Slabs")
+    ax.set_ylabel("Performance (GFlops/s)")
 
     fig.tight_layout()
     plt.savefig(f'results/{exp_name}/plots/ex4_results.pdf')

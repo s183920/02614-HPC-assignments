@@ -25,7 +25,7 @@
 #endif
 
 #ifndef _SLABS
-#define _SLABS 4
+#define _SLABS 2
 #endif
 
 // standard OpenMP versions for question 1
