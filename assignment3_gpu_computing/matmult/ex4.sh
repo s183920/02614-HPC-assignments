@@ -31,7 +31,7 @@ mkdir -p $PROFILE_DIR
 SIZES="2048"
 TEAMS=16384
 THREADS=16
-SLABS="1 2 4 8 16 32"
+SLABS="1 2 3 4 5 6 7 8 16 32"
 BLKSIZE=8
 
 # VERSIONS="asy_offload blk_offload"
