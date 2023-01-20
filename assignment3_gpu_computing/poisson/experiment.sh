@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # experiments name
-EXPNAME=question6_$(date +%Y%m%d_%H%M%S)
+EXPNAME=part2_$(date +%Y%m%d_%H%M%S)
 OUTDIR=results/$EXPNAME/output_files
 mkdir -p results/$EXPNAME
 mkdir -p $OUTDIR
@@ -14,14 +14,13 @@ mkdir -p results/$EXPNAME/compile_logs
 #BSUB -q hpcintrogpu
 #BSUB -n 4
 #BSUB -R "span[hosts=1]"
-#BSUB -gpu "num=1:mode=exclusive_process"
+#BSUB -gpu "num=2:mode=exclusive_process"
 #BSUB -W 10
 #BSUB -R "rusage[mem=2048]"
 # uncomment the following line, if you want to assure that your job has
 # a whole CPU for itself (shared L3 cache)
-### BSUB -R "span[hosts=1] affinity[socket(1)]"
 
-
+export CUDA_VISIBLE_DEVICES=0,1
 
 
 # compile the code
@@ -29,12 +28,11 @@ module load nvhpc/22.11-nompi
 module load cuda/11.8
 module load gcc/11.3.0-binutils-2.38
 make clean
-make OPT="$OPT_FLAGS"
+make
 
 # define the driver name to use
 # cp matmult_c.gcc results/$EXPNAME/matmult_c.gcc
-export EXECUTABLE=possion
-export CUDA_VISIBLE_DEVICES=0,1
+export EXECUTABLE=poisson
 # create necesary files and directories
 export ANALYZER_DIR=results/${EXPNAME}/analyzer_files
 export SIZE_DIR=results/${EXPNAME}/output_files
@@ -53,16 +51,17 @@ export DEFAULT_MAX_IT=1000    # [3.0]         max. no of iterations; set if you 
 export DEFAULT_T=0.32         # [0.32]        tolerance
 export DEFAULT_START_T=0      #Start time
 export DEFAULT_OUTPUT_ARG=0   #No output 
-export VERSIONS="0 1 2"
+export VERSIONS="0 1 2 3 4"
+export SIZES="200"
 # run the driver
 fnum=0
 # total=$VERSIONS* // VERSIONS * SIZES
 for VERSION in $VERSIONS; do
     for S in $SIZES; do
-        echo "Starting run $fnum using $VERSION with grid size $DEFAULT_N"
+        echo "Starting run $fnum using $VERSION with grid size $S"
         echo "version: $VERSION" > $OUTDIR/run_$fnum.txt
-        echo "size: $DEFAULT_N" >> $OUTDIR/run_$fnum.txt
-        echo "result: $(./$EXECUTABLE $DEFAULT_N $DEFAULT_MAX_IT $DEFAULT_T $DEFAULT_START $DEFAULT_OUTPUT_ARG $VERSION)"  >> $OUTDIR/run_$fnum.txt
+        echo "size: $S" >> $OUTDIR/run_$fnum.txt
+        echo "result: $(OMP_NUM_THREADS=16 ./$EXECUTABLE $S $DEFAULT_MAX_IT $DEFAULT_T $DEFAULT_START $DEFAULT_OUTPUT_ARG $VERSION)"  >> $OUTDIR/run_$fnum.txt
         fnum=$((fnum+1))
     done
 done

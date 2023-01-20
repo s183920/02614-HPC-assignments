@@ -213,7 +213,7 @@ void matmult_blk_offload(int m, int n, int k, double **A,double **B,double **C){
     #pragma omp target data map(to: A[:m][:k], B[:k][:n], m,k,n) map(tofrom: C[:m][:n])
     {
     #endif // TRANSER_TIMING end
-    #pragma omp target teams distribute parallel for \
+    #pragma omp target teams loop \
     map(to: A[:m][:k], B[:k][:n], m,k,n) map(tofrom: C[:m][:n]) \
     num_teams(_TEAMS) thread_limit(_THREADS)\
     collapse(2)
