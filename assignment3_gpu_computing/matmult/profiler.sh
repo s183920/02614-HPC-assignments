@@ -13,9 +13,25 @@
 # fi
 version=blk_offload
 size=2048
+FILE=profiles/profile_$(date +%Y%m%d_%H%M%S)_$LSB_JOBID.txt
 mkdir -p profiles
 
-FILE=profiles/profile_$(date +%Y%m%d_%H%M%S)_$LSB_JOBID.txt
+if [ $# -eq 1 ]; then
+    version=$1
+fi
+
+if [ $# -eq 2 ]; then
+    version=$1
+    size=$2
+fi
+
+if [ $# -eq 3 ]; then
+    version=$1
+    size=$2
+    FILE=$3
+fi
+
+
 # mkdir -p $FILEDIR
 export TMPDIR=$__LSF_JOB_TMPDIR__
 module load cuda/11.8

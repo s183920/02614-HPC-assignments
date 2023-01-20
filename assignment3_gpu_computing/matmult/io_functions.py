@@ -10,25 +10,39 @@ def read_experiment(experiment_name: str):
     return pd.concat(dfs).reset_index(drop=True)
     
 def read_file(file: Path) -> pd.DataFrame:
-    columns = []
-    values = []
-    remove = ["", " ", "#"]
+    df_dict = {}
+
     with file.open() as f:
         for line in f:
-            key, value = line.split(": ")
-            if key.lower() in "results":
-                value = value.split(" ")
-                values += [l.strip() for l in value if l not in remove]
-                if values[-2] == "matmult_blk":
-                    del values[-1]
-                columns += ["memory", "performance", "result", "info"]
+            lst = line.split(": ")
+            if len(lst) < 2:
+                result_loader(value, df_dict)
+            else: 
+                key, value = lst
+                if 'time' in key.lower():
+                    time_loader(key, value, df_dict)
+                else:
+                    df_dict.update({key: value.strip()})
+    
 
-            else:
-                columns += [key]
-                values += [value.strip()]
-    df = pd.DataFrame(data=[values], columns=columns)
+    df = pd.DataFrame.from_records([df_dict])
     return df
             
+def result_loader(value, df_dict: dict):
+    remove = ["", " ", "#"]
+    value = [l.strip() for l in value.split(" ") if l not in remove]
+    measures, info = value[0:3], " ".join(value[3:])
+    data = measures + [info]
+    columns = ["memory", "performance", "result", "info"]
+    df_dict.update(dict(zip(columns, data)))
+
+
+def time_loader(key: str, value: str, df_dict: dict):
+    df_dict[key + '_count'] = df.get(key + '_count', 0) + 1
+    df_dict[key] += value.strip()
+
+
+
 if __name__ == "__main__":
     df = read_experiment("blk_size_500_20230118_134540")
     print(df)

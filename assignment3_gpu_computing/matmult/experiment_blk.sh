@@ -13,6 +13,9 @@
 
 #### Compiler Options
 OPT_FLAGS="-g -fast -Msafeptr -Minfo -mp=gpu -gpu=pinned -gpu=cc80 -gpu=lineinfo -cuda -mp=noautopar"
+THREADS=16
+export OMP_NUM_THREADS=$THREADS
+TEAMS=108
 
 #### Driver Options
 export EXECUTABLE=matmult_c.nvc++ # Driver Name
@@ -20,24 +23,23 @@ export EXECUTABLE=matmult_c.nvc++ # Driver Name
 # export MATMULT_RESULTS=      # {[0]|1}       print result matrices (in Matlab format, def: 0)
 export MATMULT_COMPARE=1   # {0|[1]}       control result comparison (def: 1); enable(1)/disable(0) result checking
 export MFLOPS_MIN_T=3.0        # [3.0]         the minimum run-time (def: 3.0 s)
-export MFLOPS_MAX_IT=100       # [infinity]    max. no of iterations; set if you want to do profiling.
+export MFLOPS_MAX_IT=100       #     remove = ["", " ", "#"][infinity]    max. no of iterations; set if you want to do profiling.
 
 #### Experiment Options
-BLKSIZES={1..700..10}
-SIZE="1000"
-VERSIONS="blk blk_omp"
+BLKSIZES={1..1000..10}
+SIZE="2048"
+VERSIONS="blk_omp"
 export EXPNAME=blk_size_${SIZE}_$(date +%Y%m%d_%H%M%S) #Name of Experiment
 export EXPPATH=results/${EXPNAME} # Path to experiment folder
 # Sub-Folders
 export ANALYZER_DIR=$EXPPATH/analyzer_files
 export OUTPUT_PATH=$EXPPATH/output_files
 
-#### Compile Code
+#### Modules
 module load nvhpc/22.11-nompi
 module load cuda/11.8
 module load gcc/11.3.0-binutils-2.38
-make clean
-make OPT="$OPT_FLAGS"
+
 
 
 #### Run Experiment
@@ -45,22 +47,17 @@ mkdir -p $OUTPUT_PATH
 for V in $VERSIONS; do
 for BLK in $(eval echo $BLKSIZES) ; do
 FILENAME=${V}_${BLK}.txt
+make clean
+make THREADS=$THREADS TEAMS=$TEAMS BLOCK_SIZE=$BLK
+
 echo "version: $V" >> $OUTPUT_PATH/$FILENAME
 echo "block_size: $BLK" >> $OUTPUT_PATH/$FILENAME
 echo "size: $SIZE" >> $OUTPUT_PATH/$FILENAME
-echo "./$EXECUTABLE $V $SIZE $SIZE $SIZE $BLK >> $FILENAME"
-echo "result: $(./$EXECUTABLE $V $SIZE $SIZE $SIZE)" >> $OUTPUT_PATH/$FILENAME
+echo "OMP_NUM_THREADS=$THREADS ./$EXECUTABLE $V $SIZE $SIZE $SIZE $BLK >> $FILENAME"
+OMP_NUM_THREADS=16 ./$EXECUTABLE $V $SIZE $SIZE $SIZE $BLK >> $OUTPUT_PATH/$FILENAME
 done
 done
 
-
-#### Setup Logs
-mkdir -p $EXPPATH
-touch $EXPPATH/setup.txt # file for setup
-lscpu >> $SETUP_DIR/setup.txt # write setup to file
-echo "Jobid: ${LSB_JOBID}" >> $SETUP_DIR/setup.txt # write setup to file
-
-echo "SIZES=$SIZES\nBLKSIZE=$BLKSIZE" >> $EXPPATH/setup_sizes.txt
 
 #### HPC Logs
 mkdir -p $EXPPATH/hpc_logs
