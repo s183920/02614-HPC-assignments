@@ -11,17 +11,21 @@ def read_experiment(experiment_name: str):
     
 def read_file(file: Path) -> pd.DataFrame:
     df_dict = {}
+
     with file.open() as f:
         for line in f:
-            key, value = line.split(": ")
-            if key.lower() in "results":
+            lst = line.split(": ")
+            if len(lst) < 2:
                 result_loader(value, df_dict)
-            elif 'time' in key.lower():
-                time_loader(key, value, df_dict)
-            else:
-                df_dict.update({key: value.strip()})
+            else: 
+                key, value = lst
+                if 'time' in key.lower():
+                    time_loader(key, value, df_dict)
+                else:
+                    df_dict.update({key: value.strip()})
+    
 
-    df = pd.DataFrame(data=[values], columns=columns)
+    df = pd.DataFrame.from_records([df_dict])
     return df
             
 def result_loader(value, df_dict: dict):
