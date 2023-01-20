@@ -24,14 +24,14 @@ mkdir -p $PROFILE_DIR
 #BSUB -n 16
 #BSUB -R "span[hosts=1]"
 #BSUB -gpu "num=1:mode=exclusive_process"
-#BSUB -W 10
+#BSUB -W 20
 #BSUB -R "rusage[mem=2048]" 
 
 # SETTINGS
-SIZES="512 1024 2048 4096 8192"
+SIZES="32 128 256 512 1024 2048 4096 8192 16384"
 TEAMS=16384
 THREADS=16
-SLABS=4
+SLABS=2
 BLKSIZE=8
 
 VERSIONS="mkn_omp blk_omp lib mkn_offload mnk_offload blk_offload asy_offload lib_offload"
