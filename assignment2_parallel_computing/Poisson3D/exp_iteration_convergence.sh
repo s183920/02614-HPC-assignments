@@ -13,12 +13,11 @@ module load gcc
 make realclean
 make 
 
-module load gcc
-module load python3
-source ../../../venv/bin/activate
+# module load python3
+# source ../../../venv/bin/activate
 
 # set Ns to test
-Ns="20 40 60 80 100 120 140 160 180 200"
+Ns="10 20 40 50 75 100 125 150 200 256 512"
 export max_iters=10000
 # save settings
 echo "start_T = $start_T" >> $EXP_DIR/setup.txt
@@ -33,7 +32,9 @@ for n in $Ns; do
     echo "N = $n"
     ./poisson_gs $n $max_iters 0.01 $start_T 0 > $OUT_DIR/output_gs_N_${n}.txt
     ./poisson_j $n $max_iters 0.01 $start_T 0 > $OUT_DIR/output_j_N_${n}.txt
-done;echo
+done
 
 echo "Making plots of Iteration convergence..."
 python3 plot_iteration_convergence.py --save_folder $EXP_DIR --output_files $OUT_DIR
+
+# ../results/test_20230113_174914/exp_iteration_convergence/output_files/

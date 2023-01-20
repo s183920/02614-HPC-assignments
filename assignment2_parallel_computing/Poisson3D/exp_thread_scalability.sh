@@ -20,11 +20,11 @@ make realclean
 make PARA=-fopenmp
 
 module load gcc
-module load python3
-source ../../../venv/bin/activate
+# module load python3
+# source ../../../venv/bin/activate
 
 # set Ns to test
-Ns="256"
+Ns="128 256"
 thread_step_size=1
 
 #LSB_DJOB_NUMPROC=4
@@ -67,5 +67,5 @@ done
 
 echo "Making plots of thread scalability..."
 python3 plot_threads.py --save_folder $EXP_DIR --output_files $OUT_DIR
-echo "Making plots of performance..."
-python3 plot_totalperformance.py --save_folder $EXP_DIR --output_files $OUT_DIR
+# echo "Making plots of performance..."
+# python3 plot_totalperformance.py --save_folder $EXP_DIR --output_files $OUT_DIR

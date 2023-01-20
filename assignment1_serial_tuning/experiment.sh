@@ -3,7 +3,7 @@
 # experiments name
 export EXPNAME=blk_size_30_p2_$(date +%Y%m%d_%H%M%S)
 mkdir -p results/$EXPNAME
-mkdir -p hpc_logs
+mkdir -p results/$EXPNAME/hpc_logs
 mkdir -p results/$EXPNAME/compile_logs
 
 #!/bin/bash

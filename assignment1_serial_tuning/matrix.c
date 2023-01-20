@@ -4,6 +4,7 @@
 
 int min(int a, int b);
 // helper function for creating the C matrix
+
 double **init_C(double **C, int m, int n){
     for(int i=0;i<m;i++){
         for(int j=0;j<n;j++){
