@@ -39,6 +39,7 @@ module load gcc/11.3.0-binutils-2.38
 module load nvhpc/22.11-nompi
 export MFLOPS_MAX_IT=1
 
+export OMP_NUM_THREADS=16
 # command line output
 echo "$(nv-nsight-cu-cli \
         --section MemoryWorkloadAnalysis \
@@ -46,4 +47,4 @@ echo "$(nv-nsight-cu-cli \
         --section ComputeWorkloadAnalysis \
         --section Occupancy \
         --section SpeedOfLight \
-        OMP_NUM_THREADS=16 ./matmult_c.nvc++ $version $size $size $size)" > $FILE
+        ./matmult_c.nvc++ $version $size $size $size)" > $FILE
