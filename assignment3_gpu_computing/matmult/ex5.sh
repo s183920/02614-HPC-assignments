@@ -81,8 +81,8 @@ for VERSION in $VERSIONS; do
 done
 
 # profile the code
-# sh profiler.sh lib_offload 2048 $PROFILE_DIR/lib_offload
-# sh profiler.sh lib 2048 $PROFILE_DIR/lib
+sh profiler.sh lib_offload 2048 $PROFILE_DIR/lib_offload
+sh profiler.sh lib 2048 $PROFILE_DIR/lib
 
 
 
@@ -94,5 +94,6 @@ if [ "$LSB_JOBID" != "" ]; then
 fi
 
 # plot
+echo "Plotting results for $EXPNAME"
 source ../../../hpc_env/bin/activate
 python3 plot_functions.py -q 5 --exp $EXPNAME

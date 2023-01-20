@@ -97,14 +97,18 @@ def plot_ex4(exp_name: str):
     print(df)
     df["performance"] = df["performance"] / 1000
     df = df.sort_values(by=['slabs'])
-    df["time_avg"] = df["Time with transfer"] / df["Time with transfer_count"]
+    df["time_avg"] = df["Time"] / df["Time_count"]
+    # df.loc[df["version"] == "blk_offload"]["time_avg"] = df["Time with transfer"] / df["Time with transfer_count"]
+
     # df["transfer_time_avg"] = df["Time without transfer"] / df["Time without transfer_count"] # without 
     # print(df)
     fig, axes = plt.subplots()
 
     df_version = df[df.version == "asy_offload"]
     axes.plot(df_version.slabs, df_version.time_avg, label="asy_offload", marker = markers["asy_offload"])
-    axes.axhline(y = df[df.version == "blk_offload"].time_avg.item(), linestyle = "--", color = "C3", label="blk_offload")
+    d = df[df.version == "blk_offload"]
+    d = d["Time with transfer"] / d["Time with transfer_count"]
+    axes.axhline(y = d.item(), linestyle = "--", color = "C3", label="blk_offload")
     axes.legend()
     axes.set_xlabel("Slabs")
     axes.set_ylabel("Time (ms)")

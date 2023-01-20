@@ -29,7 +29,7 @@ mkdir -p $PROFILE_DIR
 
 # SETTINGS
 SIZES="2048"
-BLKSIZE=32
+BLKSIZE=130
 # TEAMS="2048 8192 16384 32768"
 # THREADS="1 2 4 8 16 32"
 THREADS="1 2 4 6 8 10 12 14 16"
@@ -91,5 +91,6 @@ if [ "$LSB_JOBID" != "" ]; then
 fi
 
 # plot
+echo "Plotting results for $EXPNAME"
 source ../../../hpc_env/bin/activate
 python3 plot_functions.py -q 1 --expname $EXPNAME

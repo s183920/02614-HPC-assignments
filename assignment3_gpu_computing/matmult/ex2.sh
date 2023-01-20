@@ -24,12 +24,12 @@ mkdir -p $PROFILE_DIR
 #BSUB -n 4
 #BSUB -R "span[hosts=1]"
 #BSUB -gpu "num=1:mode=exclusive_process"
-#BSUB -W 10
+#BSUB -W 15
 #BSUB -R "rusage[mem=2048]" 
 
 # SETTINGS
 SIZES="2048"
-TEAMS="1 10 64 108 256 512 700 1024"
+TEAMS="1 10 64 108 256 512 700 1024 2024 4096 8192 16384 32768"
 THREADS="16"
 
 VERSIONS="mkn_offload mnk_offload"
@@ -100,5 +100,6 @@ if [ "$LSB_JOBID" != "" ]; then
 fi
 
 # plot
-# source ../../../hpc_env/bin/activate
-# python3 plot_functions.py -q 2 --exp $EXPNAME
+echo "Plotting results for $EXPNAME"
+source ../../../hpc_env/bin/activate
+python3 plot_functions.py -q 2 --exp $EXPNAME
