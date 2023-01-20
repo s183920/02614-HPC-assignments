@@ -19,6 +19,10 @@
 #define _THREADS 16
 #endif
 
+#ifndef _SLABS
+#define _SLABS 4
+#endif
+
 // standard OpenMP versions
 void matmult_mkn_omp(int m,int n,int k,double **A,double **B,double **C){
     #pragma omp parallel shared(A,B,C)
@@ -106,7 +110,6 @@ void matmult_lib(int m,int n,int k,double **A,double **B,double **C){
 
 // offload versions
 void matmult_mkn_offload(int m,int n,int k,double **A,double **B, double **C){
-    printf("TEAMS: %d, THREADS: %d\n", _TEAMS, _THREADS);
     C = init_C(C,m,n);
     
     // timings
@@ -197,8 +200,8 @@ void matmult_blk_offload(int m, int n, int k, double **A,double **B,double **C){
     for(int i1=0;i1<m;i1+=_BLOCK_SIZE){
         for(int j=0;j<n;j++){
             int i2, l;
-            double temp_sum[_BLOCK_SIZE] = {};
-            if (_BLOCK_SIZE < (m-i1)){
+            double temp_sum[_BLOCK_SIZE] = {0};
+            if (_BLOCK_SIZE -1 < (m-i1)){
                 for(l=0;l<k;l++){   
                     for(i2=0; i2 < _BLOCK_SIZE; i2++){
                         temp_sum[i2] += A[i1+i2][l] * B[l][j];
@@ -261,41 +264,67 @@ void matmult_blk_offload(int m, int n, int k, double **A,double **B,double **C){
 // }
 
 // block offload versions
-#ifndef _SLABS
-#define _SLABS 1
-#endif
+
 
 void matmult_asy_offload(int m, int n, int k, double **A,double **B,double **C){
     C = init_C(C,m,n);
-    #pragma omp target teams loop \
-    map(to: A[:m][:k], B[:k][:n], m,k,n) map(tofrom: C[:m][:n]) \
-    num_teams(_TEAMS) thread_limit(_THREADS)\
-    collapse(2)
-    for(int i1=0;i1<m;i1+=_BLOCK_SIZE){
-        for(int j=0;j<n;j++){
-            int i2, l;
-            double temp_sum[_BLOCK_SIZE] = {};
-            if (_BLOCK_SIZE < (m-i1)){
-                for(l=0;l<k;l++){   
-                    for(i2=0; i2 < _BLOCK_SIZE; i2++){
-                        temp_sum[i2] += A[i1+i2][l] * B[l][j];
+
+    double t1, t2;
+    t1 = omp_get_wtime();
+    #pragma omp target enter data map(alloc: A[0:m][0:k], B[0:k][0:n], C[0:m][0:n])
+    #pragma omp target update to(B[0:k][0:n])
+
+    #pragma omp parallel for
+    for (int s = 0; s < _SLABS; ++s) {
+        int length = m/_SLABS; // assumed to be divisible such that we get an integer
+        int start = s*length;
+
+        #pragma omp target update to(A[start:length][0:k]) depend(out:A) nowait
+
+        #pragma omp target teams distribute parallel for \
+        map(to: A[start:length][:k]) \
+        num_teams(length) thread_limit(16)\
+        depend(in:A) depend(out:C) nowait \
+        collapse(2)
+        for(int i1=start; i1<start+length;i1+=_BLOCK_SIZE){
+            for(int j=0;j<n;j++){
+                // int i2, l;
+
+                if (_BLOCK_SIZE -1 < (m-i1)){
+                    double temp_sum[_BLOCK_SIZE] = {0};
+                    for(int l=0;l<k;l++){   
+                        for(int i2=0; i2 < _BLOCK_SIZE; i2++){
+                            temp_sum[i2] += A[i1+i2][l] * B[l][j];
+                        }
+                    }
+                    // printf("p1 i1: %d, j: %d, i2: %d, l: %d, k: %d\n", i1, j, i2, l, k);
+                    for (int i=0; i < _BLOCK_SIZE; i++){
+                        C[i + i1][j] = temp_sum[i];
+                    }
+                    // printf("p2 i1: %d, j: %d, i2: %d, l: %d, k: %d\n", i1, j, i2, l, k);
+
+                }
+                else { 
+                    for(int i2=0; i2 < (m-i1); i2++){
+                        double sum= 0;
+                        for(int l=0;l<k;l++){   
+                            // C[i1+i2][j] += A[i1+i2][l]*B[l][j];
+                            sum += A[i2+i1][l]*B[l][j];
+                        }
+                        C[i1+i2][j] = sum;
                     }
                 }
-
-                for (int i=0; i < _BLOCK_SIZE; i++){
-                    C[i + i1][j] = temp_sum[i];
-                }
-
             }
-            else { 
-                for(l=0;l<k;l++){   
-                    for(i2=0; i2 < (m-i1); i2++){
-                        C[i1+i2][j] += A[i1+i2][l]*B[l][j];
-                    }
-                }
-            }
-        }
-    }
+            // printf("i1: %d\n", i1);
+        } // end block
+        #pragma omp target update from(C[start:length][:n]) depend(in:C) nowait
+        // printf("s: %d, start: %d, length: %d\n", s, start, length);
+    } // end async/parallel
+    #pragma omp taskwait
+    #pragma omp target exit data map(delete: A[0:m][0:k], B[0:k][0:n], C[0:m][0:n])
+
+    t2 = omp_get_wtime();
+    printf("Time with transfer: %f\n", 1e3*(t2-t1));
 }   
 
 
