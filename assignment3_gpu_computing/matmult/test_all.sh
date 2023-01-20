@@ -32,7 +32,7 @@ SIZES="512 1024 2048 4096 8192"
 TEAMS=16384
 THREADS=16
 SLABS=4
-BLKSIZE=14
+BLKSIZE=8
 
 VERSIONS="mkn_omp blk_omp lib mkn_offload mnk_offload blk_offload asy_offload lib_offload"
 
@@ -80,7 +80,7 @@ for S in $SIZES; do
         echo "slabs: $SLABS" >> $OUTDIR/run_$fnum.txt
         echo "teams: $TEAMS" >> $OUTDIR/run_$fnum.txt
         echo "threads: $THREADS" >> $OUTDIR/run_$fnum.txt
-        echo "$(OMP_NUM_THREADS=$THREADS ./$EXECUTABLE $VERSION $S $S $S 32)"  >> $OUTDIR/run_$fnum.txt
+        echo "$(OMP_NUM_THREADS=$THREADS ./$EXECUTABLE $VERSION $S $S $S 130)"  >> $OUTDIR/run_$fnum.txt
         fnum=$((fnum+1))
     done
 done

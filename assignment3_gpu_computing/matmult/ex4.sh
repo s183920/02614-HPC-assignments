@@ -32,7 +32,7 @@ SIZES="2048"
 TEAMS=16384
 THREADS=16
 SLABS="1 2 4 8 16 32"
-BLKSIZE=14
+BLKSIZE=8
 
 # VERSIONS="asy_offload blk_offload"
 

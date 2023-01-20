@@ -81,8 +81,8 @@ for VERSION in $VERSIONS; do
 done
 
 # profile the code
-# sh profiler.sh lib_offload 2048 $PROFILE_DIR/lib_offload
-# sh profiler.sh lib 2048 $PROFILE_DIR/lib
+sh profiler.sh lib_offload 2048 $PROFILE_DIR/lib_offload
+sh profiler.sh lib 2048 $PROFILE_DIR/lib
 
 
 
