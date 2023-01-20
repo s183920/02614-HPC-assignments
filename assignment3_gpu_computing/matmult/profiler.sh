@@ -46,4 +46,4 @@ echo "$(nv-nsight-cu-cli \
         --section ComputeWorkloadAnalysis \
         --section Occupancy \
         --section SpeedOfLight \
-        ./matmult_c.nvc++ $version $size $size $size)" > $FILE
+        OMP_NUM_THREADS=16 ./matmult_c.nvc++ $version $size $size $size)" > $FILE

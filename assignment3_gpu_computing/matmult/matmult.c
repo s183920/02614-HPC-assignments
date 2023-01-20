@@ -9,7 +9,7 @@
 
 // define variables if they dont exist - this should not be the case when compiling with make
 
-// #define _TIMING
+#define _TIMING
 
 
 #ifndef _BLOCK_SIZE
@@ -123,7 +123,7 @@ void matmult_lib(int m,int n,int k,double **A,double **B,double **C){
 
 // OpenMP offload versions for question 2
 void matmult_mkn_offload(int m,int n,int k,double **A,double **B, double **C){
-    printf("teams: %d, threads: %d, slabs: %d\n", _TEAMS, _THREADS, _SLABS);
+    // printf("teams: %d, threads: %d, slabs: %d\n", _TEAMS, _THREADS, _SLABS);
     C = init_C_omp(C,m,n);
     
     // timings
