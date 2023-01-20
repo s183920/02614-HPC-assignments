@@ -107,7 +107,7 @@ jacobi_GPU(int N, double threshold, int iter_max, double ***U_d, double ***U_new
         U_new_d = tmp;
         iteration++;
         }
-    // swap_3d(&U_d, &U_new_d);
+    swap_3d(&U_d, &U_new_d);
     
     printf("\tIterations: %d\n", iteration);
 }
@@ -168,7 +168,7 @@ jacobi_dual_GPU(int N, double threshold, int iter_max, double ***U_d, double ***
         U_new_d = tmp;
         iteration++;
         }
-    // swap_3d(&U_d, &U_new_d);
+    swap_3d(&U_d, &U_new_d);
     
     printf("\tIterations: %d\n", iteration);
 }

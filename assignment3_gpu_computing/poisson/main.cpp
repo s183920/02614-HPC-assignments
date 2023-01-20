@@ -64,7 +64,6 @@ double solver(int version, int N, double tolerance, int iter_max, double ***U, d
             perror("array U_new_d: allocation failed");
             exit(-1);
         }
-    
         /* initialize U_new, U_old and F on host */
         omp_target_memcpy(data_un_d, U_new[0][0], (N+2) * (N+2) * (N+2) * sizeof(double), 0, 0, omp_get_default_device(), omp_get_initial_device());
         omp_target_memcpy(data_u_d, U[0][0], (N+2) * (N+2) * (N+2) * sizeof(double), 0, 0, omp_get_default_device(), omp_get_initial_device());
@@ -104,6 +103,7 @@ double solver(int version, int N, double tolerance, int iter_max, double ***U, d
         t2_wot = omp_get_wtime();
         omp_target_memcpy(U_new[0][0], data_un_d, (N+2) * (N+2) * (N+2) * sizeof(double), 0, 0, omp_get_initial_device(), omp_get_default_device());
         printf("\tTime w/o data transfer: %lf\n", delta_t(t1_wot, t2_wot));
+        printf("\tPerformance: %f MFLOPS w/o data transfer\n", (double)N*N*N/(delta_t(t1_wot, t2_wot)/100*1000));
         omp_set_default_device(0);
         d_free_3d(U_d, data_u_d);
         d_free_3d(U_new_d, data_un_d);
@@ -142,7 +142,7 @@ main(int argc, char *argv[]) {
     int version = 0;
     // double ***U_true = NULL;
 
-
+srand(0);
     /* get the paramters from the command line */
     N         = atoi(argv[1]);	// grid size
     iter_max  = atoi(argv[2]);  // max. no. of iterations
@@ -154,7 +154,7 @@ main(int argc, char *argv[]) {
     if (argc == 7) {
         version = atoi(argv[6]);
     }
-
+    printf("Version: %d", version);
     // allocate memory
     if ( (U = malloc_3d(N+2,N+2,N+2)) == NULL ) {
         perror("array U: allocation failed");
@@ -217,6 +217,7 @@ main(int argc, char *argv[]) {
 
     // print time results
     printf("\tTime: %lf\n", time);
+    printf("\tPerformance: %f MFLOPS with data transfer\n", (double)N*N*N/(time/100*1000));
 
     // print error if testing
     #ifdef _TEST
